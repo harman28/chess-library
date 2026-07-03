@@ -103,7 +103,15 @@ function classify(game, name){ const r=game.headers.Result; const w=game.headers
   let outcome="other"; if(r==="1/2-1/2") outcome="draws"; else if(r==="1-0") outcome=isWhite?"wins":(isBlack?"losses":"other"); else if(r==="0-1") outcome=isBlack?"wins":(isWhite?"losses":"other");
   return {color,outcome};
 }
-function countMoves(movetext){ return movetext.length ? movetext.split(/\s+/).length : 0; }
+function countMoves(movetext){
+  if(!movetext) return 0;
+  const t = movetext
+    .replace(/\{[^}]*\}/g, " ")
+    .replace(/\$\d+/g, " ")
+    .replace(/\d+\.(\.\.)?/g, " ")
+    .replace(/(1-0|0-1|1\/2-1\/2|\*)\s*$/, " ");
+  return t.trim().split(/\s+/).filter(Boolean).length;
+}
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
   games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false;

@@ -25,11 +25,8 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .toolbar button:hover{background:#334155}.toolbar button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
 .toolbar button.danger{color:#f87171}.toolbar button.danger:hover{background:#3f1d1d;border-color:#f87171}
 .filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}.filters button{background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
-table{border-collapse:collapse;width:100%;table-layout:fixed}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle;overflow:hidden;text-overflow:ellipsis}
+table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}tr:hover td{background:#111827}
-.game td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.col-resize{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;z-index:2}
-.col-resize:hover{background:#38bdf8}
 .num{color:#64748b;width:2rem}.event{color:#93c5fd;max-width:22ch}.players{white-space:nowrap}.result{color:#fbbf24;font-weight:600}.moves{color:#cbd5e1}.date{color:#a5f3fc}
 .pgn{background:#020617;color:#e2e8f0;padding:.6rem .8rem;font-size:.82rem;white-space:pre-wrap;word-break:break-all}
 .columns-wrap{position:relative}
@@ -95,7 +92,6 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   </div>
 </div>
 <table id="table">
-<colgroup id="colgroup"></colgroup>
 <thead><tr></tr></thead>
 <tbody id="rows"></tbody>
 </table>
@@ -157,10 +153,8 @@ function loadGames(pgnText, name){
   saveToStorage();
 }
 const STORAGE_KEY="chessLibraryData";
-function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}, columnWidths})); }catch(_){} }
-const DEFAULT_COLUMN_WIDTH={date:95,event:170,players:190,result:65,moves:65};
-function defaultWidthFor(key){ return DEFAULT_COLUMN_WIDTH[key] || 130; }
-let columnWidths={};
+const SCHEMA_VERSION=2;
+function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}})); }catch(_){} }
 
 const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];
 const KNOWN_KEY_FOR_HEADER={Site:'site',Round:'round',ECO:'eco',WhiteElo:'whiteelo',BlackElo:'blackelo',TimeControl:'time',Termination:'term',Opening:'opening',Variation:'variation'};
@@ -190,18 +184,14 @@ function getColumnValue(g, col){
 function initColumnState(){
   const cols=discoverColumns();
   columnState={ order: cols.map(c=>c.key), visible: new Set(['date','event','players','result','moves']) };
-  columnWidths={};
 }
 function render(){
   const allCols=discoverColumns();
   const colByKey=Object.fromEntries(allCols.map(c=>[c.key,c]));
   const visibleOrdered=columnState.order.filter(k=>columnState.visible.has(k)&&colByKey[k]);
-  document.getElementById("colgroup").innerHTML=`<col style="width:28px"><col style="width:44px">`
-    +visibleOrdered.map(k=>`<col data-key="${esc(k)}" style="width:${columnWidths[k]||defaultWidthFor(k)}px">`).join("")
-    +`<col style="width:90px">`;
   const theadRow=document.querySelector("#table thead tr");
   theadRow.innerHTML=`<th class="cb-col"><input type="checkbox" id="selectAll"></th><th class="num">#</th>`
-    +visibleOrdered.map(k=>`<th class="${esc(k)}">${esc(colByKey[k].label)}<span class="col-resize" data-key="${esc(k)}"></span></th>`).join("")
+    +visibleOrdered.map(k=>`<th class="${esc(k)}">${esc(colByKey[k].label)}</th>`).join("")
     +`<th></th>`;
   document.getElementById("selectAll").addEventListener("change", onSelectAllChange);
   const tbody=document.getElementById("rows"); tbody.innerHTML="";
@@ -277,17 +267,6 @@ document.getElementById("columnsResetBtn").addEventListener("click",(e)=>{
 document.addEventListener("click",(e)=>{
   const panel=document.getElementById("columnsPanel");
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="columnsBtn"){ panel.classList.add("hidden"); }
-});
-document.getElementById("table").addEventListener("mousedown",(e)=>{
-  const handle=e.target.closest(".col-resize"); if(!handle) return;
-  e.preventDefault();
-  const key=handle.dataset.key;
-  const col=document.querySelector('#colgroup col[data-key="'+CSS.escape(key)+'"]'); if(!col) return;
-  const startX=e.clientX; const startWidth=col.getBoundingClientRect().width;
-  function onMove(ev){ const w=Math.max(40, Math.round(startWidth+(ev.clientX-startX))); col.style.width=w+"px"; }
-  function onUp(){ document.removeEventListener("mousemove",onMove); document.removeEventListener("mouseup",onUp);
-    columnWidths[key]=parseInt(col.style.width,10); saveToStorage(); }
-  document.addEventListener("mousemove",onMove); document.addEventListener("mouseup",onUp);
 });
 function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
 document.getElementById("rows").addEventListener("click",(e)=>{ const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=btn.dataset.i; const text=document.getElementById("pgnrow-"+i).querySelector(".pgn").textContent;
@@ -375,7 +354,7 @@ document.getElementById("importBtn").addEventListener("click",()=>{
 });
 function resetToUpload(){
   games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); exportMode=false; uploadedText="";
-  columnState={order:[], visible:new Set()}; columnWidths={};
+  columnState={order:[], visible:new Set()};
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";
   document.getElementById("continueBtn").disabled=true;
@@ -389,11 +368,10 @@ document.getElementById("reloadBtn").addEventListener("click",()=>{
 (function restoreFromStorage(){
   try{
     const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(saved && Array.isArray(saved.games) && saved.games.length){
+    if(saved && saved.version===SCHEMA_VERSION && Array.isArray(saved.games) && saved.games.length){
       games=saved.games; playerName=saved.playerName||"";
       if(saved.columnState && Array.isArray(saved.columnState.order) && Array.isArray(saved.columnState.visible)){
         columnState={order:saved.columnState.order, visible:new Set(saved.columnState.visible)};
-        columnWidths=(saved.columnWidths && typeof saved.columnWidths==="object") ? saved.columnWidths : {};
       } else {
         initColumnState();
       }

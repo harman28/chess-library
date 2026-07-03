@@ -28,7 +28,17 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}tr:hover td{background:#111827}
 .num{color:#64748b;width:2rem}.event{color:#93c5fd;max-width:22ch}.players{white-space:nowrap}.result{color:#fbbf24;font-weight:600}.moves{color:#cbd5e1}.date{color:#a5f3fc}
-.extra{display:none}.pgn{background:#020617;color:#e2e8f0;padding:.6rem .8rem;font-size:.82rem;white-space:pre-wrap;word-break:break-all}
+.pgn{background:#020617;color:#e2e8f0;padding:.6rem .8rem;font-size:.82rem;white-space:pre-wrap;word-break:break-all}
+.columns-wrap{position:relative}
+#columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.columns-panel-header{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
+.columns-panel-header button{background:none;border:none;color:#38bdf8;cursor:pointer;font-size:.75rem;text-transform:none;letter-spacing:0;padding:0}
+#columnsList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.1rem}
+#columnsList li{display:flex;align-items:center;gap:.5rem;padding:.35rem .4rem;border-radius:.25rem;font-size:.85rem}
+#columnsList li:hover{background:#1e293b}
+#columnsList li.dragging{opacity:.35}
+#columnsList li .drag-handle{color:#475569;cursor:grab;user-select:none}
+#columnsList li label{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e8f0}
 .pgnrow{display:none}.pgnrow.open{display:table-row}.pgnrow.open .pgn{display:block}.pgnrow td{padding:0}.pgnrow.open td{padding:.6rem .8rem}
 .pgnwrap{position:relative}.mini-copy{position:absolute;bottom:.5rem;right:.5rem;background:rgba(15,23,42,.7);border:none;color:#94a3b8;cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}.mini-copy:hover{color:#e2e8f0;background:rgba(30,41,59,.9)}
 button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:#334155}
@@ -70,13 +80,18 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   </div>
   <div class="right">
     <button id="exportBtn" type="button">Export</button>
+    <div class="columns-wrap">
+      <button id="columnsBtn" type="button">Columns</button>
+      <div id="columnsPanel" class="hidden">
+        <div class="columns-panel-header">Show &amp; reorder<button id="columnsResetBtn" type="button">Reset</button></div>
+        <ul id="columnsList"></ul>
+      </div>
+    </div>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
   </div>
 </div>
 <table id="table">
-<thead><tr><th class="cb-col"><input type="checkbox" id="selectAll"></th><th class="num">#</th><th class="date">Date</th><th class="event">Event</th><th class="players">Players</th><th class="result">Result</th><th class="moves">Moves</th>
-<th class="site extra">site</th><th class="round extra">round</th><th class="eco extra">eco</th><th class="whiteelo extra">whiteelo</th><th class="blackelo extra">blackelo</th><th class="time extra">time</th><th class="term extra">term</th><th class="opening extra">opening</th><th class="variation extra">variation</th>
-<th></th></tr></thead>
+<thead><tr></tr></thead>
 <tbody id="rows"></tbody>
 </table>
 <div class="empty-state" id="emptyState"></div>
@@ -116,8 +131,9 @@ function loadGames(pgnText, name){
   blocks.forEach((b,idx)=>{
     const c=classify(b,name);
     const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
-    games.push({ idx:idx+1, date:b.headers.Date||"", event:b.headers.Event||"", white:b.headers.White||"", black:b.headers.Black||"", result:b.headers.Result||"", moves:countMoves(b.movetext), pgn:pgn, color:c.color, outcome:c.outcome, site:b.headers.Site||"", round:b.headers.Round||"", eco:b.headers.ECO||"", opening:b.headers.Opening||"", variation:b.headers.Variation||"", whiteelo:b.headers.WhiteElo||"", blackelo:b.headers.BlackElo||"", time:b.headers.TimeControl||"", term:b.headers.Termination||"" });
+    games.push({ idx:idx+1, headers:{...b.headers}, moves:countMoves(b.movetext), pgn:pgn, color:c.color, outcome:c.outcome });
   });
+  initColumnState();
   document.getElementById("playerDisplay").textContent="Games ("+games.length+")";
   document.getElementById("table").classList.remove("export-mode");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
@@ -126,8 +142,47 @@ function loadGames(pgnText, name){
   saveToStorage();
 }
 const STORAGE_KEY="chessLibraryData";
-function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({playerName, games})); }catch(_){} }
-function render(){ const tbody=document.getElementById("rows"); tbody.innerHTML="";
+function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}})); }catch(_){} }
+
+const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];
+const KNOWN_KEY_FOR_HEADER={Site:'site',Round:'round',ECO:'eco',WhiteElo:'whiteelo',BlackElo:'blackelo',TimeControl:'time',Termination:'term',Opening:'opening',Variation:'variation'};
+let columnState={order:[], visible:new Set()};
+function discoverColumns(){
+  const seen=new Set();
+  games.forEach(g=>Object.keys(g.headers||{}).forEach(k=>seen.add(k)));
+  const skip=new Set(['White','Black','Event','Date','Result']);
+  const cols=[
+    {key:'date', label:'Date', header:'Date'},
+    {key:'event', label:'Event', header:'Event'},
+    {key:'players', label:'Players'},
+    {key:'result', label:'Result', header:'Result'},
+    {key:'moves', label:'Moves'},
+  ];
+  KNOWN_HEADER_ORDER.forEach(h=>{ if(seen.has(h)) cols.push({key:KNOWN_KEY_FOR_HEADER[h], label:h, header:h}); });
+  [...seen].filter(h=>!skip.has(h)&&!KNOWN_HEADER_ORDER.includes(h)).sort().forEach(h=>{
+    cols.push({key:'hdr_'+h.replace(/[^a-zA-Z0-9_-]/g,'_'), label:h, header:h});
+  });
+  return cols;
+}
+function getColumnValue(g, col){
+  if(col.key==='players') return (g.headers.White||"")+" vs "+(g.headers.Black||"");
+  if(col.key==='moves') return g.moves;
+  return g.headers[col.header]!==undefined ? g.headers[col.header] : "";
+}
+function initColumnState(){
+  const cols=discoverColumns();
+  columnState={ order: cols.map(c=>c.key), visible: new Set(['date','event','players','result','moves']) };
+}
+function render(){
+  const allCols=discoverColumns();
+  const colByKey=Object.fromEntries(allCols.map(c=>[c.key,c]));
+  const visibleOrdered=columnState.order.filter(k=>columnState.visible.has(k)&&colByKey[k]);
+  const theadRow=document.querySelector("#table thead tr");
+  theadRow.innerHTML=`<th class="cb-col"><input type="checkbox" id="selectAll"></th><th class="num">#</th>`
+    +visibleOrdered.map(k=>`<th class="${esc(k)}">${esc(colByKey[k].label)}</th>`).join("")
+    +`<th></th>`;
+  document.getElementById("selectAll").addEventListener("change", onSelectAllChange);
+  const tbody=document.getElementById("rows"); tbody.innerHTML="";
   const filtered=games.filter(g=>{ if(activeFilters.has("all")) return true; const c=activeFilters.has("white")||activeFilters.has("black"); const o=activeFilters.has("wins")||activeFilters.has("losses")||activeFilters.has("draws");
     if(c&&!activeFilters.has(g.color)) return false; if(o&&!activeFilters.has(g.outcome)) return false; return true; });
   const empty=document.getElementById("emptyState");
@@ -135,22 +190,72 @@ function render(){ const tbody=document.getElementById("rows"); tbody.innerHTML=
   filtered.forEach(g=>{
     const tr=document.createElement("tr"); tr.className="game"; tr.dataset.i=g.idx; tr.dataset.color=g.color; tr.dataset.outcome=g.outcome;
     const checked=selected.has(g.idx)?"checked":"";
+    const cells=visibleOrdered.map(k=>`<td class="${esc(k)}">${esc(String(getColumnValue(g, colByKey[k])))}</td>`).join("");
     tr.innerHTML=`<td class="cb-col"><input type="checkbox" data-i="${g.idx}" ${checked}></td>`
       +`<td class="num">${g.idx}</td>`
-      +`<td class="date">${esc(g.date)}</td>`
-      +`<td class="event">${esc(g.event)}</td>`
-      +`<td class="players">${esc(g.white)} vs ${esc(g.black)}</td>`
-      +`<td class="result">${esc(g.result)}</td>`
-      +`<td class="moves">${g.moves}</td>`
-      +`<td class="site extra">${esc(g.site)}</td><td class="round extra">${esc(g.round)}</td><td class="eco extra">${esc(g.eco)}</td>`
-      +`<td class="whiteelo extra">${esc(g.whiteelo)}</td><td class="blackelo extra">${esc(g.blackelo)}</td>`
-      +`<td class="time extra">${esc(g.time)}</td><td class="term extra">${esc(g.term)}</td>`
-      +`<td class="opening extra">${esc(g.opening)}</td><td class="variation extra">${esc(g.variation)}</td>`
+      +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="pgnwrap"><pre class="pgn" style="margin:0;">${esc(g.pgn)}</pre><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateExportButton(); }
+function onSelectAllChange(e){
+  const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
+  selected.clear();
+  if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
+  else { cbs.forEach(cb=>{ cb.checked=false; }); }
+}
+function renderColumnsPanel(){
+  const allCols=discoverColumns();
+  const colByKey=Object.fromEntries(allCols.map(c=>[c.key,c]));
+  const list=document.getElementById("columnsList"); list.innerHTML="";
+  columnState.order.forEach(key=>{
+    const col=colByKey[key]; if(!col) return;
+    const li=document.createElement("li"); li.draggable=true; li.dataset.key=key;
+    const checked=columnState.visible.has(key)?"checked":"";
+    li.innerHTML=`<span class="drag-handle">\u22ee\u22ee</span><input type="checkbox" data-key="${key}" ${checked}><label>${esc(col.label)}</label>`;
+    list.appendChild(li);
+  });
+}
+let dragKey=null;
+const columnsListEl=document.getElementById("columnsList");
+columnsListEl.addEventListener("dragstart",(e)=>{ const li=e.target.closest("li"); if(!li) return; dragKey=li.dataset.key; li.classList.add("dragging"); });
+columnsListEl.addEventListener("dragend",(e)=>{ const li=e.target.closest("li"); if(li) li.classList.remove("dragging"); });
+columnsListEl.addEventListener("dragover",(e)=>{
+  e.preventDefault();
+  const li=e.target.closest("li"); if(!li||li.dataset.key===dragKey) return;
+  const items=[...columnsListEl.children];
+  const draggingEl=items.find(el=>el.dataset.key===dragKey);
+  if(!draggingEl) return;
+  if(items.indexOf(draggingEl)<items.indexOf(li)) columnsListEl.insertBefore(draggingEl, li.nextSibling);
+  else columnsListEl.insertBefore(draggingEl, li);
+});
+columnsListEl.addEventListener("drop",(e)=>{
+  e.preventDefault();
+  columnState.order=[...columnsListEl.children].map(li=>li.dataset.key);
+  saveToStorage(); render();
+});
+columnsListEl.addEventListener("change",(e)=>{
+  if(e.target.type==="checkbox"){
+    const key=e.target.dataset.key;
+    if(e.target.checked) columnState.visible.add(key); else columnState.visible.delete(key);
+    saveToStorage(); render();
+  }
+});
+document.getElementById("columnsBtn").addEventListener("click",(e)=>{
+  e.stopPropagation();
+  const panel=document.getElementById("columnsPanel");
+  if(panel.classList.contains("hidden")) renderColumnsPanel();
+  panel.classList.toggle("hidden");
+});
+document.getElementById("columnsResetBtn").addEventListener("click",(e)=>{
+  e.stopPropagation();
+  initColumnState(); renderColumnsPanel(); render(); saveToStorage();
+});
+document.addEventListener("click",(e)=>{
+  const panel=document.getElementById("columnsPanel");
+  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="columnsBtn"){ panel.classList.add("hidden"); }
+});
 function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
 document.getElementById("rows").addEventListener("click",(e)=>{ const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=btn.dataset.i; const text=document.getElementById("pgnrow-"+i).querySelector(".pgn").textContent;
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
@@ -158,12 +263,6 @@ document.getElementById("rows").addEventListener("click",(e)=>{ const btn=e.targ
   if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
   const row=e.target.closest("tr.game"); if(!row) return; const el=document.getElementById("pgnrow-"+row.dataset.i); if(el) el.classList.toggle("open"); });
 document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });
-document.getElementById("selectAll").addEventListener("change",(e)=>{
-  const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
-  selected.clear();
-  if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
-  else { cbs.forEach(cb=>{ cb.checked=false; }); }
-});
 document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListener("click",()=>{
   const group=btn.dataset.group; const filter=btn.dataset.filter; const wasActive=btn.classList.contains("active");
   if(filter==="all"){ activeFilters.clear(); btn.classList.add("active"); document.querySelectorAll("#filters button:not([data-filter='all'])").forEach(b=>b.classList.remove("active")); }
@@ -174,11 +273,12 @@ document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListen
   syncFiltersFromDOM(); render(); }); });
 function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
 function updateExportButton(){ document.getElementById("exportBtn").disabled=games.length===0; }
+const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];
 function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.has(g.idx)):games; if(!chosen.length) return "";
-  return chosen.map(g=>{ let pgn="[Event \""+esc(g.event)+"\"]\n[Site \""+esc(g.site)+"\"]\n[Date \""+esc(g.date)+"\"]\n"; pgn+="[Round \""+esc(g.round)+"\"]\n[White \""+esc(g.white)+"\"]\n[Black \""+esc(g.black)+"\"]\n[Result \""+esc(g.result)+"\"]\n";
-    const extras=[]; if(g.eco) extras.push("[ECO \""+esc(g.eco)+"\"]"); if(g.opening) extras.push("[Opening \""+esc(g.opening)+"\"]"); if(g.variation) extras.push("[Variation \""+esc(g.variation)+"\"]");
-    if(g.whiteelo) extras.push("[WhiteElo \""+esc(g.whiteelo)+"\"]"); if(g.blackelo) extras.push("[BlackElo \""+esc(g.blackelo)+"\"]"); if(g.time) extras.push("[TimeControl \""+esc(g.time)+"\"]"); if(g.term) extras.push("[Termination \""+esc(g.term)+"\"]");
-    return pgn+extras.join("\n")+"\n\n"+g.pgn.split("\n").slice(7).join("\n").trim(); }).join("\n\n")+"\n"; }
+  return chosen.map(g=>{ const h=g.headers||{};
+    const lines=EXPORT_TAG_ORDER.map(t=>"["+t+" \""+esc(h[t]||"")+"\"]");
+    Object.keys(h).forEach(t=>{ if(!EXPORT_TAG_ORDER.includes(t)) lines.push("["+t+" \""+esc(h[t])+"\"]"); });
+    return lines.join("\n")+"\n\n"+g.pgn.split("\n").slice(7).join("\n").trim(); }).join("\n\n")+"\n"; }
 function downloadBlob(text, filename){ const blob=new Blob([text],{type:"application/x-chess-pgn"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
 document.getElementById("exportBtn").addEventListener("click",()=>{
   if(!exportMode){ exportMode=true; document.getElementById("table").classList.add("export-mode"); document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); return; }
@@ -242,6 +342,7 @@ document.getElementById("importBtn").addEventListener("click",()=>{
 });
 function resetToUpload(){
   games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); exportMode=false; uploadedText="";
+  columnState={order:[], visible:new Set()};
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";
   document.getElementById("continueBtn").disabled=true;
@@ -257,6 +358,11 @@ document.getElementById("reloadBtn").addEventListener("click",()=>{
     const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
     if(saved && Array.isArray(saved.games) && saved.games.length){
       games=saved.games; playerName=saved.playerName||"";
+      if(saved.columnState && Array.isArray(saved.columnState.order) && Array.isArray(saved.columnState.visible)){
+        columnState={order:saved.columnState.order, visible:new Set(saved.columnState.visible)};
+      } else {
+        initColumnState();
+      }
       document.getElementById("playerDisplay").textContent="Games ("+games.length+")";
       document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
       render();

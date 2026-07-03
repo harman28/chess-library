@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Chess Library</title><style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2rem;background:#0f172a;color:#e2e8f0}
+h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
+.landing{display:flex;justify-content:center;align-items:center;min-height:60vh}
+.landing .card{background:#111827;border:1px solid #334155;border-radius:.5rem;padding:2rem 2.5rem;width:100%;max-width:420px;display:flex;flex-direction:column;gap:1rem}
+.landing #stepUpload,.landing #stepConfirm,.landing #manualNameWrap{display:flex;flex-direction:column;gap:1rem}
+.landing h2{margin:0;font-size:1.1rem;font-weight:500;color:#e2e8f0}
+.landing label{color:#94a3b8;font-size:.85rem;font-weight:500}
+.landing input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-size:.92rem;width:100%;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s}
+.landing input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.landing input[type="file"]{width:100%}
+.landing label{padding-left:.2rem}
+.landing button:disabled{opacity:.5;cursor:not-allowed}.landing button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-weight:600;cursor:pointer;font-size:.92rem;width:100%;transition:border-color .15s,background .15s}.landing button:hover:not(:disabled){border-color:#475569;background:#1f2937}
+#nameChart{display:flex;flex-direction:column;gap:.45rem}
+.namebar-row{display:flex;align-items:center;gap:.6rem}
+.namebar-name{width:8rem;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem;color:#e2e8f0}
+.namebar-track{flex:1;background:#0f172a;border:1px solid #334155;border-radius:.25rem;height:.6rem;overflow:hidden}
+.namebar-fill{height:100%;background:#38bdf8;border-radius:.25rem}
+.namebar-row.top .namebar-name{color:#38bdf8;font-weight:600}.namebar-row.top .namebar-fill{background:#38bdf8}
+.namebar-row:not(.top) .namebar-fill{background:#475569}
+.namebar-count{width:1.6rem;text-align:right;font-size:.78rem;color:#64748b}
+.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
+.toolbar .left{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.player{color:#38bdf8;font-weight:600;font-size:.95rem}.toolbar .right{margin-left:auto;display:flex;gap:.4rem;align-items:center}
+.toolbar button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem}
+.toolbar button:hover{background:#334155}.toolbar button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
+.filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}.filters button{background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
+table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
+td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}tr:hover td{background:#111827}
+.num{color:#64748b;width:2rem}.event{color:#93c5fd;max-width:22ch}.players{white-space:nowrap}.result{color:#fbbf24;font-weight:600}.moves{color:#cbd5e1}.date{color:#a5f3fc}
+.extra{display:none}.pgn{background:#020617;color:#e2e8f0;padding:.6rem .8rem;font-size:.82rem;white-space:pre-wrap;word-break:break-all}
+.pgnrow{display:none}.pgnrow.open{display:table-row}.pgnrow.open .pgn{display:block}.pgnrow td{padding:0}.pgnrow.open td{padding:.6rem .8rem}
+.pgnwrap{position:relative}.mini-copy{position:absolute;bottom:.5rem;right:.5rem;background:rgba(15,23,42,.7);border:none;color:#94a3b8;cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}.mini-copy:hover{color:#e2e8f0;background:rgba(30,41,59,.9)}
+button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:#334155}
+.hidden{display:none!important}.empty-state{text-align:center;padding:3rem 1rem;color:#64748b;font-size:.95rem}
+.cb-col{display:none}#table.export-mode .cb-col{display:table-cell}
+</style></head><body>
+<h1>Chess Library</h1>
+<div class="landing" id="landing">
+<div class="card">
+<h2>Import Your Games</h2>
+<div id="stepUpload">
+<label>PGN File</label>
+<input type="file" id="pgnUpload" accept=".pgn,text/plain">
+<div id="fileName" style="color:#64748b;font-size:.8rem"></div>
+<button id="continueBtn" type="button" disabled>Continue</button>
+</div>
+<div id="stepConfirm" class="hidden">
+<div id="guessText" style="color:#94a3b8;font-size:.9rem"></div>
+<div id="nameChart"></div>
+<button id="confirmYesBtn" type="button"></button>
+<button id="confirmNoBtn" type="button">That's not me</button>
+<div id="manualNameWrap" class="hidden">
+<label>Your Name</label>
+<input type="text" id="playerName" placeholder="e.g. Harman Singh" autocomplete="off">
+<button id="importBtn" type="button">Import</button>
+</div>
+</div>
+</div>
+</div>
+<div id="app" class="hidden">
+<div class="toolbar">
+  <div class="left">
+    <span class="player" id="playerDisplay"></span>
+    <div class="filters" id="filters">
+      <button data-filter="all" data-group="base" class="active">All</button><div class="sep"></div>
+      <button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button><div class="sep"></div>
+      <button data-filter="wins" data-group="outcome">Wins</button><button data-filter="losses" data-group="outcome">Losses</button><button data-filter="draws" data-group="outcome">Draws</button>
+    </div>
+  </div>
+  <div class="right">
+    <button id="exportBtn" type="button">Export</button>
+  </div>
+</div>
+<table id="table">
+<thead><tr><th class="cb-col"><input type="checkbox" id="selectAll"></th><th class="num">#</th><th class="date">Date</th><th class="event">Event</th><th class="players">Players</th><th class="result">Result</th><th class="moves">Moves</th>
+<th class="site extra">site</th><th class="round extra">round</th><th class="eco extra">eco</th><th class="whiteelo extra">whiteelo</th><th class="blackelo extra">blackelo</th><th class="time extra">time</th><th class="term extra">term</th><th class="opening extra">opening</th><th class="variation extra">variation</th>
+<th></th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+<div class="empty-state" id="emptyState"></div>
+</div>
+<script>
+let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let exportMode = false;
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function parsePGN(text){
+  text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+  const parts = text.split(/(?=\[Event\s)/);
+  const blocks=[];
+  for(let i=0;i<parts.length;i++){
+    const p=parts[i].trim(); if(!p) continue;
+    const headers={}; const re=/\[(\w+)\s+"([^"]*)"\]/g; let m;
+    while((m=re.exec(p))!==null) headers[m[1]]=m[2];
+    const movetext=p.replace(/\[\w+\s+"[^"]*"\]\s*/g,"").trim();
+    blocks.push({headers,movetext});
+  }
+  return blocks;
+}
+function classify(game, name){ const r=game.headers.Result; const w=game.headers.White||""; const b=game.headers.Black||""; const low=name.toLowerCase();
+  const isWhite=w.toLowerCase().indexOf(low)!==-1; const isBlack=b.toLowerCase().indexOf(low)!==-1;
+  let color="other"; if(isWhite&&!isBlack) color="white"; else if(isBlack&&!isWhite) color="black"; else if(isWhite&&isBlack) color="other";
+  let outcome="other"; if(r==="1/2-1/2") outcome="draws"; else if(r==="1-0") outcome=isWhite?"wins":(isBlack?"losses":"other"); else if(r==="0-1") outcome=isBlack?"wins":(isWhite?"losses":"other");
+  return {color,outcome};
+}
+function countMoves(movetext){ return movetext.length ? movetext.split(/\s+/).length : 0; }
+function loadGames(pgnText, name){
+  if(!name || !name.trim()){ alert("Please enter your name"); return; }
+  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false;
+  const blocks=parsePGN(pgnText);
+  blocks.forEach((b,idx)=>{
+    const c=classify(b,name);
+    const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
+    games.push({ idx:idx+1, date:b.headers.Date||"", event:b.headers.Event||"", white:b.headers.White||"", black:b.headers.Black||"", result:b.headers.Result||"", moves:countMoves(b.movetext), pgn:pgn, color:c.color, outcome:c.outcome, site:b.headers.Site||"", round:b.headers.Round||"", eco:b.headers.ECO||"", opening:b.headers.Opening||"", variation:b.headers.Variation||"", whiteelo:b.headers.WhiteElo||"", blackelo:b.headers.BlackElo||"", time:b.headers.TimeControl||"", term:b.headers.Termination||"" });
+  });
+  document.getElementById("playerDisplay").textContent="Games ("+games.length+")";
+  document.getElementById("table").classList.remove("export-mode");
+  document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
+  document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
+  render();
+}
+function render(){ const tbody=document.getElementById("rows"); tbody.innerHTML="";
+  const filtered=games.filter(g=>{ if(activeFilters.has("all")) return true; const c=activeFilters.has("white")||activeFilters.has("black"); const o=activeFilters.has("wins")||activeFilters.has("losses")||activeFilters.has("draws");
+    if(c&&!activeFilters.has(g.color)) return false; if(o&&!activeFilters.has(g.outcome)) return false; return true; });
+  const empty=document.getElementById("emptyState");
+  if(filtered.length===0){ empty.textContent="no games match"; empty.classList.remove("hidden"); } else { empty.classList.add("hidden"); }
+  filtered.forEach(g=>{
+    const tr=document.createElement("tr"); tr.className="game"; tr.dataset.i=g.idx; tr.dataset.color=g.color; tr.dataset.outcome=g.outcome;
+    const checked=selected.has(g.idx)?"checked":"";
+    tr.innerHTML=`<td class="cb-col"><input type="checkbox" data-i="${g.idx}" ${checked}></td>`
+      +`<td class="num">${g.idx}</td>`
+      +`<td class="date">${esc(g.date)}</td>`
+      +`<td class="event">${esc(g.event)}</td>`
+      +`<td class="players">${esc(g.white)} vs ${esc(g.black)}</td>`
+      +`<td class="result">${esc(g.result)}</td>`
+      +`<td class="moves">${g.moves}</td>`
+      +`<td class="site extra">${esc(g.site)}</td><td class="round extra">${esc(g.round)}</td><td class="eco extra">${esc(g.eco)}</td>`
+      +`<td class="whiteelo extra">${esc(g.whiteelo)}</td><td class="blackelo extra">${esc(g.blackelo)}</td>`
+      +`<td class="time extra">${esc(g.time)}</td><td class="term extra">${esc(g.term)}</td>`
+      +`<td class="opening extra">${esc(g.opening)}</td><td class="variation extra">${esc(g.variation)}</td>`
+      +`<td class="actions"><button data-i="${g.idx}" class="copy-btn">Analyse \u2197</button></td>`;
+    const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
+    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="pgnwrap"><pre class="pgn" style="margin:0;">${esc(g.pgn)}</pre><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></td>`;
+    tbody.appendChild(tr); tbody.appendChild(pr);
+  }); updateExportButton(); }
+function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
+document.getElementById("rows").addEventListener("click",(e)=>{ const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=btn.dataset.i; const text=document.getElementById("pgnrow-"+i).querySelector(".pgn").textContent;
+  copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
+  const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
+  if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
+  const row=e.target.closest("tr.game"); if(!row) return; const el=document.getElementById("pgnrow-"+row.dataset.i); if(el) el.classList.toggle("open"); });
+document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });
+document.getElementById("selectAll").addEventListener("change",(e)=>{
+  const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
+  selected.clear();
+  if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
+  else { cbs.forEach(cb=>{ cb.checked=false; }); }
+});
+document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListener("click",()=>{
+  const group=btn.dataset.group; const filter=btn.dataset.filter; const wasActive=btn.classList.contains("active");
+  if(filter==="all"){ activeFilters.clear(); btn.classList.add("active"); document.querySelectorAll("#filters button:not([data-filter='all'])").forEach(b=>b.classList.remove("active")); }
+  else { document.querySelectorAll("#filters button[data-filter='all']").forEach(b=>b.classList.remove("active")); if(group!=="base"){ document.querySelectorAll("#filters button[data-group='"+group+"']").forEach(b=>{if(b!==btn)b.classList.remove("active")}); }
+    if(!wasActive){ btn.classList.add("active"); } else { btn.classList.remove("active"); }
+    if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");}
+  }
+  syncFiltersFromDOM(); render(); }); });
+function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
+function updateExportButton(){ document.getElementById("exportBtn").disabled=games.length===0; }
+function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.has(g.idx)):games; if(!chosen.length) return "";
+  return chosen.map(g=>{ let pgn="[Event \""+esc(g.event)+"\"]\n[Site \""+esc(g.site)+"\"]\n[Date \""+esc(g.date)+"\"]\n"; pgn+="[Round \""+esc(g.round)+"\"]\n[White \""+esc(g.white)+"\"]\n[Black \""+esc(g.black)+"\"]\n[Result \""+esc(g.result)+"\"]\n";
+    const extras=[]; if(g.eco) extras.push("[ECO \""+esc(g.eco)+"\"]"); if(g.opening) extras.push("[Opening \""+esc(g.opening)+"\"]"); if(g.variation) extras.push("[Variation \""+esc(g.variation)+"\"]");
+    if(g.whiteelo) extras.push("[WhiteElo \""+esc(g.whiteelo)+"\"]"); if(g.blackelo) extras.push("[BlackElo \""+esc(g.blackelo)+"\"]"); if(g.time) extras.push("[TimeControl \""+esc(g.time)+"\"]"); if(g.term) extras.push("[Termination \""+esc(g.term)+"\"]");
+    return pgn+extras.join("\n")+"\n\n"+g.pgn.split("\n").slice(7).join("\n").trim(); }).join("\n\n")+"\n"; }
+function downloadBlob(text, filename){ const blob=new Blob([text],{type:"application/x-chess-pgn"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+document.getElementById("exportBtn").addEventListener("click",()=>{
+  if(!exportMode){ exportMode=true; document.getElementById("table").classList.add("export-mode"); document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); return; }
+  const hasChecked=document.querySelectorAll("#rows input[type='checkbox']:checked").length>0;
+  if(!hasChecked){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>cb.checked=true);
+    games.forEach(g=>selected.add(g.idx)); }
+  const pgnText=buildExport();
+  const toExport=selected.size>0?"selected":"all";
+  downloadBlob(pgnText,(playerName||"games").replace(/\s+/g,"_")+"_"+toExport+".pgn");
+  document.getElementById("table").classList.remove("export-mode"); document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
+  document.getElementById("selectAll").checked=false;
+  document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; }); selected.clear(); exportMode=false;
+});
+let uploadedText = "";
+function getNameCounts(blocks){
+  const counts=new Map();
+  blocks.forEach(b=>{ [b.headers.White,b.headers.Black].forEach(n=>{ if(!n) return; counts.set(n,(counts.get(n)||0)+1); }); });
+  return [...counts.entries()].map(([name,count])=>({name,count})).sort((a,b)=>b.count-a.count);
+}
+function renderNameChart(counts){
+  const top=counts.slice(0,5);
+  const max=top.length?top[0].count:1;
+  document.getElementById("nameChart").innerHTML=top.map((c,i)=>
+    `<div class="namebar-row${i===0?" top":""}"><span class="namebar-name">${esc(c.name)}</span><div class="namebar-track"><div class="namebar-fill" style="width:${Math.round(c.count/max*100)}%"></div></div><span class="namebar-count">${c.count}</span></div>`
+  ).join("");
+}
+document.getElementById("pgnUpload").addEventListener("change",(e)=>{
+  const file=e.target.files[0];
+  document.getElementById("continueBtn").disabled=true;
+  uploadedText="";
+  if(!file){ document.getElementById("fileName").textContent=""; return; }
+  document.getElementById("fileName").textContent=file.name;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{ uploadedText=ev.target.result; document.getElementById("continueBtn").disabled=false; };
+  reader.readAsText(file);
+});
+document.getElementById("continueBtn").addEventListener("click",()=>{
+  if(!uploadedText) return;
+  const blocks=parsePGN(uploadedText);
+  const counts=getNameCounts(blocks);
+  const guess=counts.length?counts[0].name:null;
+  document.getElementById("stepUpload").classList.add("hidden");
+  document.getElementById("stepConfirm").classList.remove("hidden");
+  renderNameChart(counts);
+  const yesBtn=document.getElementById("confirmYesBtn"), noBtn=document.getElementById("confirmNoBtn");
+  if(guess){
+    document.getElementById("guessText").textContent="Most games played by \""+guess+"\" — is this you?";
+    yesBtn.textContent="Yes, that's me"; yesBtn.classList.remove("hidden"); noBtn.classList.remove("hidden");
+    yesBtn.onclick=()=>loadGames(uploadedText, guess);
+    noBtn.onclick=()=>{ yesBtn.classList.add("hidden"); noBtn.classList.add("hidden"); document.getElementById("manualNameWrap").classList.remove("hidden"); };
+  } else {
+    document.getElementById("guessText").textContent="Couldn't detect a name from these games.";
+    yesBtn.classList.add("hidden"); noBtn.classList.add("hidden");
+    document.getElementById("manualNameWrap").classList.remove("hidden");
+  }
+});
+document.getElementById("importBtn").addEventListener("click",()=>{
+  const name=document.getElementById("playerName").value.trim();
+  if(!name){ alert("Please enter your name"); return; }
+  loadGames(uploadedText, name);
+});
+</script></body></html>

@@ -75,13 +75,13 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <div class="toolbar">
   <div class="left">
     <span class="player" id="playerDisplay"></span>
-    <input type="text" id="searchInput" placeholder="Search games…">
     <div class="filters" id="filters">
       <button data-filter="all" data-group="base" class="active">All</button><div class="sep"></div>
       <button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button><div class="sep"></div>
       <button data-filter="wins" data-group="outcome">Wins</button><button data-filter="losses" data-group="outcome">Losses</button><button data-filter="draws" data-group="outcome">Draws</button><div class="sep"></div>
       <button data-filter="blitz" data-group="speed">Blitz</button><button data-filter="rapid" data-group="speed">Rapid</button><button data-filter="classical" data-group="speed">Classical</button>
     </div>
+    <input type="text" id="searchInput" placeholder="Search games…">
   </div>
   <div class="right">
     <button id="exportBtn" type="button">Export</button>
@@ -106,7 +106,8 @@ let games = []; let playerName = ""; let selected = new Set(); let activeFilters
 function gameMatchesSearch(g){
   if(!searchQuery) return true;
   const q=searchQuery.toLowerCase();
-  return Object.values(g.headers||{}).some(v=>String(v).toLowerCase().includes(q));
+  if(Object.values(g.headers||{}).some(v=>String(v).toLowerCase().includes(q))) return true;
+  return (g.pgn||"").toLowerCase().includes(q);
 }
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function parsePGN(text){

@@ -124,10 +124,9 @@ function classifySpeed(timeControl){
   const m = timeControl.match(/^(?:\d+\/)?(\d+)/);
   if(!m) return "other";
   const minutes = parseInt(m[1],10)/60;
-  if(minutes>=3 && minutes<=5) return "blitz";
-  if(minutes>5 && minutes<90) return "rapid";
-  if(minutes>=90) return "classical";
-  return "other";
+  if(minutes<=5) return "blitz";
+  if(minutes<90) return "rapid";
+  return "classical";
 }
 function countMoves(movetext){
   if(!movetext) return 0;
@@ -153,7 +152,7 @@ function loadGames(pgnText, name){
   saveToStorage();
 }
 const STORAGE_KEY="chessLibraryData";
-const SCHEMA_VERSION=2;
+const SCHEMA_VERSION=3;
 function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}})); }catch(_){} }
 
 const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];

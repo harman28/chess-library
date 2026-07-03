@@ -21,6 +21,9 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .namebar-count{width:1.6rem;text-align:right;font-size:.78rem;color:#64748b}
 .toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
 .toolbar .left{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.player{color:#38bdf8;font-weight:600;font-size:.95rem}.toolbar .right{margin-left:auto;display:flex;gap:.4rem;align-items:center}
+#searchInput{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .6rem;font-size:.82rem;outline:none;width:13rem;transition:border-color .15s,box-shadow .15s}
+#searchInput:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+#searchInput::placeholder{color:#64748b}
 .toolbar button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem}
 .toolbar button:hover{background:#334155}.toolbar button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
 .toolbar button.danger{color:#f87171}.toolbar button.danger:hover{background:#3f1d1d;border-color:#f87171}
@@ -72,6 +75,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <div class="toolbar">
   <div class="left">
     <span class="player" id="playerDisplay"></span>
+    <input type="text" id="searchInput" placeholder="Search games…">
     <div class="filters" id="filters">
       <button data-filter="all" data-group="base" class="active">All</button><div class="sep"></div>
       <button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button><div class="sep"></div>
@@ -98,7 +102,12 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <div class="empty-state" id="emptyState"></div>
 </div>
 <script>
-let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let exportMode = false;
+let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let exportMode = false; let searchQuery = "";
+function gameMatchesSearch(g){
+  if(!searchQuery) return true;
+  const q=searchQuery.toLowerCase();
+  return Object.values(g.headers||{}).some(v=>String(v).toLowerCase().includes(q));
+}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function parsePGN(text){
   text=text.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
@@ -136,7 +145,7 @@ function countMoves(movetext){
 }
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
-  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false;
+  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false; searchQuery=""; document.getElementById("searchInput").value="";
   const blocks=parsePGN(pgnText);
   blocks.forEach((b,idx)=>{
     const c=classify(b,name);
@@ -194,7 +203,7 @@ function render(){
     +`<th></th>`;
   document.getElementById("selectAll").addEventListener("change", onSelectAllChange);
   const tbody=document.getElementById("rows"); tbody.innerHTML="";
-  const filtered=games.filter(g=>{ if(activeFilters.has("all")) return true; const c=activeFilters.has("white")||activeFilters.has("black"); const o=activeFilters.has("wins")||activeFilters.has("losses")||activeFilters.has("draws"); const s=activeFilters.has("blitz")||activeFilters.has("rapid")||activeFilters.has("classical");
+  const filtered=games.filter(g=>{ if(!gameMatchesSearch(g)) return false; if(activeFilters.has("all")) return true; const c=activeFilters.has("white")||activeFilters.has("black"); const o=activeFilters.has("wins")||activeFilters.has("losses")||activeFilters.has("draws"); const s=activeFilters.has("blitz")||activeFilters.has("rapid")||activeFilters.has("classical");
     if(c&&!activeFilters.has(g.color)) return false; if(o&&!activeFilters.has(g.outcome)) return false; if(s&&!activeFilters.has(g.speed)) return false; return true; });
   const empty=document.getElementById("emptyState");
   if(filtered.length===0){ empty.textContent="no games match"; empty.classList.remove("hidden"); } else { empty.classList.add("hidden"); }
@@ -282,6 +291,7 @@ document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListen
     if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");}
   }
   syncFiltersFromDOM(); render(); }); });
+document.getElementById("searchInput").addEventListener("input",(e)=>{ searchQuery=e.target.value.trim(); render(); });
 function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
 function updateExportButton(){ document.getElementById("exportBtn").disabled=games.length===0; }
 const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];
@@ -297,8 +307,7 @@ document.getElementById("exportBtn").addEventListener("click",()=>{
   if(!hasChecked){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>cb.checked=true);
     games.forEach(g=>selected.add(g.idx)); }
   const pgnText=buildExport();
-  const toExport=selected.size>0?"selected":"all";
-  downloadBlob(pgnText,(playerName||"games").replace(/\s+/g,"_")+"_"+toExport+".pgn");
+  downloadBlob(pgnText,(playerName||"Games").trim().replace(/\s+/g,"_")+"_Games.pgn");
   document.getElementById("table").classList.remove("export-mode"); document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("selectAll").checked=false;
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; }); selected.clear(); exportMode=false;
@@ -352,7 +361,7 @@ document.getElementById("importBtn").addEventListener("click",()=>{
   loadGames(uploadedText, name);
 });
 function resetToUpload(){
-  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); exportMode=false; uploadedText="";
+  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); exportMode=false; uploadedText=""; searchQuery=""; document.getElementById("searchInput").value="";
   columnState={order:[], visible:new Set()};
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";

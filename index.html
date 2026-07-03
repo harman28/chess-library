@@ -23,6 +23,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .toolbar .left{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.player{color:#38bdf8;font-weight:600;font-size:.95rem}.toolbar .right{margin-left:auto;display:flex;gap:.4rem;align-items:center}
 .toolbar button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem}
 .toolbar button:hover{background:#334155}.toolbar button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
+.toolbar button.danger{color:#f87171}.toolbar button.danger:hover{background:#3f1d1d;border-color:#f87171}
 .filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}.filters button{background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
 table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}tr:hover td{background:#111827}
@@ -69,6 +70,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   </div>
   <div class="right">
     <button id="exportBtn" type="button">Export</button>
+    <button id="reloadBtn" type="button" class="danger">Reload</button>
   </div>
 </div>
 <table id="table">
@@ -116,7 +118,10 @@ function loadGames(pgnText, name){
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
   render();
+  saveToStorage();
 }
+const STORAGE_KEY="chessLibraryData";
+function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({playerName, games})); }catch(_){} }
 function render(){ const tbody=document.getElementById("rows"); tbody.innerHTML="";
   const filtered=games.filter(g=>{ if(activeFilters.has("all")) return true; const c=activeFilters.has("white")||activeFilters.has("black"); const o=activeFilters.has("wins")||activeFilters.has("losses")||activeFilters.has("draws");
     if(c&&!activeFilters.has(g.color)) return false; if(o&&!activeFilters.has(g.outcome)) return false; return true; });
@@ -230,4 +235,27 @@ document.getElementById("importBtn").addEventListener("click",()=>{
   if(!name){ alert("Please enter your name"); return; }
   loadGames(uploadedText, name);
 });
+function resetToUpload(){
+  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); exportMode=false; uploadedText="";
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";
+  document.getElementById("continueBtn").disabled=true;
+  document.getElementById("stepConfirm").classList.add("hidden"); document.getElementById("stepUpload").classList.remove("hidden");
+  document.getElementById("manualNameWrap").classList.add("hidden");
+  document.getElementById("app").classList.add("hidden"); document.getElementById("landing").classList.remove("hidden");
+}
+document.getElementById("reloadBtn").addEventListener("click",()=>{
+  if(confirm("Drop all currently loaded games and import a new PGN?")) resetToUpload();
+});
+(function restoreFromStorage(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(saved && Array.isArray(saved.games) && saved.games.length){
+      games=saved.games; playerName=saved.playerName||"";
+      document.getElementById("playerDisplay").textContent="Games ("+games.length+")";
+      document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
+      render();
+    }
+  }catch(_){}
+})();
 </script></body></html>

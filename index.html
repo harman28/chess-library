@@ -105,12 +105,9 @@ function classify(game, name){ const r=game.headers.Result; const w=game.headers
 }
 function countMoves(movetext){
   if(!movetext) return 0;
-  const t = movetext
-    .replace(/\{[^}]*\}/g, " ")
-    .replace(/\$\d+/g, " ")
-    .replace(/\d+\.(\.\.)?/g, " ")
-    .replace(/(1-0|0-1|1\/2-1\/2|\*)\s*$/, " ");
-  return t.trim().split(/\s+/).filter(Boolean).length;
+  const stripped = movetext.replace(/\{[^}]*\}/g, " ");
+  const nums = stripped.match(/\d+(?=\.)/g);
+  return nums && nums.length ? Math.max(...nums.map(Number)) : 0;
 }
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }

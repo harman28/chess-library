@@ -33,7 +33,12 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}tr:hover td{background:#111827}
 .num{color:#64748b;width:2rem}.event{color:#93c5fd;max-width:22ch}.players{white-space:nowrap}.result{color:#fbbf24;font-weight:600}.moves{color:#cbd5e1}.date{color:#a5f3fc}
-.pgn{background:#020617;color:#e2e8f0;padding:.6rem .8rem;font-size:.82rem;white-space:pre-wrap;word-break:break-all}
+.detail-flex{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.move-formatted{font-size:.88rem;line-height:1.7;padding-right:1.6rem;color:#e2e8f0;word-break:break-word}
+.move-num{color:#64748b;font-weight:600}
+.move-san{color:#e2e8f0}
+.move-result{color:#fbbf24;font-weight:700}
+.move-comment{display:block;background:rgba(56,189,248,.09);border-left:3px solid #38bdf8;color:#7dd3fc;padding:.4rem .6rem;margin:.35rem 0;border-radius:.25rem;font-style:italic}
 .columns-wrap{position:relative}
 #columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .columns-panel-header{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
@@ -44,8 +49,15 @@ td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-s
 #columnsList li.dragging{opacity:.35}
 #columnsList li .drag-handle{color:#475569;cursor:grab;user-select:none}
 #columnsList li label{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e2e8f0}
-.pgnrow{display:none}.pgnrow.open{display:table-row}.pgnrow.open .pgn{display:block}.pgnrow td{padding:0}.pgnrow.open td{padding:.6rem .8rem}
-.pgnwrap{position:relative}.mini-copy{position:absolute;bottom:.5rem;right:.5rem;background:rgba(15,23,42,.7);border:none;color:#94a3b8;cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}.mini-copy:hover{color:#e2e8f0;background:rgba(30,41,59,.9)}
+.pgnrow{display:none}.pgnrow.open{display:table-row}.pgnrow td{padding:0}.pgnrow.open td{padding:.6rem .8rem}
+.pgnwrap{position:relative;flex:1;min-width:260px;max-height:420px;overflow-y:auto;background:#020617;padding:.6rem .8rem;border-radius:.4rem;box-sizing:border-box}
+.mini-copy{position:absolute;bottom:.5rem;right:.5rem;background:rgba(15,23,42,.7);border:none;color:#94a3b8;cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}.mini-copy:hover{color:#e2e8f0;background:rgba(30,41,59,.9)}
+.lichess-embed-wrap{flex:0 0 360px;order:2}
+.pgnwrap{order:1}
+.lichess-board-crop{width:360px;height:458px;overflow:hidden;border:1px solid #334155;border-radius:.4rem;background:#161512}
+.lichess-frame{width:360px;height:540px;border:none;display:block}
+.lichess-embed-status{color:#94a3b8;font-size:.85rem;padding:1rem;text-align:center}
+.lichess-retry{margin-left:.5rem;background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:.2rem .5rem;border-radius:.25rem;cursor:pointer;font-size:.78rem}
 button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:#334155}
 .hidden{display:none!important}.empty-state{text-align:center;padding:3rem 1rem;color:#64748b;font-size:.95rem}
 .cb-col{display:none}#table.export-mode .cb-col{display:table-cell}
@@ -149,6 +161,25 @@ function countMoves(movetext){
   const nums = stripped.match(/\d+(?=\.)/g);
   return nums && nums.length ? Math.max(...nums.map(Number)) : 0;
 }
+function formatMovesWithComments(movetext){
+  if(!movetext) return "";
+  const re=/(\d+\.(?:\.\.)?)|(\{[^}]*\})|(\S+)/g;
+  let html=""; let lineOpen=false; let m;
+  while((m=re.exec(movetext))!==null){
+    if(m[2]){
+      if(lineOpen){ html+="</div>"; lineOpen=false; }
+      html+=`<div class="move-comment">${esc(m[2].slice(1,-1).trim())}</div>`;
+    } else {
+      if(!lineOpen){ html+=`<div class="move-line">`; lineOpen=true; }
+      const text=m[1]||m[3];
+      if(m[1]) html+=`<span class="move-num">${esc(text)}</span> `;
+      else if(/^(1-0|0-1|1\/2-1\/2|\*)$/.test(text)) html+=`<span class="move-result">${esc(text)}</span> `;
+      else html+=`<span class="move-san">${esc(text)}</span> `;
+    }
+  }
+  if(lineOpen) html+="</div>";
+  return html;
+}
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
   games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false; searchQuery=""; document.getElementById("searchInput").value="";
@@ -156,7 +187,7 @@ function loadGames(pgnText, name){
   blocks.forEach((b,idx)=>{
     const c=classify(b,name);
     const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
-    games.push({ idx:idx+1, headers:{...b.headers}, moves:countMoves(b.movetext), pgn:pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) });
+    games.push({ idx:idx+1, headers:{...b.headers}, movetext:b.movetext, moves:countMoves(b.movetext), pgn:pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) });
   });
   initColumnState();
   document.getElementById("table").classList.remove("export-mode");
@@ -166,7 +197,7 @@ function loadGames(pgnText, name){
   saveToStorage();
 }
 const STORAGE_KEY="chessLibraryData";
-const SCHEMA_VERSION=3;
+const SCHEMA_VERSION=4;
 function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}})); }catch(_){} }
 
 const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];
@@ -222,7 +253,7 @@ function render(){
       +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
-    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="pgnwrap"><pre class="pgn" style="margin:0;">${esc(g.pgn)}</pre><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></td>`;
+    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateExportButton(); }
 function onSelectAllChange(e){
@@ -283,11 +314,46 @@ document.addEventListener("click",(e)=>{
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="columnsBtn"){ panel.classList.add("hidden"); }
 });
 function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
-document.getElementById("rows").addEventListener("click",(e)=>{ const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=btn.dataset.i; const text=document.getElementById("pgnrow-"+i).querySelector(".pgn").textContent;
+function renderLichessIframe(container, id){
+  container.innerHTML=`<div class="lichess-board-crop"><iframe class="lichess-frame" src="https://lichess.org/embed/game/${id}?theme=auto&bg=dark" frameborder="0" allowtransparency="true"></iframe></div>`;
+}
+async function ensureLichessEmbed(g, container){
+  if(g.lichessId){ renderLichessIframe(container, g.lichessId); return; }
+  if(g.lichessLoading) return;
+  g.lichessLoading=true;
+  container.innerHTML=`<div class="lichess-embed-status">Loading Lichess embed…</div>`;
+  try{
+    const res=await fetch("https://lichess.org/api/import", {
+      method:"POST",
+      headers:{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json"},
+      body:"pgn="+encodeURIComponent(g.pgn)
+    });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const data=await res.json();
+    g.lichessLoading=false; g.lichessId=data.id;
+    saveToStorage();
+    renderLichessIframe(container, data.id);
+  }catch(err){
+    g.lichessLoading=false;
+    container.innerHTML=`<div class="lichess-embed-status">Couldn't load Lichess embed.<button class="lichess-retry" data-i="${g.idx}">Retry</button></div>`;
+  }
+}
+document.getElementById("rows").addEventListener("click",(e)=>{
+  const retryBtn=e.target.closest("button.lichess-retry");
+  if(retryBtn){ e.stopPropagation(); const i=parseInt(retryBtn.dataset.i); const g=games.find(x=>x.idx===i);
+    const container=document.querySelector("#pgnrow-"+i+" .lichess-embed-wrap");
+    if(g&&container){ g.lichessId=null; ensureLichessEmbed(g, container); } return; }
+  const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
   if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
-  const row=e.target.closest("tr.game"); if(!row) return; const el=document.getElementById("pgnrow-"+row.dataset.i); if(el) el.classList.toggle("open"); });
+  const row=e.target.closest("tr.game"); if(!row) return;
+  const i=parseInt(row.dataset.i);
+  const el=document.getElementById("pgnrow-"+i); if(!el) return;
+  const opening=!el.classList.contains("open");
+  el.classList.toggle("open");
+  if(opening){ const g=games.find(x=>x.idx===i); const container=el.querySelector(".lichess-embed-wrap"); if(g&&container) ensureLichessEmbed(g, container); }
+});
 document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });
 document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListener("click",()=>{
   const group=btn.dataset.group; const filter=btn.dataset.filter; const wasActive=btn.classList.contains("active");

@@ -29,7 +29,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .toolbar button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem}
 .toolbar button:hover{background:#334155}.toolbar button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
 .toolbar button.danger{color:#f87171}.toolbar button.danger:hover{background:#3f1d1d;border-color:#f87171}
-.filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}.filters button{background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
+.filters{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}.filters button{background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters button.active:hover{background:#2ea8e0;color:#0f172a}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
 table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}tr:hover td{background:#111827}
 .num{color:#64748b;width:2rem}.event{color:#93c5fd;max-width:22ch}.players{white-space:nowrap}.result{color:#fbbf24;font-weight:600}.moves{color:#cbd5e1}.date{color:#a5f3fc}
@@ -436,14 +436,14 @@ function enterSelectionMode(mode){
   selectionMode=mode;
   document.getElementById("table").classList.add("selecting");
   if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
-  else { document.getElementById("deleteBtn").textContent="Delete Selected"; document.getElementById("deleteBtn").classList.add("armed"); }
+  else { document.getElementById("deleteBtn").classList.add("armed"); }
   updateActionButtons();
 }
 function exitSelectionMode(){
   selectionMode=null;
   document.getElementById("table").classList.remove("selecting");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
-  document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("selectAll").checked=false;
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   selected.clear();
@@ -468,7 +468,7 @@ document.getElementById("exportBtn").addEventListener("click",()=>{
 document.getElementById("deleteBtn").addEventListener("click",()=>{
   if(selectionMode!=="delete"){ enterSelectionMode("delete"); return; }
   const checkedCount=document.querySelectorAll("#rows input[type='checkbox']:checked").length;
-  if(checkedCount===0){ alert("Select at least one game to delete."); return; }
+  if(checkedCount===0){ exitSelectionMode(); return; }
   if(!confirm("Delete "+checkedCount+" selected game"+(checkedCount===1?"":"s")+"? This cannot be undone.")) return;
   games=games.filter(g=>!selected.has(g.idx));
   exitSelectionMode();

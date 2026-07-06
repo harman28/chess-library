@@ -60,6 +60,17 @@ td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-s
 .lichess-retry{margin-left:.5rem;background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:.2rem .5rem;border-radius:.25rem;cursor:pointer;font-size:.78rem}
 button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:#334155}
 .hidden{display:none!important}.empty-state{text-align:center;padding:3rem 1rem;color:#64748b;font-size:.95rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal-card{background:#111827;border:1px solid #334155;border-radius:.5rem;padding:1.5rem 1.75rem;width:100%;max-width:480px;display:flex;flex-direction:column;gap:.8rem;margin:0 1rem}
+.modal-card h2{margin:0;font-size:1.05rem;font-weight:600;color:#e2e8f0}
+.modal-card label{color:#94a3b8;font-size:.85rem;font-weight:500}
+.modal-card input[type="file"]{color:#e2e8f0;font-size:.85rem}
+.modal-card textarea{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%}
+.modal-card textarea:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.4rem}
+.modal-actions button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.88rem}
+.modal-actions button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
+.modal-actions button:hover{border-color:#475569}
 .cb-col{display:none}#table.export-mode .cb-col{display:table-cell}
 </style></head><body>
 <h1>Chess Library</h1>
@@ -102,6 +113,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   </div>
   <div class="right">
     <button id="exportBtn" type="button">Export</button>
+    <button id="addGamesBtn" type="button">Add Game(s)</button>
     <div class="columns-wrap">
       <button id="columnsBtn" type="button">Columns</button>
       <div id="columnsPanel" class="hidden">
@@ -117,6 +129,19 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <tbody id="rows"></tbody>
 </table>
 <div class="empty-state" id="emptyState"></div>
+</div>
+<div id="addGamesModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2>Add Games</h2>
+    <label>PGN File</label>
+    <input type="file" id="addGamesFile" accept=".pgn,text/plain">
+    <label>or paste PGN</label>
+    <textarea id="addGamesPaste" rows="8" placeholder="Paste PGN text here…"></textarea>
+    <div class="modal-actions">
+      <button id="addGamesCancelBtn" type="button">Cancel</button>
+      <button id="addGamesSubmitBtn" type="button" class="primary">Add Games</button>
+    </div>
+  </div>
 </div>
 <script>
 let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let exportMode = false; let searchQuery = "";
@@ -180,15 +205,16 @@ function formatMovesWithComments(movetext){
   if(lineOpen) html+="</div>";
   return html;
 }
+function buildGameRecord(b, idx, name){
+  const c=classify(b, name);
+  const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
+  return { idx, headers:{...b.headers}, movetext:b.movetext, moves:countMoves(b.movetext), pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) };
+}
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
   games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false; searchQuery=""; document.getElementById("searchInput").value="";
   const blocks=parsePGN(pgnText);
-  blocks.forEach((b,idx)=>{
-    const c=classify(b,name);
-    const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
-    games.push({ idx:idx+1, headers:{...b.headers}, movetext:b.movetext, moves:countMoves(b.movetext), pgn:pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) });
-  });
+  blocks.forEach((b,idx)=>{ games.push(buildGameRecord(b, idx+1, name)); });
   initColumnState();
   document.getElementById("table").classList.remove("export-mode");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
@@ -228,6 +254,10 @@ function getColumnValue(g, col){
 function initColumnState(){
   const cols=discoverColumns();
   columnState={ order: cols.map(c=>c.key), visible: new Set(['date','event','players','result','moves']) };
+}
+function reconcileColumnState(){
+  const known=new Set(columnState.order);
+  discoverColumns().forEach(c=>{ if(!known.has(c.key)) columnState.order.push(c.key); });
 }
 function render(){
   const allCols=discoverColumns();
@@ -444,6 +474,34 @@ function resetToUpload(){
 }
 document.getElementById("reloadBtn").addEventListener("click",()=>{
   if(confirm("Drop all currently loaded games and import a new PGN?")) resetToUpload();
+});
+function addGamesFromText(pgnText){
+  const blocks=parsePGN(pgnText).filter(b=>b.movetext);
+  if(!blocks.length){ alert("No valid games found in that PGN."); return; }
+  let nextIdx = games.length ? Math.max(...games.map(g=>g.idx))+1 : 1;
+  blocks.forEach(b=>{ games.push(buildGameRecord(b, nextIdx++, playerName)); });
+  reconcileColumnState();
+  render();
+  saveToStorage();
+  alert(blocks.length+" game"+(blocks.length===1?"":"s")+" added.");
+}
+function closeAddGamesModal(){ document.getElementById("addGamesModal").classList.add("hidden"); }
+document.getElementById("addGamesBtn").addEventListener("click",()=>{
+  document.getElementById("addGamesFile").value="";
+  document.getElementById("addGamesPaste").value="";
+  document.getElementById("addGamesModal").classList.remove("hidden");
+});
+document.getElementById("addGamesCancelBtn").addEventListener("click", closeAddGamesModal);
+document.getElementById("addGamesModal").addEventListener("click",(e)=>{ if(e.target.id==="addGamesModal") closeAddGamesModal(); });
+document.getElementById("addGamesSubmitBtn").addEventListener("click", async ()=>{
+  const file=document.getElementById("addGamesFile").files[0];
+  const pasted=document.getElementById("addGamesPaste").value.trim();
+  let text="";
+  if(file){ text=await file.text(); }
+  else if(pasted){ text=pasted; }
+  else { alert("Choose a file or paste PGN text first."); return; }
+  addGamesFromText(text);
+  closeAddGamesModal();
 });
 (function restoreFromStorage(){
   try{

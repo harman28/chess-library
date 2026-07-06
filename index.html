@@ -10,6 +10,8 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .landing input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .landing input[type="file"]{width:100%}
 .landing label{padding-left:.2rem}
+.landing textarea{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%;transition:border-color .15s,box-shadow .15s}
+.landing textarea:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .landing button:disabled{opacity:.5;cursor:not-allowed}.landing button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-weight:600;cursor:pointer;font-size:.92rem;width:100%;transition:border-color .15s,background .15s}.landing button:hover:not(:disabled){border-color:#475569;background:#1f2937}
 #nameChart{display:flex;flex-direction:column;gap:.45rem}
 .namebar-row{display:flex;align-items:center;gap:.6rem}
@@ -86,6 +88,8 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <label>PGN File</label>
 <input type="file" id="pgnUpload" accept=".pgn,text/plain">
 <div id="fileName" style="color:#64748b;font-size:.8rem"></div>
+<label>or paste PGN</label>
+<textarea id="pgnPaste" rows="6" placeholder="Paste PGN text here…"></textarea>
 <button id="continueBtn" type="button" disabled>Continue</button>
 </div>
 <div id="stepConfirm" class="hidden">
@@ -488,17 +492,22 @@ function renderNameChart(counts){
     `<div class="namebar-row${i===0?" top":""}"><span class="namebar-name">${esc(c.name)}</span><div class="namebar-track"><div class="namebar-fill" style="width:${Math.round(c.count/max*100)}%"></div></div><span class="namebar-count">${c.count}</span></div>`
   ).join("");
 }
+function updateContinueButtonState(){
+  const pasted=document.getElementById("pgnPaste").value.trim();
+  document.getElementById("continueBtn").disabled = !(uploadedText || pasted);
+}
 document.getElementById("pgnUpload").addEventListener("change",(e)=>{
   const file=e.target.files[0];
-  document.getElementById("continueBtn").disabled=true;
   uploadedText="";
-  if(!file){ document.getElementById("fileName").textContent=""; return; }
+  if(!file){ document.getElementById("fileName").textContent=""; updateContinueButtonState(); return; }
   document.getElementById("fileName").textContent=file.name;
   const reader=new FileReader();
-  reader.onload=(ev)=>{ uploadedText=ev.target.result; document.getElementById("continueBtn").disabled=false; };
+  reader.onload=(ev)=>{ uploadedText=ev.target.result; updateContinueButtonState(); };
   reader.readAsText(file);
 });
+document.getElementById("pgnPaste").addEventListener("input", updateContinueButtonState);
 document.getElementById("continueBtn").addEventListener("click",()=>{
+  if(!uploadedText){ uploadedText=document.getElementById("pgnPaste").value.trim(); }
   if(!uploadedText) return;
   const blocks=parsePGN(uploadedText);
   const counts=getNameCounts(blocks);
@@ -528,6 +537,7 @@ function resetToUpload(){
   columnState={order:[], visible:new Set()};
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";
+  document.getElementById("pgnPaste").value="";
   document.getElementById("continueBtn").disabled=true;
   document.getElementById("stepConfirm").classList.add("hidden"); document.getElementById("stepUpload").classList.remove("hidden");
   document.getElementById("manualNameWrap").classList.add("hidden");

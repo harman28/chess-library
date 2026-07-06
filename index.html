@@ -218,11 +218,23 @@ function buildGameRecord(b, idx, name){
   const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
   return { idx, headers:{...b.headers}, movetext:b.movetext, moves:countMoves(b.movetext), pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) };
 }
+function dateSortKey(dateStr){
+  if(!dateStr) return -Infinity;
+  const parts=dateStr.split(".");
+  const y=parseInt(parts[0],10), m=parseInt(parts[1],10), d=parseInt(parts[2],10);
+  return (isNaN(y)?0:y)*10000 + (isNaN(m)?0:m)*100 + (isNaN(d)?0:d);
+}
+function sortGamesByDate(){
+  games.sort((a,b)=>dateSortKey(b.headers.Date)-dateSortKey(a.headers.Date));
+  games.forEach((g,i)=>{ g.idx=i+1; });
+  selected.clear();
+}
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
   games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); selectionMode=null; searchQuery=""; document.getElementById("searchInput").value="";
   const blocks=parsePGN(pgnText);
   blocks.forEach((b,idx)=>{ games.push(buildGameRecord(b, idx+1, name)); });
+  sortGamesByDate();
   initColumnState();
   document.getElementById("table").classList.remove("selecting");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
@@ -518,6 +530,7 @@ function addGamesFromText(pgnText){
   if(!blocks.length){ alert("No valid games found in that PGN."); return; }
   let nextIdx = games.length ? Math.max(...games.map(g=>g.idx))+1 : 1;
   blocks.forEach(b=>{ games.push(buildGameRecord(b, nextIdx++, playerName)); });
+  sortGamesByDate();
   reconcileColumnState();
   render();
   saveToStorage();
@@ -546,6 +559,7 @@ document.getElementById("addGamesSubmitBtn").addEventListener("click", async ()=
     const saved=JSON.parse(localStorage.getItem(STORAGE_KEY));
     if(saved && saved.version===SCHEMA_VERSION && Array.isArray(saved.games) && saved.games.length){
       games=saved.games; playerName=saved.playerName||"";
+      sortGamesByDate();
       if(saved.columnState && Array.isArray(saved.columnState.order) && Array.isArray(saved.columnState.visible)){
         columnState={order:saved.columnState.order, visible:new Set(saved.columnState.visible)};
       } else {

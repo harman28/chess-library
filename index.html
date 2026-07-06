@@ -2,7 +2,13 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2rem;background:#0f172a;color:#e2e8f0}
 h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .landing{display:flex;justify-content:center;align-items:center;min-height:60vh}
+.landing-inner{display:flex;flex-direction:column;align-items:center;gap:1.5rem;width:100%;max-width:460px}
+.hero{text-align:center;display:flex;flex-direction:column;gap:.5rem}
+.tagline{margin:0;font-size:1.1rem;font-weight:600;color:#e2e8f0}
+.hero-note{margin:0;font-size:.85rem;color:#94a3b8;line-height:1.5}
 .landing .card{background:#111827;border:1px solid #334155;border-radius:.5rem;padding:2rem 2.5rem;width:100%;max-width:420px;display:flex;flex-direction:column;gap:1rem}
+.landing-sep{display:flex;align-items:center;gap:.6rem;color:#64748b;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.landing-sep::before,.landing-sep::after{content:"";flex:1;height:1px;background:#334155}
 .landing #stepUpload,.landing #stepConfirm,.landing #manualNameWrap{display:flex;flex-direction:column;gap:1rem}
 .landing h2{margin:0;font-size:1.1rem;font-weight:500;color:#e2e8f0}
 .landing label{color:#94a3b8;font-size:.85rem;font-weight:500}
@@ -13,6 +19,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .landing textarea{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%;transition:border-color .15s,box-shadow .15s}
 .landing textarea:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .landing button:disabled{opacity:.5;cursor:not-allowed}.landing button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-weight:600;cursor:pointer;font-size:.92rem;width:100%;transition:border-color .15s,background .15s}.landing button:hover:not(:disabled){border-color:#475569;background:#1f2937}
+.landing button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8}.landing button.primary:hover:not(:disabled){background:#2ea8e0;border-color:#2ea8e0}
 #nameChart{display:flex;flex-direction:column;gap:.45rem}
 .namebar-row{display:flex;align-items:center;gap:.6rem}
 .namebar-name{width:8rem;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.82rem;color:#e2e8f0}
@@ -100,9 +107,16 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 </style></head><body>
 <h1>Chess Library</h1>
 <div class="landing" id="landing">
+<div class="landing-inner">
+<div class="hero">
+<p class="tagline">A private viewer for your own over-the-board games.</p>
+<p class="hero-note">Filter, browse, and replay your games with an interactive board, right in your browser. Your games stay on your device — nothing is uploaded anywhere unless you explicitly create a shareable link.</p>
+</div>
 <div class="card">
-<h2>Import Your Games</h2>
+<h2>Get Started</h2>
 <div id="stepUpload">
+<button id="tryDemoBtn" type="button" class="primary">Try a Demo</button>
+<div class="landing-sep"><span>or bring your own games</span></div>
 <label>PGN File</label>
 <input type="file" id="pgnUpload" accept=".pgn,text/plain">
 <div id="fileName" style="color:#64748b;font-size:.8rem"></div>
@@ -123,20 +137,21 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 </div>
 </div>
 </div>
+</div>
 <div id="app" class="hidden">
 <div class="toolbar">
   <div class="right">
-    <button id="addGamesBtn" type="button">Add Game(s)</button>
     <div class="save-library-wrap">
-      <button id="saveLibraryBtn" type="button">Save my library</button>
+      <button id="saveLibraryBtn" type="button" class="primary">Save My Library</button>
       <div id="saveLibraryPanel" class="hidden">
-        <p class="save-link-note">Anyone with this link can see your library. Keep it safe — there's no account to recover it otherwise.</p>
+        <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
         <div class="save-link-row">
           <input type="text" id="saveLibraryLink" readonly>
           <button id="copyLibraryLinkBtn" type="button">Copy</button>
         </div>
       </div>
     </div>
+    <button id="addGamesBtn" type="button">Add Game(s)</button>
     <button id="exportBtn" type="button">Export</button>
     <button id="deleteBtn" type="button" class="danger">Delete</button>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
@@ -546,6 +561,69 @@ function updateContinueButtonState(){
   const pasted=document.getElementById("pgnPaste").value.trim();
   document.getElementById("continueBtn").disabled = !(uploadedText || pasted);
 }
+const DEMO_PGN=`[Event "Paris Opera House"]
+[Site "Paris, France"]
+[Date "1858.11.02"]
+[Round "-"]
+[White "Paul Morphy"]
+[Black "Duke of Brunswick & Count Isouard"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 d6 3. d4 Bg4 {Pinning the knight, but it's premature —
+development matters more than this pin right now.} 4. dxe5 Bxf3 5. Qxf3 dxe5
+6. Bc4 Nf6 7. Qb3 {Attacking both b7 and f7 at once.} Qe7 8. Nc3 c6 9. Bg5 b5
+10. Nxb5 cxb5 11. Bxb5+ Nbd7 12. O-O-O Rd8 13. Rxd7 Rxd7 14. Rd1 Qe6 15. Bxd7+
+Nxd7 16. Qb8+ {The final combination begins.} Nxb8 17. Rd8# {A queen
+sacrifice leading to mate with just a rook and bishop — one of the most
+famous finishes in chess history.} 1-0
+
+[Event "London"]
+[Site "London, England"]
+[Date "1851.06.21"]
+[Round "-"]
+[White "Adolf Anderssen"]
+[Black "Lionel Kieseritzky"]
+[Result "1-0"]
+
+1. e4 e5 2. f4 exf4 3. Bc4 Qh4+ 4. Kf1 b5 {An audacious gambit offer to
+deflect White's bishop.} 5. Bxb5 Nf6 6. Nf3 Qh6 7. d3 Nh5 8. Nh4 Qg5 9. Nf5 c6
+10. g4 Nf6 11. Rg1 cxb5 12. h4 Qg6 13. h5 Qg5 14. Qf3 Ng8 15. Bxf4 Qf6 16. Nc3
+Bc5 17. Nd5 Qxb2 18. Bd6 {White ignores material entirely, hunting the king.}
+Bxg1 19. e5 Qxa1+ 20. Ke2 Na6 21. Nxg7+ Kd8 22. Qf6+ {Known as "The Immortal
+Game" — Anderssen sacrifices a queen, two rooks, and a bishop to deliver
+checkmate with his three remaining minor pieces.} Nxf6 23. Be7# 1-0
+
+[Event "Berlin"]
+[Site "Berlin, Germany"]
+[Date "1852.01.01"]
+[Round "-"]
+[White "Adolf Anderssen"]
+[Black "Jean Dufresne"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bxb4 5. c3 Ba5 6. d4 exd4 7. O-O d3 8. Qb3
+Qf6 9. e5 Qg6 10. Re1 Nge7 11. Ba3 b5 12. Qxb5 Rb8 13. Qa4 Bb6 14. Nbd2 Bb7
+15. Ne4 Qf5 16. Bxd3 Qh5 17. Nf6+ {The start of a legendary finishing
+combination.} gxf6 18. exf6 Rg8 19. Rad1 Qxf3 20. Rxe7+ Nxe7 21. Qxd7+ Kxd7
+22. Bf5+ Ke8 23. Bd7+ Kf8 24. Bxe7# {"The Evergreen Game" — still admired
+today for its combinational depth.} 1-0
+
+[Event "Casual Game"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "-"]
+[White "Amateur"]
+[Black "Amateur"]
+[Result "0-1"]
+
+1. f3 {A weakening first move.} e5 2. g4 {And an even weaker second move —
+White has just opened the diagonal to their own king.} Qh4# {Checkmate in two
+moves: the fastest possible way to lose a game of chess, known as "Fool's
+Mate."} 0-1
+`;
+document.getElementById("tryDemoBtn").addEventListener("click",()=>{
+  loadGames(DEMO_PGN, "Demo");
+});
 document.getElementById("pgnUpload").addEventListener("change",(e)=>{
   const file=e.target.files[0];
   uploadedText="";

@@ -315,12 +315,12 @@ function render(){
   document.getElementById("playerDisplay").textContent = filtered.length===games.length ? "Games ("+games.length+")" : "Games ("+filtered.length+"/"+games.length+")";
   const empty=document.getElementById("emptyState");
   if(filtered.length===0){ empty.textContent="no games match"; empty.classList.remove("hidden"); } else { empty.classList.add("hidden"); }
-  filtered.forEach(g=>{
+  filtered.forEach((g,i)=>{
     const tr=document.createElement("tr"); tr.className="game"; tr.dataset.i=g.idx; tr.dataset.color=g.color; tr.dataset.outcome=g.outcome;
     const checked=selected.has(g.idx)?"checked":"";
     const cells=visibleOrdered.map(k=>`<td class="${esc(k)}">${esc(String(getColumnValue(g, colByKey[k])))}</td>`).join("");
     tr.innerHTML=`<td class="cb-col"><input type="checkbox" data-i="${g.idx}" ${checked}></td>`
-      +`<td class="num">${g.idx}</td>`
+      +`<td class="num">${i+1}</td>`
       +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
@@ -386,7 +386,7 @@ document.addEventListener("click",(e)=>{
 });
 function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
 function renderLichessIframe(container, id){
-  container.innerHTML=`<div class="lichess-board-crop"><iframe class="lichess-frame" src="https://lichess.org/embed/game/${id}?theme=auto&bg=dark" frameborder="0" allowtransparency="true"></iframe></div>`;
+  container.innerHTML=`<div class="lichess-board-crop"><iframe class="lichess-frame" src="https://lichess.org/embed/game/${id}?theme=blue2&pieceSet=caliente&bg=dark" frameborder="0" allowtransparency="true"></iframe></div>`;
 }
 async function ensureLichessEmbed(g, container){
   if(g.lichessId){ renderLichessIframe(container, g.lichessId); return; }

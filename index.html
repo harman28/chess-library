@@ -81,6 +81,15 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .table-wrap .columns-wrap{position:absolute;top:0;right:0;z-index:2}
 .th-icon-btn{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1rem;padding:.3rem .6rem;line-height:1}
 .th-icon-btn:hover{color:#e2e8f0}
+.settings-wrap{position:relative}
+.icon-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1}
+.icon-btn:hover{background:#334155}
+#settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:16rem;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
+#settingsPanel label{color:#94a3b8;font-size:.85rem;font-weight:500}
+#settingsPanel input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
+#settingsPanel input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.settings-toggle-row{display:flex;align-items:center;justify-content:space-between}
+.settings-toggle-row label{margin:0}
 </style></head><body>
 <h1>Chess Library</h1>
 <div class="landing" id="landing">
@@ -127,6 +136,22 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
     <button id="exportBtn" type="button">Export</button>
     <button id="deleteBtn" type="button" class="danger">Delete</button>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
+    <div class="settings-wrap">
+      <button id="settingsBtn" type="button" class="icon-btn" title="Settings">⚙</button>
+      <div id="settingsPanel" class="hidden">
+        <div class="columns-panel-header">Settings</div>
+        <label>Your Name</label>
+        <input type="text" id="settingsNameInput" autocomplete="off">
+        <div class="settings-toggle-row">
+          <label for="themeToggle">Light mode</label>
+          <input type="checkbox" id="themeToggle">
+        </div>
+        <div class="modal-actions">
+          <button id="settingsCancelBtn" type="button">Cancel</button>
+          <button id="settingsSaveBtn" type="button" class="primary">Save</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="table-wrap">
@@ -270,11 +295,13 @@ let columnState={order:[], visible:new Set()};
 function discoverColumns(){
   const seen=new Set();
   games.forEach(g=>Object.keys(g.headers||{}).forEach(k=>seen.add(k)));
-  const skip=new Set(['White','Black','Event','Date','Result']);
+  const skip=new Set(['Event','Date','Result','White','Black']);
   const cols=[
     {key:'date', label:'Date', header:'Date'},
     {key:'event', label:'Event', header:'Event'},
     {key:'players', label:'Players'},
+    {key:'white', label:'White', header:'White'},
+    {key:'black', label:'Black', header:'Black'},
     {key:'result', label:'Result', header:'Result'},
     {key:'wl', label:'W/L'},
     {key:'moves', label:'Moves'},
@@ -550,6 +577,35 @@ function resetToUpload(){
 }
 document.getElementById("reloadBtn").addEventListener("click",()=>{
   if(confirm("Drop all currently loaded games and import a new PGN?")) resetToUpload();
+});
+let lightModeEnabled=false; // placeholder only, not applied to the page yet
+document.getElementById("settingsBtn").addEventListener("click",(e)=>{
+  e.stopPropagation();
+  const panel=document.getElementById("settingsPanel");
+  if(panel.classList.contains("hidden")){
+    document.getElementById("settingsNameInput").value=playerName;
+    document.getElementById("themeToggle").checked=lightModeEnabled;
+  }
+  panel.classList.toggle("hidden");
+});
+document.getElementById("settingsCancelBtn").addEventListener("click",()=>{
+  document.getElementById("settingsPanel").classList.add("hidden");
+});
+document.getElementById("themeToggle").addEventListener("change",(e)=>{
+  lightModeEnabled=e.target.checked; // TODO: actually apply light/dark theme
+});
+document.getElementById("settingsSaveBtn").addEventListener("click",()=>{
+  const newName=document.getElementById("settingsNameInput").value.trim();
+  if(!newName){ alert("Please enter a name."); return; }
+  playerName=newName;
+  games.forEach(g=>{ const c=classify(g, playerName); g.color=c.color; g.outcome=c.outcome; });
+  document.getElementById("settingsPanel").classList.add("hidden");
+  render();
+  saveToStorage();
+});
+document.addEventListener("click",(e)=>{
+  const panel=document.getElementById("settingsPanel");
+  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="settingsBtn"){ panel.classList.add("hidden"); }
 });
 function addGamesFromText(pgnText){
   const blocks=parsePGN(pgnText).filter(b=>b.movetext);

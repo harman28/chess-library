@@ -5,10 +5,10 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .site-footer a{color:#38bdf8;text-decoration:none}
 .site-footer a:hover{text-decoration:underline}
 .landing{display:flex;justify-content:center;align-items:center;min-height:60vh}
-.landing-inner{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:2rem;width:100%;max-width:820px}
-.hero{text-align:left;flex:1 1 260px;display:flex;flex-direction:column;gap:.75rem;padding-top:.5rem}
-.tagline{margin:0;font-size:1.1rem;font-weight:600;color:#e2e8f0}
-.hero-note{margin:0;font-size:.85rem;color:#94a3b8;line-height:1.5}
+.landing-inner{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:2.5rem;width:100%;max-width:980px}
+.hero{text-align:left;flex:1 1 340px;display:flex;flex-direction:column;gap:1.1rem;padding-top:.5rem}
+.tagline{margin:0;font-size:2.1rem;line-height:1.2;font-weight:700;color:#e2e8f0}
+.hero-note{margin:0;font-size:1.1rem;color:#94a3b8;line-height:1.6}
 .landing .card{background:#111827;border:1px solid #334155;border-radius:.5rem;padding:2rem 2.5rem;width:100%;flex:0 1 420px;display:flex;flex-direction:column;gap:1rem}
 .landing-sep{display:flex;align-items:center;gap:.6rem;color:#64748b;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
 .landing-sep::before,.landing-sep::after{content:"";flex:1;height:1px;background:#334155}
@@ -17,7 +17,9 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .landing label{color:#94a3b8;font-size:.85rem;font-weight:500}
 .landing input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-size:.92rem;width:100%;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s}
 .landing input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
-.landing input[type="file"]{width:100%}
+.landing input[type="file"]{width:100%;color:#94a3b8;font-size:.85rem}
+.landing input[type="file"]::file-selector-button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;font-weight:600;font-size:.85rem;cursor:pointer;margin-right:.75rem;transition:border-color .15s,background .15s}
+.landing input[type="file"]::file-selector-button:hover{background:#334155;border-color:#475569}
 .landing label{padding-left:.2rem}
 .landing textarea{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%;transition:border-color .15s,box-shadow .15s}
 .landing textarea:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
@@ -112,8 +114,9 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <div class="landing" id="landing">
 <div class="landing-inner">
 <div class="hero">
-<p class="tagline">A private viewer for your own over-the-board games.</p>
-<p class="hero-note">Filter, browse, and replay your games with an interactive board, right in your browser. Your games stay on your device — nothing is uploaded anywhere unless you explicitly create a shareable link.</p>
+<p class="tagline">A private viewer for your over-the-board games.</p>
+<p class="hero-note">Filter, browse, and re-live your games. Or open an analysis board to analyse.</p>
+<p class="hero-note">Your games stay on your device. Nothing is uploaded anywhere unless you explicitly create a reusable link.</p>
 </div>
 <div class="card">
 <h2>Get Started</h2>
@@ -385,7 +388,7 @@ function render(){
     tr.innerHTML=`<td class="cb-col"><input type="checkbox" data-i="${g.idx}" ${checked}></td>`
       +`<td class="num">${i+1}</td>`
       +cells
-      +`<td class="actions"><button data-i="${g.idx}" class="copy-btn">Analyse \u2197</button></td>`;
+      +`<td class="actions"><button data-i="${g.idx}" class="copy-btn" title="Copies the PGN, then opens chess.com to paste it in">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
@@ -478,7 +481,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
     const container=document.querySelector("#pgnrow-"+i+" .lichess-embed-wrap");
     if(g&&container){ g.lichessId=null; ensureLichessEmbed(g, container); } return; }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
-  copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://lichess.org/paste","_blank"); }
+  copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
   if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
   const row=e.target.closest("tr.game"); if(!row) return;

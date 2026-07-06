@@ -478,7 +478,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
     const container=document.querySelector("#pgnrow-"+i+" .lichess-embed-wrap");
     if(g&&container){ g.lichessId=null; ensureLichessEmbed(g, container); } return; }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
-  copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
+  copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://lichess.org/paste","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
   if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
   const row=e.target.closest("tr.game"); if(!row) return;

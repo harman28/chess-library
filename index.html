@@ -39,7 +39,6 @@ td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-s
 .move-san{color:#e2e8f0}
 .move-result{color:#fbbf24;font-weight:700}
 .move-comment{display:block;background:rgba(56,189,248,.09);border-left:3px solid #38bdf8;color:#7dd3fc;padding:.4rem .6rem;margin:.35rem 0;border-radius:.25rem;font-style:italic}
-.columns-wrap{position:relative}
 #columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .columns-panel-header{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
 .columns-panel-header button{background:none;border:none;color:#38bdf8;cursor:pointer;font-size:.75rem;text-transform:none;letter-spacing:0;padding:0}
@@ -71,7 +70,13 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .modal-actions button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.88rem}
 .modal-actions button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
 .modal-actions button:hover{border-color:#475569}
-.cb-col{display:none}#table.export-mode .cb-col{display:table-cell}
+.cb-col{display:none}#table.selecting .cb-col{display:table-cell}
+.toolbar button.danger.armed{background:#dc2626;color:#fff;border-color:#dc2626;font-weight:600}
+.toolbar button.danger.armed:hover{background:#b91c1c;border-color:#b91c1c}
+.table-wrap{position:relative}
+.table-wrap .columns-wrap{position:absolute;top:0;right:0;z-index:2}
+.th-icon-btn{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1rem;padding:.3rem .6rem;line-height:1}
+.th-icon-btn:hover{color:#e2e8f0}
 </style></head><body>
 <h1>Chess Library</h1>
 <div class="landing" id="landing">
@@ -114,20 +119,23 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   <div class="right">
     <button id="addGamesBtn" type="button">Add Game(s)</button>
     <button id="exportBtn" type="button">Export</button>
-    <div class="columns-wrap">
-      <button id="columnsBtn" type="button">Columns</button>
-      <div id="columnsPanel" class="hidden">
-        <div class="columns-panel-header">Show &amp; reorder<button id="columnsResetBtn" type="button">Reset</button></div>
-        <ul id="columnsList"></ul>
-      </div>
-    </div>
+    <button id="deleteBtn" type="button" class="danger">Delete</button>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
   </div>
 </div>
-<table id="table">
-<thead><tr></tr></thead>
-<tbody id="rows"></tbody>
-</table>
+<div class="table-wrap">
+  <div class="columns-wrap">
+    <button id="columnsBtn" type="button" class="th-icon-btn" title="Columns">☰</button>
+    <div id="columnsPanel" class="hidden">
+      <div class="columns-panel-header">Show &amp; reorder<button id="columnsResetBtn" type="button">Reset</button></div>
+      <ul id="columnsList"></ul>
+    </div>
+  </div>
+  <table id="table">
+  <thead><tr></tr></thead>
+  <tbody id="rows"></tbody>
+  </table>
+</div>
 <div class="empty-state" id="emptyState"></div>
 </div>
 <div id="addGamesModal" class="modal-overlay hidden">
@@ -144,7 +152,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   </div>
 </div>
 <script>
-let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let exportMode = false; let searchQuery = "";
+let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let selectionMode = null; let searchQuery = "";
 function gameMatchesSearch(g){
   if(!searchQuery) return true;
   const q=searchQuery.toLowerCase();
@@ -212,12 +220,13 @@ function buildGameRecord(b, idx, name){
 }
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
-  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); exportMode=false; searchQuery=""; document.getElementById("searchInput").value="";
+  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); selectionMode=null; searchQuery=""; document.getElementById("searchInput").value="";
   const blocks=parsePGN(pgnText);
   blocks.forEach((b,idx)=>{ games.push(buildGameRecord(b, idx+1, name)); });
   initColumnState();
-  document.getElementById("table").classList.remove("export-mode");
+  document.getElementById("table").classList.remove("selecting");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
+  document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
   render();
   saveToStorage();
@@ -285,7 +294,7 @@ function render(){
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
-  }); updateExportButton(); }
+  }); updateActionButtons(); }
 function onSelectAllChange(e){
   const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
   selected.clear();
@@ -395,7 +404,28 @@ document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListen
   syncFiltersFromDOM(); render(); }); });
 document.getElementById("searchInput").addEventListener("input",(e)=>{ searchQuery=e.target.value.trim(); render(); });
 function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
-function updateExportButton(){ document.getElementById("exportBtn").disabled=games.length===0; }
+function updateActionButtons(){
+  const noGames=games.length===0;
+  document.getElementById("exportBtn").disabled = noGames || selectionMode==="delete";
+  document.getElementById("deleteBtn").disabled = noGames || selectionMode==="export";
+}
+function enterSelectionMode(mode){
+  selectionMode=mode;
+  document.getElementById("table").classList.add("selecting");
+  if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
+  else { document.getElementById("deleteBtn").textContent="Delete Selected"; document.getElementById("deleteBtn").classList.add("armed"); }
+  updateActionButtons();
+}
+function exitSelectionMode(){
+  selectionMode=null;
+  document.getElementById("table").classList.remove("selecting");
+  document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
+  document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("selectAll").checked=false;
+  document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
+  selected.clear();
+  updateActionButtons();
+}
 const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];
 function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.has(g.idx)):games; if(!chosen.length) return "";
   return chosen.map(g=>{ const h=g.headers||{};
@@ -404,15 +434,23 @@ function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.ha
     return lines.join("\n")+"\n\n"+g.pgn.split("\n").slice(7).join("\n").trim(); }).join("\n\n")+"\n"; }
 function downloadBlob(text, filename){ const blob=new Blob([text],{type:"application/x-chess-pgn"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
 document.getElementById("exportBtn").addEventListener("click",()=>{
-  if(!exportMode){ exportMode=true; document.getElementById("table").classList.add("export-mode"); document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); return; }
+  if(selectionMode!=="export"){ enterSelectionMode("export"); return; }
   const hasChecked=document.querySelectorAll("#rows input[type='checkbox']:checked").length>0;
   if(!hasChecked){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>cb.checked=true);
     games.forEach(g=>selected.add(g.idx)); }
   const pgnText=buildExport();
   downloadBlob(pgnText,(playerName||"Games").trim().replace(/\s+/g,"_")+"_Games.pgn");
-  document.getElementById("table").classList.remove("export-mode"); document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
-  document.getElementById("selectAll").checked=false;
-  document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; }); selected.clear(); exportMode=false;
+  exitSelectionMode();
+});
+document.getElementById("deleteBtn").addEventListener("click",()=>{
+  if(selectionMode!=="delete"){ enterSelectionMode("delete"); return; }
+  const checkedCount=document.querySelectorAll("#rows input[type='checkbox']:checked").length;
+  if(checkedCount===0){ alert("Select at least one game to delete."); return; }
+  if(!confirm("Delete "+checkedCount+" selected game"+(checkedCount===1?"":"s")+"? This cannot be undone.")) return;
+  games=games.filter(g=>!selected.has(g.idx));
+  exitSelectionMode();
+  render();
+  saveToStorage();
 });
 let uploadedText = "";
 function getNameCounts(blocks){
@@ -463,7 +501,7 @@ document.getElementById("importBtn").addEventListener("click",()=>{
   loadGames(uploadedText, name);
 });
 function resetToUpload(){
-  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); exportMode=false; uploadedText=""; searchQuery=""; document.getElementById("searchInput").value="";
+  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); selectionMode=null; uploadedText=""; searchQuery=""; document.getElementById("searchInput").value="";
   columnState={order:[], visible:new Set()};
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";

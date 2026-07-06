@@ -21,9 +21,11 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .namebar-row.top .namebar-name{color:#38bdf8;font-weight:600}.namebar-row.top .namebar-fill{background:#38bdf8}
 .namebar-row:not(.top) .namebar-fill{background:#475569}
 .namebar-count{width:1.6rem;text-align:right;font-size:.78rem;color:#64748b}
-.toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
-.toolbar .left{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}.player{color:#38bdf8;font-weight:600;font-size:.95rem}.toolbar .right{margin-left:auto;display:flex;gap:.4rem;align-items:center}
-.search-wrap{position:relative;display:flex;align-items:center;margin-left:1.25rem;flex:1 1 8rem;min-width:0}
+.toolbar{display:flex;flex-direction:row-reverse;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
+.player{color:#38bdf8;font-weight:600;font-size:.95rem}
+.toolbar .right{display:flex;gap:.4rem;align-items:center}
+.filter-group{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
+.search-wrap{position:relative;display:flex;align-items:center;flex:1 1 8rem;min-width:0}
 .search-icon{position:absolute;left:.7rem;font-size:.8rem;color:#64748b;pointer-events:none}
 #searchInput{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:999px;padding:.4rem .8rem .4rem 1.9rem;font-size:.82rem;outline:none;width:100%;min-width:6rem;max-width:18rem;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
 #searchInput:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15);background:#0f172a}
@@ -31,7 +33,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:#38bdf8;font-weight:600}
 .toolbar button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem}
 .toolbar button:hover{background:#334155}.toolbar button.primary{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}
 .toolbar button.danger{color:#f87171}.toolbar button.danger:hover{background:#3f1d1d;border-color:#f87171}
-.filters{display:flex;gap:.35rem;flex-wrap:nowrap;flex-shrink:0;align-items:center}.filters button{flex-shrink:0;background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters button.active:hover{background:#2ea8e0;color:#0f172a}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
+.filters{display:flex;gap:.35rem;flex-wrap:wrap;min-width:0;align-items:center}.filters button{flex-shrink:0;background:#0f172a;color:#94a3b8;border:1px solid #334155;padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:#38bdf8;color:#0f172a;border-color:#38bdf8;font-weight:600}.filters button:hover{background:#1e293b}.filters button.active:hover{background:#2ea8e0;color:#0f172a}.filters .sep{width:1px;height:1.1rem;background:#334155;flex-shrink:0}
 table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:#94a3b8;border-bottom:1px solid #334155;font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:#0f172a;z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid #111827;vertical-align:top;font-size:.88rem}
 tr.game td{transition:background .12s}
@@ -118,19 +120,6 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 </div>
 <div id="app" class="hidden">
 <div class="toolbar">
-  <div class="left">
-    <span class="player" id="playerDisplay"></span>
-    <div class="filters" id="filters">
-      <button data-filter="all" data-group="base" class="active">All</button><div class="sep"></div>
-      <button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button><div class="sep"></div>
-      <button data-filter="wins" data-group="outcome">Wins</button><button data-filter="losses" data-group="outcome">Losses</button><button data-filter="draws" data-group="outcome">Draws</button><div class="sep"></div>
-      <button data-filter="blitz" data-group="speed">Blitz</button><button data-filter="rapid" data-group="speed">Rapid</button><button data-filter="classical" data-group="speed">Classical</button>
-    </div>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search games…">
-    </div>
-  </div>
   <div class="right">
     <button id="addGamesBtn" type="button">Add Game(s)</button>
     <button id="exportBtn" type="button">Export</button>
@@ -151,6 +140,19 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
           <button id="settingsSaveBtn" type="button" class="primary">Save</button>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search games…">
+  </div>
+  <div class="filter-group">
+    <span class="player" id="playerDisplay"></span>
+    <div class="filters" id="filters">
+      <button data-filter="all" data-group="base" class="active">All</button><div class="sep"></div>
+      <button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button><div class="sep"></div>
+      <button data-filter="wins" data-group="outcome">Wins</button><button data-filter="losses" data-group="outcome">Losses</button><button data-filter="draws" data-group="outcome">Draws</button><div class="sep"></div>
+      <button data-filter="blitz" data-group="speed">Blitz</button><button data-filter="rapid" data-group="speed">Rapid</button><button data-filter="classical" data-group="speed">Classical</button>
     </div>
   </div>
 </div>

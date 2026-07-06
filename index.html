@@ -274,6 +274,7 @@ function discoverColumns(){
     {key:'event', label:'Event', header:'Event'},
     {key:'players', label:'Players'},
     {key:'result', label:'Result', header:'Result'},
+    {key:'wl', label:'W/L'},
     {key:'moves', label:'Moves'},
   ];
   KNOWN_HEADER_ORDER.forEach(h=>{ if(seen.has(h)) cols.push({key:KNOWN_KEY_FOR_HEADER[h], label:h, header:h}); });
@@ -282,14 +283,16 @@ function discoverColumns(){
   });
   return cols;
 }
+const WL_LABEL={wins:'W', losses:'L', draws:'D'};
 function getColumnValue(g, col){
   if(col.key==='players') return (g.headers.White||"")+" vs "+(g.headers.Black||"");
   if(col.key==='moves') return g.moves;
+  if(col.key==='wl') return WL_LABEL[g.outcome] || "—";
   return g.headers[col.header]!==undefined ? g.headers[col.header] : "";
 }
 function initColumnState(){
   const cols=discoverColumns();
-  columnState={ order: cols.map(c=>c.key), visible: new Set(['date','event','players','result','moves']) };
+  columnState={ order: cols.map(c=>c.key), visible: new Set(['date','event','players','result','wl','moves']) };
 }
 function reconcileColumnState(){
   const known=new Set(columnState.order);
@@ -583,6 +586,7 @@ document.getElementById("addGamesSubmitBtn").addEventListener("click", async ()=
       sortGamesByDate();
       if(saved.columnState && Array.isArray(saved.columnState.order) && Array.isArray(saved.columnState.visible)){
         columnState={order:saved.columnState.order, visible:new Set(saved.columnState.visible)};
+        reconcileColumnState();
       } else {
         initColumnState();
       }

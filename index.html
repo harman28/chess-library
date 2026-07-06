@@ -194,14 +194,25 @@ function countMoves(movetext){
   const nums = stripped.match(/\d+(?=\.)/g);
   return nums && nums.length ? Math.max(...nums.map(Number)) : 0;
 }
+function cleanCommentText(text){
+  return text
+    .replace(/\[%[^\]]*\]/g, "")
+    .replace(/\\+(["'%])/g, "$1")
+    .replace(/\\+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 function formatMovesWithComments(movetext){
   if(!movetext) return "";
   const re=/(\d+\.(?:\.\.)?)|(\{[^}]*\})|(\S+)/g;
   let html=""; let lineOpen=false; let m;
   while((m=re.exec(movetext))!==null){
     if(m[2]){
-      if(lineOpen){ html+="</div>"; lineOpen=false; }
-      html+=`<div class="move-comment">${esc(m[2].slice(1,-1).trim())}</div>`;
+      const cleaned=cleanCommentText(m[2].slice(1,-1));
+      if(cleaned){
+        if(lineOpen){ html+="</div>"; lineOpen=false; }
+        html+=`<div class="move-comment">${esc(cleaned)}</div>`;
+      }
     } else {
       if(!lineOpen){ html+=`<div class="move-line">`; lineOpen=true; }
       const text=m[1]||m[3];

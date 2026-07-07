@@ -130,6 +130,8 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .mcard .score{color:#fbbf24;font-weight:600}
 .mcard .moves-n{color:#64748b}
 .mcard .chev{margin-left:auto;color:#64748b;font-size:1.1rem}
+#mobileSelectAllRow{display:none}
+#mobileSelectAllRow label{display:flex;align-items:center;gap:.5rem;color:#94a3b8;font-size:.85rem;cursor:pointer}
 
 .sheet-scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
 .game-sheet{position:fixed;left:0;right:0;bottom:0;top:24px;z-index:41;background:#111827;border-radius:1rem 1rem 0 0;border:1px solid #334155;border-bottom:none;transform:translateY(102%);transition:transform .25s ease-out;display:flex;flex-direction:column}
@@ -158,6 +160,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   .toolbar{position:sticky;top:0;z-index:15;background:#0f172a;padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid #334155}
   .filters{flex-wrap:wrap}
   .toolbar .right{flex-wrap:wrap}
+  #mobileSelectAllRow.selecting{display:block;padding:.3rem 0 .6rem}
 }
 </style></head><body>
 <h1>Chess Library</h1>
@@ -248,6 +251,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   <tbody id="rows"></tbody>
   </table>
 </div>
+<div id="mobileSelectAllRow"><label><input type="checkbox" id="mobileSelectAll"> Select all</label></div>
 <div id="mobileList" class="mobile-only"></div>
 <div class="empty-state" id="emptyState"></div>
 </div>
@@ -324,7 +328,12 @@ function classifySpeed(timeControl){
   if(!timeControl) return "other";
   const m = timeControl.match(/^(?:\d+\/)?(\d+)/);
   if(!m) return "other";
-  const minutes = parseInt(m[1],10)/60;
+  const raw = parseInt(m[1],10);
+  // Lichess/chess.com always store TimeControl in seconds, and since their UIs only offer
+  // whole-minute base times, that always comes out as an exact multiple of 60. Some OTB/manual
+  // PGN sources instead write the base time directly in minutes (e.g. "90+30" for 90 min), which
+  // is almost never a multiple of 60 - use that as the signal to distinguish the two conventions.
+  const minutes = (raw % 60 === 0) ? raw/60 : raw;
   if(minutes<=5) return "blitz";
   if(minutes<90) return "rapid";
   return "classical";
@@ -522,6 +531,12 @@ function onSelectAllChange(e){
   if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
   else { cbs.forEach(cb=>{ cb.checked=false; }); }
 }
+document.getElementById("mobileSelectAll").addEventListener("change",(e)=>{
+  const cbs=[...document.querySelectorAll("#mobileList input[type='checkbox']")];
+  selected.clear();
+  if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
+  else { cbs.forEach(cb=>{ cb.checked=false; }); }
+});
 function positionPanelMobile(panel, trigger){
   if(!window.matchMedia("(max-width:700px)").matches) return;
   const r=trigger.getBoundingClientRect();
@@ -646,6 +661,7 @@ function enterSelectionMode(mode){
   selectionMode=mode;
   document.getElementById("table").classList.add("selecting");
   document.getElementById("mobileList").classList.add("selecting");
+  document.getElementById("mobileSelectAllRow").classList.add("selecting");
   if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
   else { document.getElementById("deleteBtn").classList.add("armed"); }
   updateActionButtons();
@@ -654,9 +670,11 @@ function exitSelectionMode(){
   selectionMode=null;
   document.getElementById("table").classList.remove("selecting");
   document.getElementById("mobileList").classList.remove("selecting");
+  document.getElementById("mobileSelectAllRow").classList.remove("selecting");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("selectAll").checked=false;
+  document.getElementById("mobileSelectAll").checked=false;
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   document.querySelectorAll("#mobileList input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   selected.clear();

@@ -104,11 +104,11 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 #settingsPanel input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .settings-toggle-row{display:flex;align-items:center;justify-content:space-between}
 .settings-toggle-row label{margin:0}
-.save-library-wrap{position:relative}
-#saveLibraryPanel{position:absolute;top:calc(100% + .4rem);left:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:40rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
 .save-link-note{margin:0;color:#94a3b8;font-size:.8rem;line-height:1.4}
 .save-link-row{display:flex;gap:.4rem}
 .save-link-row input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.8rem;outline:none;box-sizing:border-box;flex:1;min-width:0}
+.save-link-row button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;flex:0 0 auto}
+.save-link-row button:hover{border-color:#475569}
 
 /* ---------- mobile card list + bottom sheet ---------- */
 .mobile-only{display:none}
@@ -199,13 +199,6 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   <div class="right">
     <div class="save-library-wrap">
       <button id="saveLibraryBtn" type="button" class="primary">Save My Library</button>
-      <div id="saveLibraryPanel" class="hidden">
-        <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
-        <div class="save-link-row">
-          <input type="text" id="saveLibraryLink" readonly>
-          <button id="copyLibraryLinkBtn" type="button">Copy</button>
-        </div>
-      </div>
     </div>
     <button id="addGamesBtn" type="button">Add Game(s)</button>
     <button id="exportBtn" type="button">Export</button>
@@ -283,6 +276,19 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     <div class="modal-actions">
       <button id="addGamesCancelBtn" type="button">Cancel</button>
       <button id="addGamesSubmitBtn" type="button" class="primary">Add Games</button>
+    </div>
+  </div>
+</div>
+<div id="saveLibraryModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2>Save My Library</h2>
+    <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
+    <div class="save-link-row">
+      <input type="text" id="saveLibraryLink" readonly>
+      <button id="copyLibraryLinkBtn" type="button">Copy</button>
+    </div>
+    <div class="modal-actions">
+      <button id="saveLibraryDoneBtn" type="button" class="primary">Done</button>
     </div>
   </div>
 </div>
@@ -386,6 +392,7 @@ function loadGames(pgnText, name){
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
+  window.scrollTo(0,0);
   render();
   saveToStorage();
 }
@@ -777,8 +784,10 @@ document.getElementById("continueBtn").addEventListener("click",()=>{
   const blocks=parsePGN(uploadedText);
   const counts=getNameCounts(blocks);
   const guess=counts.length?counts[0].name:null;
+  document.activeElement.blur();
   document.getElementById("stepUpload").classList.add("hidden");
   document.getElementById("stepConfirm").classList.remove("hidden");
+  window.scrollTo(0,0);
   renderNameChart(counts);
   const yesBtn=document.getElementById("confirmYesBtn"), noBtn=document.getElementById("confirmNoBtn");
   if(guess){
@@ -858,8 +867,7 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
     const data=await res.json();
     const link=location.origin+location.pathname+"?lib="+data.id;
     document.getElementById("saveLibraryLink").value=link;
-    document.getElementById("saveLibraryPanel").classList.remove("hidden");
-    positionPanelMobile(document.getElementById("saveLibraryPanel"), document.getElementById("saveLibraryBtn"));
+    document.getElementById("saveLibraryModal").classList.remove("hidden");
   }catch(err){
     alert("Couldn't save your library right now. Please try again in a moment.");
   }finally{
@@ -871,10 +879,9 @@ document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
   const btn=document.getElementById("copyLibraryLinkBtn");
   const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200);
 });
-document.addEventListener("click",(e)=>{
-  const panel=document.getElementById("saveLibraryPanel");
-  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="saveLibraryBtn"){ panel.classList.add("hidden"); }
-});
+function closeSaveLibraryModal(){ document.getElementById("saveLibraryModal").classList.add("hidden"); }
+document.getElementById("saveLibraryDoneBtn").addEventListener("click", closeSaveLibraryModal);
+document.getElementById("saveLibraryModal").addEventListener("click",(e)=>{ if(e.target.id==="saveLibraryModal") closeSaveLibraryModal(); });
 async function loadFromRemoteLibrary(id){
   try{
     const res=await fetch(API_BASE+"/api/libraries/"+encodeURIComponent(id));
@@ -929,6 +936,7 @@ function restoreFromStorage(){
         initColumnState();
       }
       document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
+      window.scrollTo(0,0);
       render();
     }
   }catch(_){}

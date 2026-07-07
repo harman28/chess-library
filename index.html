@@ -57,7 +57,7 @@ tr.game:hover td{background:#1e293b}
 .move-san{color:#e2e8f0}
 .move-result{color:#fbbf24;font-weight:700}
 .move-comment{display:block;background:rgba(56,189,248,.09);border-left:3px solid #38bdf8;color:#7dd3fc;padding:.4rem .6rem;margin:.35rem 0;border-radius:.25rem;font-style:italic}
-#columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-width:calc(100vw - 2rem);max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .columns-panel-header{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
 .columns-panel-header button{background:none;border:none;color:#38bdf8;cursor:pointer;font-size:.75rem;text-transform:none;letter-spacing:0;padding:0}
 #columnsList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.1rem}
@@ -98,7 +98,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .settings-wrap{position:relative}
 .toolbar .icon-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1}
 .icon-btn:hover{background:#334155}
-#settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:16rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
+#settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:16rem;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
 #settingsPanel label{color:#94a3b8;font-size:.85rem;font-weight:500}
 #settingsPanel input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
 #settingsPanel input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
@@ -109,53 +109,6 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .save-link-note{margin:0;color:#94a3b8;font-size:.8rem;line-height:1.4}
 .save-link-row{display:flex;gap:.4rem}
 .save-link-row input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.8rem;outline:none;box-sizing:border-box;flex:1;min-width:0}
-
-/* ---------- mobile card list + bottom sheet ---------- */
-.mobile-only{display:none}
-.mcard{width:100%;text-align:left;background:#111827;border:1px solid #334155;border-radius:.6rem;padding:.8rem .9rem;margin-bottom:.5rem;display:block;cursor:pointer;transition:background .12s;font:inherit;color:inherit}
-.mcard:active{background:#1e293b}
-.mcard .eyebrow{font-size:.78rem;color:#64748b;margin-bottom:.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mcard .eyebrow .ev{color:#93c5fd}
-.mcard .players{font-size:.92rem;font-weight:500;margin-bottom:.55rem;color:#e2e8f0}
-.mcard .players .me{font-weight:700}
-.mcard .meta{display:flex;align-items:center;gap:.7rem;font-size:.82rem}
-.mcard .wl{display:inline-flex;align-items:center;gap:.35rem;font-weight:700;color:#94a3b8}
-.mcard .wl .dot{width:.5rem;height:.5rem;border-radius:50%;background:#94a3b8}
-.mcard .wl.W{color:#4ade80}.mcard .wl.W .dot{background:#4ade80}
-.mcard .wl.L{color:#f87171}.mcard .wl.L .dot{background:#f87171}
-.mcard .wl.D{color:#94a3b8}.mcard .wl.D .dot{background:#94a3b8}
-.mcard .score{color:#fbbf24;font-weight:600}
-.mcard .moves-n{color:#64748b}
-.mcard .chev{margin-left:auto;color:#64748b;font-size:1.1rem}
-
-.sheet-scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
-.game-sheet{position:fixed;left:0;right:0;bottom:0;top:24px;z-index:41;background:#111827;border-radius:1rem 1rem 0 0;border:1px solid #334155;border-bottom:none;transform:translateY(102%);transition:transform .25s ease-out;display:flex;flex-direction:column}
-body.sheet-open{overflow:hidden}
-body.sheet-open .sheet-scrim{opacity:1;pointer-events:auto}
-body.sheet-open .game-sheet{transform:translateY(0)}
-@media (prefers-reduced-motion:reduce){.game-sheet,.sheet-scrim{transition:none}}
-.sheet-hdr{padding:.6rem 1rem .75rem;border-bottom:1px solid #334155;flex:0 0 auto}
-.sheet-handle{width:2.25rem;height:.25rem;border-radius:2px;background:#334155;margin:0 auto .65rem}
-.sheet-hdr-row{display:flex;align-items:flex-start;gap:.75rem}
-.sheet-title{font-size:1rem;font-weight:700;color:#e2e8f0}
-.sheet-sub{font-size:.8rem;color:#94a3b8;margin-top:.2rem}
-.sheet-sub .ev{color:#93c5fd}
-.sheet-close{margin-left:auto;flex:0 0 auto;width:2.25rem;height:2.25rem;border-radius:50%;background:#1e293b;border:1px solid #334155;display:grid;place-items:center;font-size:1.05rem;color:#94a3b8;cursor:pointer}
-.sheet-close:hover{color:#e2e8f0;background:#334155}
-.sheet-body{flex:1 1 auto;overflow-y:auto;padding:1rem}
-.sheet-body .lichess-embed-wrap{margin-bottom:1rem}
-.game-sheet .lichess-board-crop{width:320px;max-width:100%;height:418px;margin:0 auto}
-.game-sheet .lichess-frame{width:320px;max-width:100%;height:490px}
-.sheet-body .move-formatted{padding-right:0}
-
-@media (max-width:700px){
-  .table-wrap{display:none}
-  .mobile-only{display:block}
-  .toolbar{position:sticky;top:0;z-index:15;background:#0f172a;padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid #334155}
-  .filters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .filters::-webkit-scrollbar{display:none}
-  .toolbar .right{flex-wrap:wrap}
-}
 </style></head><body>
 <h1>Chess Library</h1>
 <div class="landing" id="landing">
@@ -169,7 +122,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 <h2>Get Started</h2>
 <div id="stepUpload">
 <label>PGN File</label>
-<input type="file" id="pgnUpload" accept=".pgn,text/plain" multiple>
+<input type="file" id="pgnUpload" accept=".pgn,text/plain">
 <div id="fileName" style="color:#64748b;font-size:.8rem"></div>
 <label>or paste PGN</label>
 <textarea id="pgnPaste" rows="6" placeholder="Paste PGN text here…"></textarea>
@@ -252,29 +205,14 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   <tbody id="rows"></tbody>
   </table>
 </div>
-<div id="mobileList" class="mobile-only"></div>
 <div class="empty-state" id="emptyState"></div>
 </div>
-<div class="sheet-scrim" id="sheetScrim"></div>
-<section class="game-sheet" id="gameSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-  <div class="sheet-hdr">
-    <div class="sheet-handle"></div>
-    <div class="sheet-hdr-row">
-      <div>
-        <div class="sheet-title" id="sheetTitle"></div>
-        <div class="sheet-sub" id="sheetSub"></div>
-      </div>
-      <button class="sheet-close" id="sheetCloseBtn" type="button" aria-label="Close">✕</button>
-    </div>
-  </div>
-  <div class="sheet-body" id="sheetBody"></div>
-</section>
 <footer class="site-footer">A <a href="https://chessscenes.com/" target="_blank" rel="noopener noreferrer">Chess Scenes</a> project</footer>
 <div id="addGamesModal" class="modal-overlay hidden">
   <div class="modal-card">
     <h2>Add Games</h2>
     <label>PGN File</label>
-    <input type="file" id="addGamesFile" accept=".pgn,text/plain" multiple>
+    <input type="file" id="addGamesFile" accept=".pgn,text/plain">
     <label>or paste PGN</label>
     <textarea id="addGamesPaste" rows="8" placeholder="Paste PGN text here…"></textarea>
     <div class="modal-actions">
@@ -358,7 +296,7 @@ function formatMovesWithComments(movetext){
 }
 function buildGameRecord(b, idx, name){
   const c=classify(b, name);
-  const pgn=b.movetext ? ("[Event \""+(b.headers.Event||"")+"\"]\n[Site \""+(b.headers.Site||"")+"\"]\n[Date \""+(b.headers.Date||"")+"\"]\n[Round \""+(b.headers.Round||"")+"\"]\n[White \""+(b.headers.White||"")+"\"]\n[Black \""+(b.headers.Black||"")+"\"]\n[Result \""+(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
+  const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
   return { idx, headers:{...b.headers}, movetext:b.movetext, moves:countMoves(b.movetext), pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) };
 }
 function dateSortKey(dateStr){
@@ -454,47 +392,7 @@ function render(){
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
-  }); updateActionButtons(); renderMobileList(filtered); }
-function renderMobileList(filtered){
-  const list=document.getElementById("mobileList"); if(!list) return;
-  list.innerHTML="";
-  const lowerName=(playerName||"").toLowerCase();
-  const nameHtml=n=>{ n=n||""; return (lowerName && n.toLowerCase().indexOf(lowerName)!==-1) ? `<span class="me">${esc(n)}</span>` : esc(n); };
-  filtered.forEach(g=>{
-    const wl=WL_LABEL[g.outcome]||"—";
-    const card=document.createElement("button");
-    card.type="button"; card.className="mcard"; card.dataset.i=g.idx;
-    card.innerHTML=`<div class="eyebrow">${esc(g.headers.Date||"")} · <span class="ev">${esc(g.headers.Event||"")}</span></div>`
-      +`<div class="players">${nameHtml(g.headers.White)} vs ${nameHtml(g.headers.Black)}</div>`
-      +`<div class="meta"><span class="wl ${esc(wl)}"><span class="dot"></span>${esc(wl)}</span>`
-      +`<span class="score">${esc(g.headers.Result||"")}</span>`
-      +`<span class="moves-n">${g.moves} moves</span>`
-      +`<span class="chev">›</span></div>`;
-    card.addEventListener("click",()=>openGameSheet(g));
-    list.appendChild(card);
-  });
-}
-let sheetLastFocus=null;
-function openGameSheet(g){
-  sheetLastFocus=document.activeElement;
-  document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
-  document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:#fbbf24">${esc(g.headers.Result||"")}</span>`;
-  const body=document.getElementById("sheetBody");
-  body.innerHTML=`<div class="lichess-embed-wrap"></div><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div>`;
-  ensureLichessEmbed(g, body.querySelector(".lichess-embed-wrap"));
-  document.body.classList.add("sheet-open");
-  history.pushState({sheet:true},"");
-  document.getElementById("sheetCloseBtn").focus();
-}
-function closeGameSheet(fromPop){
-  document.body.classList.remove("sheet-open");
-  if(!fromPop && history.state && history.state.sheet) history.back();
-  if(sheetLastFocus) sheetLastFocus.focus();
-}
-document.getElementById("sheetCloseBtn").addEventListener("click",()=>closeGameSheet(false));
-document.getElementById("sheetScrim").addEventListener("click",()=>closeGameSheet(false));
-window.addEventListener("popstate",()=>{ if(document.body.classList.contains("sheet-open")) closeGameSheet(true); });
-window.addEventListener("keydown",e=>{ if(e.key==="Escape" && document.body.classList.contains("sheet-open")) closeGameSheet(false); });
+  }); updateActionButtons(); }
 function onSelectAllChange(e){
   const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
   selected.clear();
@@ -675,7 +573,7 @@ const DEMO_PGN=`[Event "Paris Opera House"]
 [Date "1858.11.02"]
 [Round "-"]
 [White "Paul Morphy"]
-[Black "Duke of Brunswick and Count Isouard"]
+[Black "Duke of Brunswick & Count Isouard"]
 [Result "1-0"]
 
 1. e4 e5 2. Nf3 d6 3. d4 Bg4 {Pinning the knight, but it's premature —
@@ -733,14 +631,14 @@ Mate."} 0-1
 document.getElementById("tryDemoBtn").addEventListener("click",()=>{
   loadGames(DEMO_PGN, "Demo");
 });
-document.getElementById("pgnUpload").addEventListener("change",async (e)=>{
-  const files=[...e.target.files];
+document.getElementById("pgnUpload").addEventListener("change",(e)=>{
+  const file=e.target.files[0];
   uploadedText="";
-  if(!files.length){ document.getElementById("fileName").textContent=""; updateContinueButtonState(); return; }
-  document.getElementById("fileName").textContent = files.length===1 ? files[0].name : files.length+" files selected";
-  const texts=await Promise.all(files.map(f=>f.text()));
-  uploadedText=texts.join("\n\n");
-  updateContinueButtonState();
+  if(!file){ document.getElementById("fileName").textContent=""; updateContinueButtonState(); return; }
+  document.getElementById("fileName").textContent=file.name;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{ uploadedText=ev.target.result; updateContinueButtonState(); };
+  reader.readAsText(file);
 });
 document.getElementById("pgnPaste").addEventListener("input", updateContinueButtonState);
 document.getElementById("continueBtn").addEventListener("click",()=>{
@@ -876,10 +774,10 @@ document.getElementById("addGamesBtn").addEventListener("click",()=>{
 document.getElementById("addGamesCancelBtn").addEventListener("click", closeAddGamesModal);
 document.getElementById("addGamesModal").addEventListener("click",(e)=>{ if(e.target.id==="addGamesModal") closeAddGamesModal(); });
 document.getElementById("addGamesSubmitBtn").addEventListener("click", async ()=>{
-  const files=[...document.getElementById("addGamesFile").files];
+  const file=document.getElementById("addGamesFile").files[0];
   const pasted=document.getElementById("addGamesPaste").value.trim();
   let text="";
-  if(files.length){ text=(await Promise.all(files.map(f=>f.text()))).join("\n\n"); }
+  if(file){ text=await file.text(); }
   else if(pasted){ text=pasted; }
   else { alert("Choose a file or paste PGN text first."); return; }
   addGamesFromText(text);

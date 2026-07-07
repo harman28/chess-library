@@ -57,7 +57,7 @@ tr.game:hover td{background:#1e293b}
 .move-san{color:#e2e8f0}
 .move-result{color:#fbbf24;font-weight:700}
 .move-comment{display:block;background:rgba(56,189,248,.09);border-left:3px solid #38bdf8;color:#7dd3fc;padding:.4rem .6rem;margin:.35rem 0;border-radius:.25rem;font-style:italic}
-#columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.6rem;width:15rem;max-width:calc(100vw - 2rem);max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .columns-panel-header{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
 .columns-panel-header button{background:none;border:none;color:#38bdf8;cursor:pointer;font-size:.75rem;text-transform:none;letter-spacing:0;padding:0}
 #columnsList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.1rem}
@@ -98,17 +98,70 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .settings-wrap{position:relative}
 .toolbar .icon-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1}
 .icon-btn:hover{background:#334155}
-#settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:16rem;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
+#settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:16rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
 #settingsPanel label{color:#94a3b8;font-size:.85rem;font-weight:500}
 #settingsPanel input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
 #settingsPanel input[type="text"]:focus{border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .settings-toggle-row{display:flex;align-items:center;justify-content:space-between}
 .settings-toggle-row label{margin:0}
-.save-library-wrap{position:relative}
-#saveLibraryPanel{position:absolute;top:calc(100% + .4rem);left:0;background:#111827;border:1px solid #334155;border-radius:.4rem;padding:.9rem 1rem;width:40rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
 .save-link-note{margin:0;color:#94a3b8;font-size:.8rem;line-height:1.4}
-.save-link-row{display:flex;gap:.4rem}
-.save-link-row input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.8rem;outline:none;box-sizing:border-box;flex:1;min-width:0}
+.save-link-box{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .7rem;font-size:.85rem;font-family:ui-monospace,monospace;line-height:1.5;word-break:break-all;box-sizing:border-box}
+.save-link-actions{display:flex;justify-content:flex-end}
+.save-link-actions button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.85rem}
+.save-link-actions button:hover{border-color:#475569}
+
+/* ---------- mobile card list + bottom sheet ---------- */
+.mobile-only{display:none}
+.mcard{position:relative;box-sizing:border-box;width:100%;text-align:left;background:#111827;border:1px solid #334155;border-radius:.6rem;padding:.8rem .9rem;margin-bottom:.5rem;display:block;cursor:pointer;transition:background .12s;font:inherit;color:inherit}
+.mcard-cb{display:none;position:absolute;top:.7rem;right:.7rem;width:1.15rem;height:1.15rem}
+#mobileList.selecting .mcard-cb{display:block}
+#mobileList.selecting .mcard{padding-right:2.4rem}
+.mcard:active{background:#1e293b}
+.mcard .eyebrow{font-size:.78rem;color:#64748b;margin-bottom:.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcard .eyebrow .ev{color:#93c5fd}
+.mcard .players{font-size:.92rem;font-weight:500;margin-bottom:.55rem;color:#e2e8f0;white-space:normal;overflow-wrap:break-word}
+.mcard .players .me{font-weight:700}
+.mcard .meta{display:flex;align-items:center;gap:.7rem;font-size:.82rem}
+.mcard .wl{display:inline-flex;align-items:center;gap:.35rem;font-weight:700;color:#94a3b8}
+.mcard .wl .dot{width:.5rem;height:.5rem;border-radius:50%;background:#94a3b8}
+.mcard .wl.W{color:#4ade80}.mcard .wl.W .dot{background:#4ade80}
+.mcard .wl.L{color:#f87171}.mcard .wl.L .dot{background:#f87171}
+.mcard .wl.D{color:#94a3b8}.mcard .wl.D .dot{background:#94a3b8}
+.mcard .score{color:#fbbf24;font-weight:600}
+.mcard .moves-n{color:#64748b}
+.mcard .chev{margin-left:auto;color:#64748b;font-size:1.1rem}
+#mobileSelectAllRow{display:none}
+#mobileSelectAllRow label{display:flex;align-items:center;gap:.5rem;color:#94a3b8;font-size:.85rem;cursor:pointer}
+
+.sheet-scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+.game-sheet{position:fixed;left:0;right:0;bottom:0;top:24px;z-index:41;background:#111827;border-radius:1rem 1rem 0 0;border:1px solid #334155;border-bottom:none;transform:translateY(102%);transition:transform .25s ease-out;display:flex;flex-direction:column}
+body.sheet-open{overflow:hidden}
+body.sheet-open .sheet-scrim{opacity:1;pointer-events:auto}
+body.sheet-open .game-sheet{transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){.game-sheet,.sheet-scrim{transition:none}}
+.sheet-hdr{padding:.6rem 1rem .75rem;border-bottom:1px solid #334155;flex:0 0 auto}
+.sheet-handle{width:2.25rem;height:.25rem;border-radius:2px;background:#334155;margin:0 auto .65rem}
+.sheet-hdr-row{display:flex;align-items:flex-start;gap:.75rem}
+.sheet-title{font-size:1rem;font-weight:700;color:#e2e8f0}
+.sheet-sub{font-size:.8rem;color:#94a3b8;margin-top:.2rem}
+.sheet-sub .ev{color:#93c5fd}
+.sheet-close{margin-left:auto;flex:0 0 auto;width:2.25rem;height:2.25rem;border-radius:50%;background:#1e293b;border:1px solid #334155;display:grid;place-items:center;font-size:1.05rem;color:#94a3b8;cursor:pointer}
+.sheet-close:hover{color:#e2e8f0;background:#334155}
+.sheet-body{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column;padding:0}
+.sheet-embed-sticky{flex:0 0 auto;padding:.75rem 1rem;border-bottom:1px solid #334155}
+.sheet-moves{flex:1 1 auto;overflow-y:auto;padding:.75rem 1rem 1.5rem}
+.game-sheet .lichess-board-crop{width:260px;max-width:100%;height:358px;margin:0 auto}
+.game-sheet .lichess-frame{width:260px;max-width:100%;height:430px}
+.sheet-moves .move-formatted{padding-right:0}
+
+@media (max-width:700px){
+  .table-wrap{display:none}
+  .mobile-only{display:block}
+  .toolbar{position:sticky;top:0;z-index:15;background:#0f172a;padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid #334155}
+  .filters{flex-wrap:wrap}
+  .toolbar .right{flex-wrap:wrap}
+  #mobileSelectAllRow.selecting{display:block;padding:.3rem 0 .6rem}
+}
 </style></head><body>
 <h1>Chess Library</h1>
 <div class="landing" id="landing">
@@ -149,13 +202,6 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   <div class="right">
     <div class="save-library-wrap">
       <button id="saveLibraryBtn" type="button" class="primary">Save My Library</button>
-      <div id="saveLibraryPanel" class="hidden">
-        <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
-        <div class="save-link-row">
-          <input type="text" id="saveLibraryLink" readonly>
-          <button id="copyLibraryLinkBtn" type="button">Copy</button>
-        </div>
-      </div>
     </div>
     <button id="addGamesBtn" type="button">Add Game(s)</button>
     <button id="exportBtn" type="button">Export</button>
@@ -205,8 +251,24 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   <tbody id="rows"></tbody>
   </table>
 </div>
+<div id="mobileSelectAllRow"><label><input type="checkbox" id="mobileSelectAll"> Select all</label></div>
+<div id="mobileList" class="mobile-only"></div>
 <div class="empty-state" id="emptyState"></div>
 </div>
+<div class="sheet-scrim" id="sheetScrim"></div>
+<section class="game-sheet" id="gameSheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-hdr">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hdr-row">
+      <div>
+        <div class="sheet-title" id="sheetTitle"></div>
+        <div class="sheet-sub" id="sheetSub"></div>
+      </div>
+      <button class="sheet-close" id="sheetCloseBtn" type="button" aria-label="Close">✕</button>
+    </div>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</section>
 <footer class="site-footer">A <a href="https://chessscenes.com/" target="_blank" rel="noopener noreferrer">Chess Scenes</a> project</footer>
 <div id="addGamesModal" class="modal-overlay hidden">
   <div class="modal-card">
@@ -218,6 +280,19 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
     <div class="modal-actions">
       <button id="addGamesCancelBtn" type="button">Cancel</button>
       <button id="addGamesSubmitBtn" type="button" class="primary">Add Games</button>
+    </div>
+  </div>
+</div>
+<div id="saveLibraryModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2>Save My Library</h2>
+    <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
+    <div class="save-link-box" id="saveLibraryLink"></div>
+    <div class="save-link-actions">
+      <button id="copyLibraryLinkBtn" type="button">Copy</button>
+    </div>
+    <div class="modal-actions">
+      <button id="saveLibraryDoneBtn" type="button" class="primary">Done</button>
     </div>
   </div>
 </div>
@@ -253,7 +328,12 @@ function classifySpeed(timeControl){
   if(!timeControl) return "other";
   const m = timeControl.match(/^(?:\d+\/)?(\d+)/);
   if(!m) return "other";
-  const minutes = parseInt(m[1],10)/60;
+  const raw = parseInt(m[1],10);
+  // Lichess/chess.com always store TimeControl in seconds, and since their UIs only offer
+  // whole-minute base times, that always comes out as an exact multiple of 60. Some OTB/manual
+  // PGN sources instead write the base time directly in minutes (e.g. "90+30" for 90 min), which
+  // is almost never a multiple of 60 - use that as the signal to distinguish the two conventions.
+  const minutes = (raw % 60 === 0) ? raw/60 : raw;
   if(minutes<=5) return "blitz";
   if(minutes<90) return "rapid";
   return "classical";
@@ -296,7 +376,7 @@ function formatMovesWithComments(movetext){
 }
 function buildGameRecord(b, idx, name){
   const c=classify(b, name);
-  const pgn=b.movetext ? ("[Event \""+esc(b.headers.Event||"")+"\"]\n[Site \""+esc(b.headers.Site||"")+"\"]\n[Date \""+esc(b.headers.Date||"")+"\"]\n[Round \""+esc(b.headers.Round||"")+"\"]\n[White \""+esc(b.headers.White||"")+"\"]\n[Black \""+esc(b.headers.Black||"")+"\"]\n[Result \""+esc(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
+  const pgn=b.movetext ? ("[Event \""+(b.headers.Event||"")+"\"]\n[Site \""+(b.headers.Site||"")+"\"]\n[Date \""+(b.headers.Date||"")+"\"]\n[Round \""+(b.headers.Round||"")+"\"]\n[White \""+(b.headers.White||"")+"\"]\n[Black \""+(b.headers.Black||"")+"\"]\n[Result \""+(b.headers.Result||"")+"\"]\n"+b.movetext) : "";
   return { idx, headers:{...b.headers}, movetext:b.movetext, moves:countMoves(b.movetext), pgn, color:c.color, outcome:c.outcome, speed:classifySpeed(b.headers.TimeControl) };
 }
 function dateSortKey(dateStr){
@@ -321,6 +401,7 @@ function loadGames(pgnText, name){
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
+  window.scrollTo(0,0);
   render();
   saveToStorage();
 }
@@ -392,12 +473,79 @@ function render(){
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
-  }); updateActionButtons(); }
+  }); updateActionButtons(); renderMobileList(filtered); }
+function renderMobileList(filtered){
+  const list=document.getElementById("mobileList"); if(!list) return;
+  list.innerHTML="";
+  const lowerName=(playerName||"").toLowerCase();
+  const nameHtml=n=>{ n=n||""; return (lowerName && n.toLowerCase().indexOf(lowerName)!==-1) ? `<span class="me">${esc(n)}</span>` : esc(n); };
+  filtered.forEach(g=>{
+    const wl=WL_LABEL[g.outcome]||"—";
+    const checked=selected.has(g.idx)?"checked":"";
+    const card=document.createElement("div");
+    card.className="mcard"; card.dataset.i=g.idx;
+    card.setAttribute("role","button"); card.tabIndex=0;
+    card.innerHTML=`<input type="checkbox" class="mcard-cb" data-i="${g.idx}" ${checked} aria-label="Select game">`
+      +`<div class="eyebrow">${esc(g.headers.Date||"")} · <span class="ev">${esc(g.headers.Event||"")}</span></div>`
+      +`<div class="players">${nameHtml(g.headers.White)} vs ${nameHtml(g.headers.Black)}</div>`
+      +`<div class="meta"><span class="wl ${esc(wl)}"><span class="dot"></span>${esc(wl)}</span>`
+      +`<span class="score">${esc(g.headers.Result||"")}</span>`
+      +`<span class="moves-n">${g.moves} moves</span>`
+      +`<span class="chev">›</span></div>`;
+    card.addEventListener("click",()=>{
+      if(selectionMode){
+        if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
+        const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
+        return;
+      }
+      openGameSheet(g);
+    });
+    card.addEventListener("keydown",(e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); card.click(); } });
+    list.appendChild(card);
+  });
+}
+let sheetLastFocus=null;
+function openGameSheet(g){
+  sheetLastFocus=document.activeElement;
+  document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
+  document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:#fbbf24">${esc(g.headers.Result||"")}</span>`;
+  const body=document.getElementById("sheetBody");
+  body.innerHTML=`<div class="sheet-embed-sticky"><div class="lichess-embed-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div></div>`;
+  ensureLichessEmbed(g, body.querySelector(".lichess-embed-wrap"));
+  document.body.classList.add("sheet-open");
+  history.pushState({sheet:true},"");
+  document.getElementById("sheetCloseBtn").focus();
+}
+function closeGameSheet(fromPop){
+  document.body.classList.remove("sheet-open");
+  if(!fromPop && history.state && history.state.sheet) history.back();
+  if(sheetLastFocus) sheetLastFocus.focus();
+}
+document.getElementById("sheetCloseBtn").addEventListener("click",()=>closeGameSheet(false));
+document.getElementById("sheetScrim").addEventListener("click",()=>closeGameSheet(false));
+window.addEventListener("popstate",()=>{ if(document.body.classList.contains("sheet-open")) closeGameSheet(true); });
+window.addEventListener("keydown",e=>{ if(e.key==="Escape" && document.body.classList.contains("sheet-open")) closeGameSheet(false); });
 function onSelectAllChange(e){
   const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
   selected.clear();
   if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
   else { cbs.forEach(cb=>{ cb.checked=false; }); }
+}
+document.getElementById("mobileSelectAll").addEventListener("change",(e)=>{
+  const cbs=[...document.querySelectorAll("#mobileList input[type='checkbox']")];
+  selected.clear();
+  if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
+  else { cbs.forEach(cb=>{ cb.checked=false; }); }
+});
+function positionPanelMobile(panel, trigger){
+  if(!window.matchMedia("(max-width:700px)").matches) return;
+  const r=trigger.getBoundingClientRect();
+  panel.style.position="fixed";
+  panel.style.left="1rem";
+  panel.style.right="1rem";
+  panel.style.width="auto";
+  panel.style.maxWidth="none";
+  panel.style.top=(r.bottom+8)+"px";
 }
 function renderColumnsPanel(){
   const allCols=discoverColumns();
@@ -439,8 +587,10 @@ columnsListEl.addEventListener("change",(e)=>{
 document.getElementById("columnsBtn").addEventListener("click",(e)=>{
   e.stopPropagation();
   const panel=document.getElementById("columnsPanel");
-  if(panel.classList.contains("hidden")) renderColumnsPanel();
+  const opening=panel.classList.contains("hidden");
+  if(opening) renderColumnsPanel();
   panel.classList.toggle("hidden");
+  if(opening) positionPanelMobile(panel, e.currentTarget);
 });
 document.getElementById("columnsResetBtn").addEventListener("click",(e)=>{
   e.stopPropagation();
@@ -510,6 +660,8 @@ function updateActionButtons(){
 function enterSelectionMode(mode){
   selectionMode=mode;
   document.getElementById("table").classList.add("selecting");
+  document.getElementById("mobileList").classList.add("selecting");
+  document.getElementById("mobileSelectAllRow").classList.add("selecting");
   if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
   else { document.getElementById("deleteBtn").classList.add("armed"); }
   updateActionButtons();
@@ -517,10 +669,14 @@ function enterSelectionMode(mode){
 function exitSelectionMode(){
   selectionMode=null;
   document.getElementById("table").classList.remove("selecting");
+  document.getElementById("mobileList").classList.remove("selecting");
+  document.getElementById("mobileSelectAllRow").classList.remove("selecting");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("selectAll").checked=false;
+  document.getElementById("mobileSelectAll").checked=false;
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
+  document.querySelectorAll("#mobileList input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   selected.clear();
   updateActionButtons();
 }
@@ -534,8 +690,7 @@ function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.ha
 function downloadBlob(text, filename){ const blob=new Blob([text],{type:"application/x-chess-pgn"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
 document.getElementById("exportBtn").addEventListener("click",()=>{
   if(selectionMode!=="export"){ enterSelectionMode("export"); return; }
-  const hasChecked=document.querySelectorAll("#rows input[type='checkbox']:checked").length>0;
-  if(!hasChecked){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>cb.checked=true);
+  if(selected.size===0){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox'], #mobileList input[type='checkbox']").forEach(cb=>cb.checked=true);
     games.forEach(g=>selected.add(g.idx)); }
   const pgnText=buildExport();
   downloadBlob(pgnText,(playerName||"Games").trim().replace(/\s+/g,"_")+"_Games.pgn");
@@ -543,7 +698,7 @@ document.getElementById("exportBtn").addEventListener("click",()=>{
 });
 document.getElementById("deleteBtn").addEventListener("click",()=>{
   if(selectionMode!=="delete"){ enterSelectionMode("delete"); return; }
-  const checkedCount=document.querySelectorAll("#rows input[type='checkbox']:checked").length;
+  const checkedCount=selected.size;
   if(checkedCount===0){ exitSelectionMode(); return; }
   if(!confirm("Delete "+checkedCount+" selected game"+(checkedCount===1?"":"s")+"? This cannot be undone.")) return;
   games=games.filter(g=>!selected.has(g.idx));
@@ -573,7 +728,7 @@ const DEMO_PGN=`[Event "Paris Opera House"]
 [Date "1858.11.02"]
 [Round "-"]
 [White "Paul Morphy"]
-[Black "Duke of Brunswick & Count Isouard"]
+[Black "Duke of Brunswick and Count Isouard"]
 [Result "1-0"]
 
 1. e4 e5 2. Nf3 d6 3. d4 Bg4 {Pinning the knight, but it's premature —
@@ -647,8 +802,10 @@ document.getElementById("continueBtn").addEventListener("click",()=>{
   const blocks=parsePGN(uploadedText);
   const counts=getNameCounts(blocks);
   const guess=counts.length?counts[0].name:null;
+  document.activeElement.blur();
   document.getElementById("stepUpload").classList.add("hidden");
   document.getElementById("stepConfirm").classList.remove("hidden");
+  window.scrollTo(0,0);
   renderNameChart(counts);
   const yesBtn=document.getElementById("confirmYesBtn"), noBtn=document.getElementById("confirmNoBtn");
   if(guess){
@@ -685,11 +842,13 @@ let lightModeEnabled=false; // placeholder only, not applied to the page yet
 document.getElementById("settingsBtn").addEventListener("click",(e)=>{
   e.stopPropagation();
   const panel=document.getElementById("settingsPanel");
-  if(panel.classList.contains("hidden")){
+  const opening=panel.classList.contains("hidden");
+  if(opening){
     document.getElementById("settingsNameInput").value=playerName;
     document.getElementById("themeToggle").checked=lightModeEnabled;
   }
   panel.classList.toggle("hidden");
+  if(opening) positionPanelMobile(panel, e.currentTarget);
 });
 document.getElementById("settingsCancelBtn").addEventListener("click",()=>{
   document.getElementById("settingsPanel").classList.add("hidden");
@@ -725,8 +884,8 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data=await res.json();
     const link=location.origin+location.pathname+"?lib="+data.id;
-    document.getElementById("saveLibraryLink").value=link;
-    document.getElementById("saveLibraryPanel").classList.remove("hidden");
+    document.getElementById("saveLibraryLink").textContent=link;
+    document.getElementById("saveLibraryModal").classList.remove("hidden");
   }catch(err){
     alert("Couldn't save your library right now. Please try again in a moment.");
   }finally{
@@ -734,14 +893,13 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
   }
 });
 document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
-  copyToClipboard(document.getElementById("saveLibraryLink").value);
+  copyToClipboard(document.getElementById("saveLibraryLink").textContent);
   const btn=document.getElementById("copyLibraryLinkBtn");
   const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200);
 });
-document.addEventListener("click",(e)=>{
-  const panel=document.getElementById("saveLibraryPanel");
-  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="saveLibraryBtn"){ panel.classList.add("hidden"); }
-});
+function closeSaveLibraryModal(){ document.getElementById("saveLibraryModal").classList.add("hidden"); }
+document.getElementById("saveLibraryDoneBtn").addEventListener("click", closeSaveLibraryModal);
+document.getElementById("saveLibraryModal").addEventListener("click",(e)=>{ if(e.target.id==="saveLibraryModal") closeSaveLibraryModal(); });
 async function loadFromRemoteLibrary(id){
   try{
     const res=await fetch(API_BASE+"/api/libraries/"+encodeURIComponent(id));
@@ -796,6 +954,7 @@ function restoreFromStorage(){
         initColumnState();
       }
       document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
+      window.scrollTo(0,0);
       render();
     }
   }catch(_){}

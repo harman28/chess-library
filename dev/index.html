@@ -105,14 +105,14 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 .settings-toggle-row{display:flex;align-items:center;justify-content:space-between}
 .settings-toggle-row label{margin:0}
 .save-link-note{margin:0;color:#94a3b8;font-size:.8rem;line-height:1.4}
-.save-link-row{display:flex;gap:.4rem}
-.save-link-row input[type="text"]{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .7rem;font-size:.8rem;outline:none;box-sizing:border-box;flex:1;min-width:0}
-.save-link-row button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.85rem;flex:0 0 auto}
-.save-link-row button:hover{border-color:#475569}
+.save-link-box{background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.6rem .7rem;font-size:.85rem;font-family:ui-monospace,monospace;line-height:1.5;word-break:break-all;box-sizing:border-box}
+.save-link-actions{display:flex;justify-content:flex-end}
+.save-link-actions button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.85rem}
+.save-link-actions button:hover{border-color:#475569}
 
 /* ---------- mobile card list + bottom sheet ---------- */
 .mobile-only{display:none}
-.mcard{position:relative;width:100%;text-align:left;background:#111827;border:1px solid #334155;border-radius:.6rem;padding:.8rem .9rem;margin-bottom:.5rem;display:block;cursor:pointer;transition:background .12s;font:inherit;color:inherit}
+.mcard{position:relative;box-sizing:border-box;width:100%;text-align:left;background:#111827;border:1px solid #334155;border-radius:.6rem;padding:.8rem .9rem;margin-bottom:.5rem;display:block;cursor:pointer;transition:background .12s;font:inherit;color:inherit}
 .mcard-cb{display:none;position:absolute;top:.7rem;right:.7rem;width:1.15rem;height:1.15rem}
 #mobileList.selecting .mcard-cb{display:block}
 #mobileList.selecting .mcard{padding-right:2.4rem}
@@ -283,8 +283,8 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   <div class="modal-card">
     <h2>Save My Library</h2>
     <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
-    <div class="save-link-row">
-      <input type="text" id="saveLibraryLink" readonly>
+    <div class="save-link-box" id="saveLibraryLink"></div>
+    <div class="save-link-actions">
       <button id="copyLibraryLinkBtn" type="button">Copy</button>
     </div>
     <div class="modal-actions">
@@ -866,7 +866,7 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data=await res.json();
     const link=location.origin+location.pathname+"?lib="+data.id;
-    document.getElementById("saveLibraryLink").value=link;
+    document.getElementById("saveLibraryLink").textContent=link;
     document.getElementById("saveLibraryModal").classList.remove("hidden");
   }catch(err){
     alert("Couldn't save your library right now. Please try again in a moment.");
@@ -875,7 +875,7 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
   }
 });
 document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
-  copyToClipboard(document.getElementById("saveLibraryLink").value);
+  copyToClipboard(document.getElementById("saveLibraryLink").textContent);
   const btn=document.getElementById("copyLibraryLinkBtn");
   const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200);
 });

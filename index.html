@@ -122,7 +122,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
 <h2>Get Started</h2>
 <div id="stepUpload">
 <label>PGN File</label>
-<input type="file" id="pgnUpload" accept=".pgn,text/plain">
+<input type="file" id="pgnUpload" accept=".pgn,text/plain" multiple>
 <div id="fileName" style="color:#64748b;font-size:.8rem"></div>
 <label>or paste PGN</label>
 <textarea id="pgnPaste" rows="6" placeholder="Paste PGN text here…"></textarea>
@@ -212,7 +212,7 @@ button.copy-btn{background:#1e293b;color:#e2e8f0;border:1px solid #334155;paddin
   <div class="modal-card">
     <h2>Add Games</h2>
     <label>PGN File</label>
-    <input type="file" id="addGamesFile" accept=".pgn,text/plain">
+    <input type="file" id="addGamesFile" accept=".pgn,text/plain" multiple>
     <label>or paste PGN</label>
     <textarea id="addGamesPaste" rows="8" placeholder="Paste PGN text here…"></textarea>
     <div class="modal-actions">
@@ -631,14 +631,14 @@ Mate."} 0-1
 document.getElementById("tryDemoBtn").addEventListener("click",()=>{
   loadGames(DEMO_PGN, "Demo");
 });
-document.getElementById("pgnUpload").addEventListener("change",(e)=>{
-  const file=e.target.files[0];
+document.getElementById("pgnUpload").addEventListener("change",async (e)=>{
+  const files=[...e.target.files];
   uploadedText="";
-  if(!file){ document.getElementById("fileName").textContent=""; updateContinueButtonState(); return; }
-  document.getElementById("fileName").textContent=file.name;
-  const reader=new FileReader();
-  reader.onload=(ev)=>{ uploadedText=ev.target.result; updateContinueButtonState(); };
-  reader.readAsText(file);
+  if(!files.length){ document.getElementById("fileName").textContent=""; updateContinueButtonState(); return; }
+  document.getElementById("fileName").textContent = files.length===1 ? files[0].name : files.length+" files selected";
+  const texts=await Promise.all(files.map(f=>f.text()));
+  uploadedText=texts.join("\n\n");
+  updateContinueButtonState();
 });
 document.getElementById("pgnPaste").addEventListener("input", updateContinueButtonState);
 document.getElementById("continueBtn").addEventListener("click",()=>{
@@ -774,10 +774,10 @@ document.getElementById("addGamesBtn").addEventListener("click",()=>{
 document.getElementById("addGamesCancelBtn").addEventListener("click", closeAddGamesModal);
 document.getElementById("addGamesModal").addEventListener("click",(e)=>{ if(e.target.id==="addGamesModal") closeAddGamesModal(); });
 document.getElementById("addGamesSubmitBtn").addEventListener("click", async ()=>{
-  const file=document.getElementById("addGamesFile").files[0];
+  const files=[...document.getElementById("addGamesFile").files];
   const pasted=document.getElementById("addGamesPaste").value.trim();
   let text="";
-  if(file){ text=await file.text(); }
+  if(files.length){ text=(await Promise.all(files.map(f=>f.text()))).join("\n\n"); }
   else if(pasted){ text=pasted; }
   else { alert("Choose a file or paste PGN text first."); return; }
   addGamesFromText(text);

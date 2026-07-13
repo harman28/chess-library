@@ -998,13 +998,14 @@ document.addEventListener("click",(e)=>{
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="settingsBtn"){ panel.classList.add("hidden"); }
 });
 const API_BASE="https://chess-library-api.up.railway.app";
+const API_LIBRARIES_PATH="/api/libraries";
 document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
   const btn=document.getElementById("saveLibraryBtn");
   const oldLabel=btn.textContent;
   btn.disabled=true; btn.textContent="Saving…";
   try{
     const pgn=buildPgnForGames(games);
-    const res=await fetch(API_BASE+"/api/libraries", {
+    const res=await fetch(API_BASE+API_LIBRARIES_PATH, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({playerName, pgn})
@@ -1030,7 +1031,7 @@ document.getElementById("saveLibraryDoneBtn").addEventListener("click", closeSav
 document.getElementById("saveLibraryModal").addEventListener("click",(e)=>{ if(e.target.id==="saveLibraryModal") closeSaveLibraryModal(); });
 async function loadFromRemoteLibrary(id){
   try{
-    const res=await fetch(API_BASE+"/api/libraries/"+encodeURIComponent(id));
+    const res=await fetch(API_BASE+API_LIBRARIES_PATH+"/"+encodeURIComponent(id));
     if(!res.ok) return false;
     const data=await res.json();
     loadGames(data.pgn, data.playerName);

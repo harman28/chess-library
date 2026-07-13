@@ -465,8 +465,8 @@ function loadGames(pgnText, name){
   render();
   saveToStorage();
 }
-const STORAGE_KEY="chessLibraryData";
-const SCHEMA_VERSION=4;
+const STORAGE_KEY="chessLibraryData"+(location.pathname.startsWith("/dev/")?"_dev":"");
+const SCHEMA_VERSION=5;
 function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}, lightModeEnabled})); }catch(_){} }
 
 const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];

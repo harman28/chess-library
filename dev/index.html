@@ -111,23 +111,26 @@ tr.game:hover td{background:var(--surface-alt)}
 .pgnwrap-actions{position:absolute;bottom:.5rem;right:.5rem;display:flex;gap:.3rem}
 .pgnwrap-actions button{background:rgba(15,23,42,.7);border:none;color:var(--text-dim);cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}
 .pgnwrap-actions button:hover{color:var(--text);background:rgba(30,41,59,.9)}
-.chess-widget-wrap{flex:0 0 360px;order:2;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.chess-widget-wrap{flex:0 0 360px;order:2;display:flex;flex-direction:column;align-items:center;gap:.4rem;width:360px;box-sizing:border-box}
 .pgnwrap{order:1}
-.cw-board-wrap{outline:none}
-.cw-board{width:360px;height:360px;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border:1px solid var(--border);border-radius:.4rem;overflow:hidden;box-shadow:0 2px 10px var(--shadow)}
-.cw-sq{position:relative;display:flex;align-items:center;justify-content:center}
+.cw-nameplate{width:100%;box-sizing:border-box;font-size:.82rem;font-weight:600;color:var(--text-dim);padding:.35rem .6rem;background:var(--surface-alt);border-radius:.3rem}
+.cw-board-wrap{outline:none;width:100%}
+.cw-board{position:relative;width:360px;height:360px;border:1px solid var(--border);border-radius:.4rem;overflow:hidden;box-shadow:0 2px 10px var(--shadow)}
+.cw-squares{position:absolute;inset:0}
+.cw-sq{position:absolute;width:12.5%;height:12.5%;box-sizing:border-box}
 .cw-sq.light{background:#8ca2b4}
 .cw-sq.dark{background:#5f7891}
 .cw-sq.cw-lastmove.light{background:#b9c363}
 .cw-sq.cw-lastmove.dark{background:#9aa54f}
-.cw-piece{width:88%;height:88%;background-size:contain;background-repeat:no-repeat;background-position:center;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.cw-pieces{position:absolute;inset:0;pointer-events:none}
+.cw-piece{position:absolute;width:12.5%;height:12.5%;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
 .cw-coord{position:absolute;font-size:.62rem;font-weight:700;line-height:1;pointer-events:none}
 .cw-coord.cw-file{right:2px;bottom:1px}
 .cw-coord.cw-rank{left:2px;top:1px}
 .cw-sq.light .cw-coord{color:#5f7891}
 .cw-sq.dark .cw-coord{color:#8ca2b4}
-.cw-controls{display:flex;gap:.35rem;justify-content:center}
-.cw-controls .cw-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.3rem;padding:.35rem .7rem;cursor:pointer;font-size:1rem;line-height:1}
+.cw-controls{display:flex;gap:.3rem;width:100%;box-sizing:border-box}
+.cw-controls .cw-btn{flex:1;background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.3rem;padding:.55rem 0;cursor:pointer;font-size:1.2rem;line-height:1}
 .cw-controls .cw-btn:hover:not(:disabled){background:var(--border)}
 .cw-controls .cw-btn:disabled{opacity:.35;cursor:not-allowed}
 .cw-error{color:var(--text-dim);font-size:.85rem;padding:1rem;text-align:center;width:360px}
@@ -216,7 +219,8 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .sheet-body{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column;padding:0}
 .sheet-embed-sticky{flex:0 0 auto;padding:.75rem 1rem;border-bottom:1px solid var(--border)}
 .sheet-moves{flex:1 1 auto;overflow-y:auto;padding:.75rem 1rem 1.5rem}
-.game-sheet .cw-board{width:260px;max-width:100%;height:260px;margin:0 auto}
+.game-sheet .chess-widget-wrap{width:260px;margin:0 auto}
+.game-sheet .cw-board{width:260px;height:260px}
 .game-sheet .cw-error{width:260px}
 .sheet-moves .move-formatted{padding-right:0}
 
@@ -227,6 +231,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   .filters{flex-wrap:wrap}
   .toolbar .right{flex-wrap:wrap}
   #mobileSelectAllRow.selecting{display:block;padding:.3rem 0 .6rem}
+  .move-comment-btn{padding:.55rem;font-size:.85rem;min-width:1.9rem;min-height:1.9rem;display:inline-flex;align-items:center;justify-content:center}
 }
 </style></head><body>
 <h1 class="logo-h1"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%23e8edf5%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23e8b93e%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-dark"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%2C%20light%20variant%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%230d1420%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23c99a1f%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%23f3efe6%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%230d1420%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%23f3efe6%22%20opacity%3D%220.6%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%230d1420%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23c99a1f%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-light"></h1>
@@ -482,17 +487,19 @@ function applySanMove(board, sanRaw, color, state){
   const isWhite = color==="w";
   if(san==="O-O"||san==="0-0"){
     const rank = isWhite?0:7;
-    board[rank][6] = board[rank][4]; board[rank][4]=null;
-    board[rank][5] = board[rank][7]; board[rank][7]=null;
+    const king={...board[rank][4]}, rook={...board[rank][7]};
+    board[rank][6] = king; board[rank][4]=null;
+    board[rank][5] = rook; board[rank][7]=null;
     state.enPassant = null;
-    return { from:rcToSq(4,rank), to:rcToSq(6,rank) };
+    return { from:rcToSq(4,rank), to:rcToSq(6,rank), piece:king, isCastle:true, rookFrom:rcToSq(7,rank), rookTo:rcToSq(5,rank), promo:null, capturedSquare:null, capturedPiece:null };
   }
   if(san==="O-O-O"||san==="0-0-0"){
     const rank = isWhite?0:7;
-    board[rank][2] = board[rank][4]; board[rank][4]=null;
-    board[rank][3] = board[rank][0]; board[rank][0]=null;
+    const king={...board[rank][4]}, rook={...board[rank][0]};
+    board[rank][2] = king; board[rank][4]=null;
+    board[rank][3] = rook; board[rank][0]=null;
     state.enPassant = null;
-    return { from:rcToSq(4,rank), to:rcToSq(2,rank) };
+    return { from:rcToSq(4,rank), to:rcToSq(2,rank), piece:king, isCastle:true, rookFrom:rcToSq(0,rank), rookTo:rcToSq(3,rank), promo:null, capturedSquare:null, capturedPiece:null };
   }
   let promo=null;
   const promoM = san.match(/=([QRBN])$/);
@@ -544,11 +551,13 @@ function applySanMove(board, sanRaw, color, state){
   }
   const movingPiece = board[from.r][from.f];
   if(!movingPiece) throw new Error("No piece at computed source for: "+sanRaw);
-  let epCapturedSquare=null;
+  let epCapturedSquare=null, epCapturedPiece=null;
   if(epCapture){
     epCapturedSquare = { f:dest.f, r:from.r };
+    epCapturedPiece = board[epCapturedSquare.r][epCapturedSquare.f];
     board[epCapturedSquare.r][epCapturedSquare.f]=null;
   }
+  const capturedAtDest = board[dest.r][dest.f];
   board[from.r][from.f]=null;
   board[dest.r][dest.f] = promo ? {type:promo,color} : {...movingPiece};
   if(pieceType==="P" && Math.abs(dest.r-from.r)===2){
@@ -556,17 +565,23 @@ function applySanMove(board, sanRaw, color, state){
   } else {
     state.enPassant = null;
   }
-  return { from: rcToSq(from.f,from.r), to: rcToSq(dest.f,dest.r), epCapturedSquare: epCapturedSquare?rcToSq(epCapturedSquare.f,epCapturedSquare.r):null };
+  const capturedSquare = epCapturedSquare ? rcToSq(epCapturedSquare.f,epCapturedSquare.r) : (capturedAtDest ? rcToSq(dest.f,dest.r) : null);
+  const capturedPiece = epCapturedPiece ? {...epCapturedPiece} : (capturedAtDest ? {...capturedAtDest} : null);
+  return {
+    from: rcToSq(from.f,from.r), to: rcToSq(dest.f,dest.r),
+    piece: {...movingPiece}, isCastle:false, rookFrom:null, rookTo:null,
+    promo: promo, capturedSquare, capturedPiece,
+  };
 }
 function computeBoardStates(sanMoves){
   const states=[];
   let board = initialBoard();
   const engineState = { enPassant:null };
-  states.push({ board:cloneBoard(board), lastMove:null });
+  states.push({ board:cloneBoard(board), lastMove:null, sanRaw:null });
   for(let i=0;i<sanMoves.length;i++){
     const color = i%2===0?"w":"b";
     const lastMove = applySanMove(board, sanMoves[i], color, engineState);
-    states.push({ board:cloneBoard(board), lastMove });
+    states.push({ board:cloneBoard(board), lastMove, sanRaw:sanMoves[i] });
   }
   return states;
 }
@@ -574,6 +589,59 @@ function extractMainlineSan(movetext){
   if(!movetext) return [];
   return tokenizeMovetext(movetext).filter(t=>t.type==="san" && !t.inVariation).map(t=>t.text);
 }
+
+let _cwAudioCtx=null;
+function _cwGetAudioCtx(){
+  if(_cwAudioCtx) return _cwAudioCtx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  _cwAudioCtx = new AC();
+  return _cwAudioCtx;
+}
+function _cwPlayNoiseBurst(duration, filterFreq, gainPeak, delay){
+  const ctx=_cwGetAudioCtx(); if(!ctx) return;
+  const now=ctx.currentTime+(delay||0);
+  const bufferSize=Math.max(1,Math.floor(ctx.sampleRate*duration));
+  const buffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*(1-i/bufferSize);
+  const noise=ctx.createBufferSource(); noise.buffer=buffer;
+  const filter=ctx.createBiquadFilter(); filter.type="bandpass"; filter.frequency.value=filterFreq; filter.Q.value=1.1;
+  const gain=ctx.createGain();
+  gain.gain.setValueAtTime(gainPeak||0.35, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now+duration);
+  noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+  noise.start(now);
+}
+function _cwPlayTone(freq, duration, delay){
+  const ctx=_cwGetAudioCtx(); if(!ctx) return;
+  const now=ctx.currentTime+(delay||0);
+  const osc=ctx.createOscillator(); osc.type="sine"; osc.frequency.value=freq;
+  const gain=ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.22, now+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now+duration);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(now); osc.stop(now+duration+0.02);
+}
+function playChessSound(kind){
+  try{
+    if(kind==="move") _cwPlayNoiseBurst(0.045, 1500, 0.3, 0);
+    else if(kind==="capture") _cwPlayNoiseBurst(0.07, 700, 0.4, 0);
+    else if(kind==="castle"){ _cwPlayNoiseBurst(0.045,1500,0.3,0); _cwPlayNoiseBurst(0.045,1350,0.28,0.09); }
+    else if(kind==="check"){ _cwPlayNoiseBurst(0.045,1500,0.3,0); _cwPlayTone(1568,0.14,0.03); }
+    else if(kind==="checkmate"){ _cwPlayTone(784,0.16,0); _cwPlayTone(523,0.22,0.13); }
+  }catch(_){}
+}
+function classifyChessSound(state){
+  const raw = state.sanRaw || "";
+  if(raw.endsWith("#")) return "checkmate";
+  if(raw.endsWith("+")) return "check";
+  if(state.lastMove && state.lastMove.isCastle) return "castle";
+  if(state.lastMove && state.lastMove.capturedPiece) return "capture";
+  return "move";
+}
+
 function createChessWidget(container, g){
   const sanMoves = extractMainlineSan(g.movetext);
   let states;
@@ -583,11 +651,14 @@ function createChessWidget(container, g){
     container.innerHTML = `<div class="cw-error">Couldn’t render this game’s moves.</div>`;
     return { goToPly:()=>{}, refreshHighlight:()=>{} };
   }
-  let ply = states.length-1;
+  let ply = 0;
   let orientation = g.color==="black" ? "black" : "white";
   const scope = container.closest("#sheetBody") || container.closest(".detail-flex") || document;
+  const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-  container.innerHTML = `<div class="cw-board-wrap" tabindex="0"><div class="cw-board"></div></div>`
+  container.innerHTML = `<div class="cw-nameplate cw-nameplate-top"></div>`
+    + `<div class="cw-board-wrap" tabindex="0"><div class="cw-board"><div class="cw-squares"></div><div class="cw-pieces"></div></div></div>`
+    + `<div class="cw-nameplate cw-nameplate-bottom"></div>`
     + `<div class="cw-controls">`
     + `<button class="cw-btn cw-first" title="First move" aria-label="First move">⏮</button>`
     + `<button class="cw-btn cw-prev" title="Previous move" aria-label="Previous move">‹</button>`
@@ -595,12 +666,77 @@ function createChessWidget(container, g){
     + `<button class="cw-btn cw-next" title="Next move" aria-label="Next move">›</button>`
     + `<button class="cw-btn cw-last" title="Last move" aria-label="Last move">⏭</button>`
     + `</div>`;
-  const boardEl = container.querySelector(".cw-board");
+  const squaresEl = container.querySelector(".cw-squares");
+  const piecesEl = container.querySelector(".cw-pieces");
   const boardWrap = container.querySelector(".cw-board-wrap");
+  const nameTop = container.querySelector(".cw-nameplate-top");
+  const nameBottom = container.querySelector(".cw-nameplate-bottom");
   const prevBtn=container.querySelector(".cw-prev"), nextBtn=container.querySelector(".cw-next"),
         firstBtn=container.querySelector(".cw-first"), lastBtn=container.querySelector(".cw-last"),
         flipBtn=container.querySelector(".cw-flip");
 
+  let squareEls = {};
+  let pieceEls = {};
+
+  function colFor(f){ return orientation==="white" ? f : 7-f; }
+  function rowFor(r){ return orientation==="white" ? 7-r : r; }
+  function pctPos(f,r){ return { left: colFor(f)*12.5, top: rowFor(r)*12.5 }; }
+
+  function renderSquares(){
+    squaresEl.innerHTML=""; squareEls={};
+    for(let r=0;r<8;r++) for(let f=0;f<8;f++){
+      const sqName="abcdefgh"[f]+(r+1);
+      const div=document.createElement("div");
+      const pos=pctPos(f,r);
+      div.className="cw-sq "+((f+r)%2===0?"dark":"light");
+      div.style.left=pos.left+"%"; div.style.top=pos.top+"%";
+      if(colFor(f)===0){ const lab=document.createElement("span"); lab.className="cw-coord cw-rank"; lab.textContent=r+1; div.appendChild(lab); }
+      if(rowFor(r)===7){ const lab=document.createElement("span"); lab.className="cw-coord cw-file"; lab.textContent="abcdefgh"[f]; div.appendChild(lab); }
+      squaresEl.appendChild(div);
+      squareEls[sqName]=div;
+    }
+  }
+  function updateNameplates(){
+    const bottomColor = orientation==="white" ? "White" : "Black";
+    const topColor = orientation==="white" ? "Black" : "White";
+    nameTop.textContent = g.headers[topColor] || topColor;
+    nameBottom.textContent = g.headers[bottomColor] || bottomColor;
+  }
+  function makePieceEl(piece){
+    const el=document.createElement("div");
+    el.className="cw-piece";
+    el.style.backgroundImage='url("'+PIECE_SVG[piece.color+piece.type]+'")';
+    return el;
+  }
+  function setPiecePos(el, f, r, animate){
+    const pos=pctPos(f,r);
+    el.style.transition=(animate && !reduceMotion) ? "left .18s ease, top .18s ease" : "none";
+    el.style.left=pos.left+"%"; el.style.top=pos.top+"%";
+  }
+  function fullRedrawPieces(){
+    piecesEl.innerHTML=""; pieceEls={};
+    const board=states[ply].board;
+    for(let r=0;r<8;r++) for(let f=0;f<8;f++){
+      const piece=board[r][f];
+      if(!piece) continue;
+      const el=makePieceEl(piece);
+      setPiecePos(el, f, r, false);
+      piecesEl.appendChild(el);
+      pieceEls["abcdefgh"[f]+(r+1)]=el;
+    }
+  }
+  function lastMoveSquares(state){
+    if(!state.lastMove) return [];
+    const lm=state.lastMove;
+    const sqs=[lm.from, lm.to];
+    if(lm.isCastle){ sqs.push(lm.rookFrom, lm.rookTo); }
+    if(lm.capturedSquare) sqs.push(lm.capturedSquare);
+    return sqs;
+  }
+  function updateHighlightSquares(){
+    Object.values(squareEls).forEach(el=>el.classList.remove("cw-lastmove"));
+    if(ply>0) lastMoveSquares(states[ply]).forEach(sq=>{ if(squareEls[sq]) squareEls[sq].classList.add("cw-lastmove"); });
+  }
   function highlightMove(){
     const prevActive = scope.querySelector(".move-san-editable.cw-active");
     if(prevActive) prevActive.classList.remove("cw-active");
@@ -609,53 +745,91 @@ function createChessWidget(container, g){
       if(span){ span.classList.add("cw-active"); if(span.scrollIntoView) span.scrollIntoView({block:"nearest"}); }
     }
   }
-  function render(){
-    boardEl.innerHTML="";
-    const board = states[ply].board;
-    const lastMove = states[ply].lastMove;
-    const lastSet = new Set(lastMove ? [lastMove.from, lastMove.to, lastMove.epCapturedSquare].filter(Boolean) : []);
-    const filesOrder = orientation==="white" ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0];
-    const ranksOrder = orientation==="white" ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
-    const frag=document.createDocumentFragment();
-    ranksOrder.forEach((r,ri)=>{
-      filesOrder.forEach((f,fi)=>{
-        const sq=document.createElement("div");
-        const sqName="abcdefgh"[f]+(r+1);
-        sq.className="cw-sq "+((f+r)%2===0?"dark":"light")+(lastSet.has(sqName)?" cw-lastmove":"");
-        const piece=board[r][f];
-        if(piece){
-          const p=document.createElement("div");
-          p.className="cw-piece";
-          p.style.backgroundImage='url("'+PIECE_SVG[piece.color+piece.type]+'")';
-          sq.appendChild(p);
-        }
-        if(fi===0){ const lab=document.createElement("span"); lab.className="cw-coord cw-rank"; lab.textContent=r+1; sq.appendChild(lab); }
-        if(ri===ranksOrder.length-1){ const lab=document.createElement("span"); lab.className="cw-coord cw-file"; lab.textContent="abcdefgh"[f]; sq.appendChild(lab); }
-        frag.appendChild(sq);
-      });
-    });
-    boardEl.appendChild(frag);
+  function updateButtons(){
     prevBtn.disabled = ply===0; firstBtn.disabled = ply===0;
     nextBtn.disabled = ply===states.length-1; lastBtn.disabled = ply===states.length-1;
-    highlightMove();
   }
-  function goToPly(p){
-    p=Math.max(0, Math.min(states.length-1, p));
-    boardWrap.focus({preventScroll:true});
-    if(p===ply) return;
-    ply=p; render();
+  function animateSingleStep(forward){
+    const state = forward ? states[ply] : states[ply+1];
+    const lm = state.lastMove;
+    if(!lm){ fullRedrawPieces(); return; }
+    if(forward && lm.capturedSquare && pieceEls[lm.capturedSquare]){
+      const capEl=pieceEls[lm.capturedSquare];
+      delete pieceEls[lm.capturedSquare];
+      capEl.style.transition="opacity .12s ease"; capEl.style.opacity="0";
+      setTimeout(()=>capEl.remove(), 150);
+    }
+    const fromKey = forward?lm.from:lm.to, toKey = forward?lm.to:lm.from;
+    const toRC = sqToRC(toKey);
+    const movingEl = pieceEls[fromKey];
+    if(movingEl){
+      delete pieceEls[fromKey];
+      setPiecePos(movingEl, toRC.f, toRC.r, true);
+      pieceEls[toKey]=movingEl;
+      if(lm.promo){
+        const targetType = forward ? lm.promo : "P";
+        const color = lm.piece.color;
+        setTimeout(()=>{ movingEl.style.backgroundImage='url("'+PIECE_SVG[color+targetType]+'")'; }, forward?150:0);
+      }
+    }
+    if(lm.isCastle){
+      const rFromKey = forward?lm.rookFrom:lm.rookTo, rToKey = forward?lm.rookTo:lm.rookFrom;
+      const rToRC = sqToRC(rToKey);
+      const rookEl = pieceEls[rFromKey];
+      if(rookEl){
+        delete pieceEls[rFromKey];
+        setPiecePos(rookEl, rToRC.f, rToRC.r, true);
+        pieceEls[rToKey]=rookEl;
+      }
+    }
+    if(!forward && lm.capturedPiece && lm.capturedSquare){
+      const capRC=sqToRC(lm.capturedSquare);
+      const el=makePieceEl(lm.capturedPiece);
+      setPiecePos(el, capRC.f, capRC.r, false);
+      el.style.opacity="0";
+      piecesEl.appendChild(el);
+      pieceEls[lm.capturedSquare]=el;
+      requestAnimationFrame(()=>{ el.style.transition="opacity .15s ease"; el.style.opacity="1"; });
+    }
+    playChessSound(classifyChessSound(state));
+  }
+  function goToPly(targetPly){
+    targetPly=Math.max(0, Math.min(states.length-1, targetPly));
+    try{ boardWrap.focus({preventScroll:true}); }catch(_){}
+    if(targetPly===ply) return;
+    const fromPly=ply;
+    const isStep=Math.abs(targetPly-fromPly)===1;
+    ply=targetPly;
+    if(isStep){ animateSingleStep(ply>fromPly); }
+    else { fullRedrawPieces(); if(ply>0) playChessSound(classifyChessSound(states[ply])); }
+    updateHighlightSquares();
+    updateButtons();
+    highlightMove();
   }
   prevBtn.addEventListener("click",()=>goToPly(ply-1));
   nextBtn.addEventListener("click",()=>goToPly(ply+1));
   firstBtn.addEventListener("click",()=>goToPly(0));
   lastBtn.addEventListener("click",()=>goToPly(states.length-1));
-  flipBtn.addEventListener("click",()=>{ orientation=orientation==="white"?"black":"white"; boardWrap.focus({preventScroll:true}); render(); });
+  flipBtn.addEventListener("click",()=>{
+    orientation = orientation==="white"?"black":"white";
+    renderSquares();
+    Object.entries(pieceEls).forEach(([sq, el])=>{ const rc=sqToRC(sq); setPiecePos(el, rc.f, rc.r, false); });
+    updateHighlightSquares();
+    updateNameplates();
+    try{ boardWrap.focus({preventScroll:true}); }catch(_){}
+  });
   boardWrap.addEventListener("keydown",(e)=>{
     if(e.key==="ArrowLeft"){ e.preventDefault(); goToPly(ply-1); }
     else if(e.key==="ArrowRight"){ e.preventDefault(); goToPly(ply+1); }
   });
-  render();
-  try{ boardWrap.focus({preventScroll:true}); }catch(_){}
+
+  renderSquares();
+  fullRedrawPieces();
+  updateHighlightSquares();
+  updateButtons();
+  highlightMove();
+  updateNameplates();
+
   const widget = { goToPly, refreshHighlight: highlightMove };
   container._chessWidget = widget;
   return widget;

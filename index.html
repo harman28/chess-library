@@ -330,6 +330,8 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     <input type="text" id="editSite" autocomplete="off">
     <label>Date</label>
     <input type="text" id="editDate" placeholder="YYYY.MM.DD" autocomplete="off">
+    <label>Time Control</label>
+    <input type="text" id="editTimeControl" placeholder="e.g. 5400+30 (seconds) or 90+30 (minutes)" autocomplete="off">
     <label>White</label>
     <input type="text" id="editWhite" autocomplete="off">
     <label>Black</label>
@@ -616,6 +618,7 @@ function openEditGameModal(g){
   document.getElementById("editEvent").value=g.headers.Event||"";
   document.getElementById("editSite").value=g.headers.Site||"";
   document.getElementById("editDate").value=g.headers.Date||"";
+  document.getElementById("editTimeControl").value=g.headers.TimeControl||"";
   document.getElementById("editWhite").value=g.headers.White||"";
   document.getElementById("editBlack").value=g.headers.Black||"";
   document.getElementById("editResult").value=["1-0","0-1","1/2-1/2","*"].includes(g.headers.Result) ? g.headers.Result : "*";
@@ -631,6 +634,7 @@ document.getElementById("editGameSaveBtn").addEventListener("click",()=>{
     Event: document.getElementById("editEvent").value.trim(),
     Site: document.getElementById("editSite").value.trim(),
     Date: document.getElementById("editDate").value.trim(),
+    TimeControl: document.getElementById("editTimeControl").value.trim(),
     White: document.getElementById("editWhite").value.trim(),
     Black: document.getElementById("editBlack").value.trim(),
     Result: document.getElementById("editResult").value,

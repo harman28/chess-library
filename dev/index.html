@@ -622,6 +622,7 @@ function render(){
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateActionButtons(); renderMobileList(filtered); }
+let lastCheckedMobileIdx=null;
 function renderMobileList(filtered){
   const list=document.getElementById("mobileList"); if(!list) return;
   list.innerHTML="";
@@ -661,11 +662,25 @@ function renderMobileList(filtered){
     }, {passive:true});
     card.addEventListener("touchend", clearLongPressTimer);
     card.addEventListener("touchcancel", clearLongPressTimer);
-    card.addEventListener("click",()=>{
+    card.addEventListener("click",(e)=>{
       if(longPressFired){ longPressFired=false; return; }
       if(selectionMode){
-        if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
-        const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
+        if(e.shiftKey && lastCheckedMobileIdx!==null){
+          const cards=[...document.querySelectorAll("#mobileList .mcard")];
+          const idxs=cards.map(c=>parseInt(c.dataset.i));
+          const fromPos=idxs.indexOf(lastCheckedMobileIdx), toPos=idxs.indexOf(g.idx);
+          if(fromPos!==-1 && toPos!==-1){
+            const [start,end]=fromPos<toPos?[fromPos,toPos]:[toPos,fromPos];
+            for(let p=start;p<=end;p++){
+              selected.add(idxs[p]);
+              const cb=cards[p].querySelector(".mcard-cb"); if(cb) cb.checked=true;
+            }
+          }
+        } else {
+          if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
+          const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
+        }
+        lastCheckedMobileIdx=g.idx;
         return;
       }
       openGameSheet(g);
@@ -930,6 +945,21 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
+  const cb=e.target.closest("input[type='checkbox'][data-i]");
+  if(cb){
+    const i=parseInt(cb.dataset.i);
+    if(e.shiftKey && lastCheckedRowIdx!==null){
+      const rowCbs=[...document.querySelectorAll("#rows input[type='checkbox'][data-i]")];
+      const idxs=rowCbs.map(r=>parseInt(r.dataset.i));
+      const fromPos=idxs.indexOf(lastCheckedRowIdx), toPos=idxs.indexOf(i);
+      if(fromPos!==-1 && toPos!==-1){
+        const [start,end]=fromPos<toPos?[fromPos,toPos]:[toPos,fromPos];
+        for(let p=start;p<=end;p++){ selected.add(idxs[p]); rowCbs[p].checked=true; }
+      }
+    }
+    lastCheckedRowIdx=i;
+    return;
+  }
   if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
   const row=e.target.closest("tr.game"); if(!row) return;
   const i=parseInt(row.dataset.i);
@@ -938,6 +968,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   el.classList.toggle("open");
   if(opening){ const g=games.find(x=>x.idx===i); const container=el.querySelector(".lichess-embed-wrap"); if(g&&container) ensureLichessEmbed(g, container); }
 });
+let lastCheckedRowIdx=null;
 document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });
 document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListener("click",()=>{
   const group=btn.dataset.group; const filter=btn.dataset.filter; const wasActive=btn.classList.contains("active");
@@ -979,6 +1010,8 @@ function exitSelectionMode(){
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   document.querySelectorAll("#mobileList input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   selected.clear();
+  lastCheckedRowIdx=null;
+  lastCheckedMobileIdx=null;
   updateActionButtons();
 }
 const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];

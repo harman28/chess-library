@@ -241,9 +241,10 @@ body.sheet-open .game-sheet{transform:translateY(0)}
       <button id="saveLibraryBtn" type="button" class="primary">Save My Library</button>
     </div>
     <button id="addGamesBtn" type="button">Add Game(s)</button>
+    <button id="enterSelectionBtn" type="button">Edit</button>
     <button id="bulkEditBtn" type="button" class="hidden">Edit</button>
-    <button id="exportBtn" type="button">Export</button>
-    <button id="deleteBtn" type="button" class="danger">Delete</button>
+    <button id="exportBtn" type="button" class="hidden">Export</button>
+    <button id="deleteBtn" type="button" class="danger hidden">Delete</button>
     <button id="cancelSelectionBtn" type="button" class="hidden">Cancel</button>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
     <div class="settings-wrap">
@@ -546,8 +547,11 @@ function loadGames(pgnText, name){
   sortGamesByDate();
   initColumnState();
   document.getElementById("table").classList.remove("selecting");
-  document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
-  document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("enterSelectionBtn").classList.remove("hidden");
+  document.getElementById("bulkEditBtn").classList.add("hidden");
+  document.getElementById("exportBtn").classList.add("hidden");
+  document.getElementById("deleteBtn").classList.add("hidden"); document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("cancelSelectionBtn").classList.add("hidden");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
   window.scrollTo(0,0);
   render();
@@ -650,7 +654,7 @@ function renderMobileList(filtered){
       longPressTimer=setTimeout(()=>{
         if(longPressMoved) return;
         longPressFired=true;
-        if(!selectionMode) enterSelectionMode("export");
+        if(!selectionMode) enterSelectionMode();
         if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
         const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
         if(navigator.vibrate) navigator.vibrate(15);
@@ -982,18 +986,20 @@ document.getElementById("searchInput").addEventListener("input",(e)=>{ searchQue
 function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
 function updateActionButtons(){
   const noGames=games.length===0;
-  document.getElementById("exportBtn").disabled = noGames || selectionMode==="delete";
-  document.getElementById("deleteBtn").disabled = noGames || selectionMode==="export";
+  document.getElementById("exportBtn").disabled = noGames;
+  document.getElementById("deleteBtn").disabled = noGames;
 }
-function enterSelectionMode(mode){
-  selectionMode=mode;
+function enterSelectionMode(){
+  selectionMode=true;
   document.getElementById("table").classList.add("selecting");
   document.getElementById("mobileList").classList.add("selecting");
   document.getElementById("mobileSelectAllRow").classList.add("selecting");
+  document.getElementById("enterSelectionBtn").classList.add("hidden");
   document.getElementById("bulkEditBtn").classList.remove("hidden");
+  document.getElementById("exportBtn").classList.remove("hidden");
+  document.getElementById("deleteBtn").classList.remove("hidden");
   document.getElementById("cancelSelectionBtn").classList.remove("hidden");
-  if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
-  else { document.getElementById("deleteBtn").classList.add("armed"); }
+  document.getElementById("deleteBtn").classList.add("armed");
   updateActionButtons();
 }
 function exitSelectionMode(){
@@ -1001,9 +1007,11 @@ function exitSelectionMode(){
   document.getElementById("table").classList.remove("selecting");
   document.getElementById("mobileList").classList.remove("selecting");
   document.getElementById("mobileSelectAllRow").classList.remove("selecting");
+  document.getElementById("enterSelectionBtn").classList.remove("hidden");
   document.getElementById("bulkEditBtn").classList.add("hidden");
+  document.getElementById("exportBtn").classList.add("hidden");
+  document.getElementById("deleteBtn").classList.add("hidden");
   document.getElementById("cancelSelectionBtn").classList.add("hidden");
-  document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("selectAll").checked=false;
   document.getElementById("mobileSelectAll").checked=false;
@@ -1022,8 +1030,10 @@ function buildPgnForGames(list){ if(!list.length) return "";
     return lines.join("\n")+"\n\n"+g.pgn.split("\n").slice(7).join("\n").trim(); }).join("\n\n")+"\n"; }
 function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.has(g.idx)):games; return buildPgnForGames(chosen); }
 function downloadBlob(text, filename){ const blob=new Blob([text],{type:"application/x-chess-pgn"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+document.getElementById("enterSelectionBtn").addEventListener("click",()=>{
+  enterSelectionMode();
+});
 document.getElementById("exportBtn").addEventListener("click",()=>{
-  if(selectionMode!=="export"){ enterSelectionMode("export"); return; }
   if(selected.size===0){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox'], #mobileList input[type='checkbox']").forEach(cb=>cb.checked=true);
     games.forEach(g=>selected.add(g.idx)); }
   const pgnText=buildExport();
@@ -1031,9 +1041,8 @@ document.getElementById("exportBtn").addEventListener("click",()=>{
   exitSelectionMode();
 });
 document.getElementById("deleteBtn").addEventListener("click",()=>{
-  if(selectionMode!=="delete"){ enterSelectionMode("delete"); return; }
   const checkedCount=selected.size;
-  if(checkedCount===0){ exitSelectionMode(); return; }
+  if(checkedCount===0){ alert("No games selected."); return; }
   if(!confirm("Delete "+checkedCount+" selected game"+(checkedCount===1?"":"s")+"? This cannot be undone.")) return;
   games=games.filter(g=>!selected.has(g.idx));
   exitSelectionMode();

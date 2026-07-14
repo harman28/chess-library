@@ -1,4 +1,14 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chess Library</title><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20icon%22%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230f172a%22/%3E%0A%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%3C%21--%20book%201%3A%20red%20--%3E%0A%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C%21--%20book%202%3A%20blue%2C%20thick%20--%3E%0A%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C%21--%20rook%3A%20gold%2C%20tallest%2C%20annotated%20--%3E%0A%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%3C%21--%20book%204%3A%20green%20--%3E%0A%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C%21--%20book%205%3A%20cream%2C%20slim%20--%3E%0A%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%3C/svg%3E%0A"><style>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chess Library</title><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20icon%22%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230f172a%22/%3E%0A%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%3C%21--%20book%201%3A%20red%20--%3E%0A%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C%21--%20book%202%3A%20blue%2C%20thick%20--%3E%0A%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C%21--%20rook%3A%20gold%2C%20tallest%2C%20annotated%20--%3E%0A%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%3C%21--%20book%204%3A%20green%20--%3E%0A%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C%21--%20book%205%3A%20cream%2C%20slim%20--%3E%0A%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%3C/svg%3E%0A">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Chess Library">
+<meta property="og:description" content="A private viewer for your over-the-board games. Filter, browse, and re-live your games, or open an analysis board.">
+<meta property="og:image" content="https://library.chessscenes.com/og-image.png">
+<meta property="og:url" content="https://library.chessscenes.com/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Chess Library">
+<meta name="twitter:description" content="A private viewer for your over-the-board games.">
+<meta name="twitter:image" content="https://library.chessscenes.com/og-image.png">
+<style>
 :root{
   --bg:#0f172a; --surface:#111827; --surface-alt:#1e293b; --surface-deep:#020617;
   --border:#334155; --border-hover:#475569;
@@ -241,9 +251,10 @@ body.sheet-open .game-sheet{transform:translateY(0)}
       <button id="saveLibraryBtn" type="button" class="primary">Save My Library</button>
     </div>
     <button id="addGamesBtn" type="button">Add Game(s)</button>
+    <button id="enterSelectionBtn" type="button">Edit</button>
     <button id="bulkEditBtn" type="button" class="hidden">Edit</button>
-    <button id="exportBtn" type="button">Export</button>
-    <button id="deleteBtn" type="button" class="danger">Delete</button>
+    <button id="exportBtn" type="button" class="hidden">Export</button>
+    <button id="deleteBtn" type="button" class="danger hidden">Delete</button>
     <button id="cancelSelectionBtn" type="button" class="hidden">Cancel</button>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
     <div class="settings-wrap">
@@ -546,8 +557,11 @@ function loadGames(pgnText, name){
   sortGamesByDate();
   initColumnState();
   document.getElementById("table").classList.remove("selecting");
-  document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
-  document.getElementById("deleteBtn").textContent="Delete"; document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("enterSelectionBtn").classList.remove("hidden");
+  document.getElementById("bulkEditBtn").classList.add("hidden");
+  document.getElementById("exportBtn").classList.add("hidden");
+  document.getElementById("deleteBtn").classList.add("hidden"); document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("cancelSelectionBtn").classList.add("hidden");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
   window.scrollTo(0,0);
   render();
@@ -622,6 +636,7 @@ function render(){
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateActionButtons(); renderMobileList(filtered); }
+let lastCheckedMobileIdx=null;
 function renderMobileList(filtered){
   const list=document.getElementById("mobileList"); if(!list) return;
   list.innerHTML="";
@@ -649,7 +664,7 @@ function renderMobileList(filtered){
       longPressTimer=setTimeout(()=>{
         if(longPressMoved) return;
         longPressFired=true;
-        if(!selectionMode) enterSelectionMode("export");
+        if(!selectionMode) enterSelectionMode();
         if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
         const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
         if(navigator.vibrate) navigator.vibrate(15);
@@ -661,11 +676,25 @@ function renderMobileList(filtered){
     }, {passive:true});
     card.addEventListener("touchend", clearLongPressTimer);
     card.addEventListener("touchcancel", clearLongPressTimer);
-    card.addEventListener("click",()=>{
+    card.addEventListener("click",(e)=>{
       if(longPressFired){ longPressFired=false; return; }
       if(selectionMode){
-        if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
-        const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
+        if(e.shiftKey && lastCheckedMobileIdx!==null){
+          const cards=[...document.querySelectorAll("#mobileList .mcard")];
+          const idxs=cards.map(c=>parseInt(c.dataset.i));
+          const fromPos=idxs.indexOf(lastCheckedMobileIdx), toPos=idxs.indexOf(g.idx);
+          if(fromPos!==-1 && toPos!==-1){
+            const [start,end]=fromPos<toPos?[fromPos,toPos]:[toPos,fromPos];
+            for(let p=start;p<=end;p++){
+              selected.add(idxs[p]);
+              const cb=cards[p].querySelector(".mcard-cb"); if(cb) cb.checked=true;
+            }
+          }
+        } else {
+          if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
+          const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
+        }
+        lastCheckedMobileIdx=g.idx;
         return;
       }
       openGameSheet(g);
@@ -930,6 +959,21 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
+  const cb=e.target.closest("input[type='checkbox'][data-i]");
+  if(cb){
+    const i=parseInt(cb.dataset.i);
+    if(e.shiftKey && lastCheckedRowIdx!==null){
+      const rowCbs=[...document.querySelectorAll("#rows input[type='checkbox'][data-i]")];
+      const idxs=rowCbs.map(r=>parseInt(r.dataset.i));
+      const fromPos=idxs.indexOf(lastCheckedRowIdx), toPos=idxs.indexOf(i);
+      if(fromPos!==-1 && toPos!==-1){
+        const [start,end]=fromPos<toPos?[fromPos,toPos]:[toPos,fromPos];
+        for(let p=start;p<=end;p++){ selected.add(idxs[p]); rowCbs[p].checked=true; }
+      }
+    }
+    lastCheckedRowIdx=i;
+    return;
+  }
   if(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON") return;
   const row=e.target.closest("tr.game"); if(!row) return;
   const i=parseInt(row.dataset.i);
@@ -938,6 +982,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   el.classList.toggle("open");
   if(opening){ const g=games.find(x=>x.idx===i); const container=el.querySelector(".lichess-embed-wrap"); if(g&&container) ensureLichessEmbed(g, container); }
 });
+let lastCheckedRowIdx=null;
 document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });
 document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListener("click",()=>{
   const group=btn.dataset.group; const filter=btn.dataset.filter; const wasActive=btn.classList.contains("active");
@@ -951,18 +996,20 @@ document.getElementById("searchInput").addEventListener("input",(e)=>{ searchQue
 function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
 function updateActionButtons(){
   const noGames=games.length===0;
-  document.getElementById("exportBtn").disabled = noGames || selectionMode==="delete";
-  document.getElementById("deleteBtn").disabled = noGames || selectionMode==="export";
+  document.getElementById("exportBtn").disabled = noGames;
+  document.getElementById("deleteBtn").disabled = noGames;
 }
-function enterSelectionMode(mode){
-  selectionMode=mode;
+function enterSelectionMode(){
+  selectionMode=true;
   document.getElementById("table").classList.add("selecting");
   document.getElementById("mobileList").classList.add("selecting");
   document.getElementById("mobileSelectAllRow").classList.add("selecting");
+  document.getElementById("enterSelectionBtn").classList.add("hidden");
   document.getElementById("bulkEditBtn").classList.remove("hidden");
+  document.getElementById("exportBtn").classList.remove("hidden");
+  document.getElementById("deleteBtn").classList.remove("hidden");
   document.getElementById("cancelSelectionBtn").classList.remove("hidden");
-  if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
-  else { document.getElementById("deleteBtn").classList.add("armed"); }
+  document.getElementById("deleteBtn").classList.add("armed");
   updateActionButtons();
 }
 function exitSelectionMode(){
@@ -970,15 +1017,19 @@ function exitSelectionMode(){
   document.getElementById("table").classList.remove("selecting");
   document.getElementById("mobileList").classList.remove("selecting");
   document.getElementById("mobileSelectAllRow").classList.remove("selecting");
+  document.getElementById("enterSelectionBtn").classList.remove("hidden");
   document.getElementById("bulkEditBtn").classList.add("hidden");
+  document.getElementById("exportBtn").classList.add("hidden");
+  document.getElementById("deleteBtn").classList.add("hidden");
   document.getElementById("cancelSelectionBtn").classList.add("hidden");
-  document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("selectAll").checked=false;
   document.getElementById("mobileSelectAll").checked=false;
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   document.querySelectorAll("#mobileList input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
   selected.clear();
+  lastCheckedRowIdx=null;
+  lastCheckedMobileIdx=null;
   updateActionButtons();
 }
 const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];
@@ -989,8 +1040,10 @@ function buildPgnForGames(list){ if(!list.length) return "";
     return lines.join("\n")+"\n\n"+g.pgn.split("\n").slice(7).join("\n").trim(); }).join("\n\n")+"\n"; }
 function buildExport(){ const chosen=selected.size>0?games.filter(g=>selected.has(g.idx)):games; return buildPgnForGames(chosen); }
 function downloadBlob(text, filename){ const blob=new Blob([text],{type:"application/x-chess-pgn"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); }
+document.getElementById("enterSelectionBtn").addEventListener("click",()=>{
+  enterSelectionMode();
+});
 document.getElementById("exportBtn").addEventListener("click",()=>{
-  if(selectionMode!=="export"){ enterSelectionMode("export"); return; }
   if(selected.size===0){ alert("No games selected. Downloading all."); document.querySelectorAll("#rows input[type='checkbox'], #mobileList input[type='checkbox']").forEach(cb=>cb.checked=true);
     games.forEach(g=>selected.add(g.idx)); }
   const pgnText=buildExport();
@@ -998,9 +1051,8 @@ document.getElementById("exportBtn").addEventListener("click",()=>{
   exitSelectionMode();
 });
 document.getElementById("deleteBtn").addEventListener("click",()=>{
-  if(selectionMode!=="delete"){ enterSelectionMode("delete"); return; }
   const checkedCount=selected.size;
-  if(checkedCount===0){ exitSelectionMode(); return; }
+  if(checkedCount===0){ alert("No games selected."); return; }
   if(!confirm("Delete "+checkedCount+" selected game"+(checkedCount===1?"":"s")+"? This cannot be undone.")) return;
   games=games.filter(g=>!selected.has(g.idx));
   exitSelectionMode();

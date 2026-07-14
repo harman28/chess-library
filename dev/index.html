@@ -238,6 +238,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     <button id="bulkEditBtn" type="button" class="hidden">Edit</button>
     <button id="exportBtn" type="button">Export</button>
     <button id="deleteBtn" type="button" class="danger">Delete</button>
+    <button id="cancelSelectionBtn" type="button" class="hidden">Cancel</button>
     <button id="reloadBtn" type="button" class="danger">Reload</button>
     <div class="settings-wrap">
       <button id="settingsBtn" type="button" class="icon-btn" title="Settings">⚙</button>
@@ -728,6 +729,7 @@ document.getElementById("bulkEditBtn").addEventListener("click",()=>{
   if(selected.size===0){ alert("No games selected."); return; }
   openBulkEditModal([...selected]);
 });
+document.getElementById("cancelSelectionBtn").addEventListener("click", exitSelectionMode);
 document.getElementById("editGameSaveBtn").addEventListener("click",()=>{
   const eventVal=document.getElementById("editEvent").value.trim();
   const siteVal=document.getElementById("editSite").value.trim();
@@ -952,6 +954,7 @@ function enterSelectionMode(mode){
   document.getElementById("mobileList").classList.add("selecting");
   document.getElementById("mobileSelectAllRow").classList.add("selecting");
   document.getElementById("bulkEditBtn").classList.remove("hidden");
+  document.getElementById("cancelSelectionBtn").classList.remove("hidden");
   if(mode==="export"){ document.getElementById("exportBtn").textContent="Download"; document.getElementById("exportBtn").classList.add("primary"); }
   else { document.getElementById("deleteBtn").classList.add("armed"); }
   updateActionButtons();
@@ -962,6 +965,7 @@ function exitSelectionMode(){
   document.getElementById("mobileList").classList.remove("selecting");
   document.getElementById("mobileSelectAllRow").classList.remove("selecting");
   document.getElementById("bulkEditBtn").classList.add("hidden");
+  document.getElementById("cancelSelectionBtn").classList.add("hidden");
   document.getElementById("exportBtn").textContent="Export"; document.getElementById("exportBtn").classList.remove("primary");
   document.getElementById("deleteBtn").classList.remove("armed");
   document.getElementById("selectAll").checked=false;

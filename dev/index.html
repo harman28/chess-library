@@ -8,6 +8,7 @@
   --danger-strong:#dc2626; --danger-strong-hover:#b91c1c; --danger-hover-bg:#3f1d1d; --danger-text:#fff;
   --moves-col:#cbd5e1; --date-col:#a5f3fc; --hover-row:#1f2937;
   --shadow:rgba(0,0,0,.4);
+  --date-icon-filter:invert(1) brightness(1.3);
 }
 :root[data-theme="light"]{
   --bg:#f4f6fa; --surface:#ffffff; --surface-alt:#e8ecf3; --surface-deep:#eef1f6;
@@ -18,6 +19,7 @@
   --danger-strong:#dc2626; --danger-strong-hover:#b91c1c; --danger-hover-bg:#fee2e2; --danger-text:#fff;
   --moves-col:#475569; --date-col:#0891b2; --hover-row:#f1f5f9;
   --shadow:rgba(30,41,59,.18);
+  --date-icon-filter:none;
 }
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2rem;background:var(--bg);color:var(--text)}
 h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:600}
@@ -107,8 +109,9 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .modal-card label{color:var(--text-dim);font-size:.85rem;font-weight:500}
 .modal-card input[type="file"]{color:var(--text);font-size:.85rem}
 .modal-card textarea{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%}
-.modal-card input[type="text"],.modal-card select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
-.modal-card input[type="text"]:focus,.modal-card select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.modal-card input[type="text"],.modal-card input[type="date"],.modal-card select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
+.modal-card input[type="text"]:focus,.modal-card input[type="date"]:focus,.modal-card select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.modal-card input[type="date"]::-webkit-calendar-picker-indicator{filter:var(--date-icon-filter)}
 .modal-card textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.4rem}
 .modal-actions button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.88rem}
@@ -335,7 +338,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     <label>Site</label>
     <input type="text" id="editSite" autocomplete="off">
     <label>Date</label>
-    <input type="text" id="editDate" placeholder="YYYY.MM.DD" autocomplete="off">
+    <input type="date" id="editDate">
     <label>Time Control</label>
     <input type="text" id="editTimeControl" placeholder="e.g. 5400+30 (seconds) or 90+30 (minutes)" autocomplete="off">
     <div id="editWhiteBlackWrap">
@@ -499,6 +502,20 @@ function dateSortKey(dateStr){
   const parts=dateStr.split(".");
   const y=parseInt(parts[0],10), m=parseInt(parts[1],10), d=parseInt(parts[2],10);
   return (isNaN(y)?0:y)*10000 + (isNaN(m)?0:m)*100 + (isNaN(d)?0:d);
+}
+function pgnDateToIso(pgnDate){
+  if(!pgnDate) return "";
+  const m=pgnDate.match(/^(\d{4})\.(\d{2})\.(\d{2})$/);
+  if(!m) return "";
+  const y=parseInt(m[1],10), mo=parseInt(m[2],10), d=parseInt(m[3],10);
+  if(mo<1||mo>12||d<1||d>31) return "";
+  const dt=new Date(Date.UTC(y,mo-1,d));
+  if(dt.getUTCFullYear()!==y || dt.getUTCMonth()!==mo-1 || dt.getUTCDate()!==d) return "";
+  return pgnDate.replace(/\./g,"-");
+}
+function isoDateToPgn(isoDate){
+  if(!isoDate) return "";
+  return isoDate.replace(/-/g,".");
 }
 function roundSortKey(roundStr){
   if(!roundStr) return -Infinity;
@@ -684,7 +701,7 @@ function openEditGameModal(g){
   document.getElementById("editWhiteBlackWrap").classList.remove("hidden");
   document.getElementById("editEvent").value=g.headers.Event||"";
   document.getElementById("editSite").value=g.headers.Site||"";
-  document.getElementById("editDate").value=g.headers.Date||"";
+  document.getElementById("editDate").value=pgnDateToIso(g.headers.Date);
   document.getElementById("editTimeControl").value=g.headers.TimeControl||"";
   document.getElementById("editWhite").value=g.headers.White||"";
   document.getElementById("editBlack").value=g.headers.Black||"";
@@ -714,7 +731,7 @@ document.getElementById("bulkEditBtn").addEventListener("click",()=>{
 document.getElementById("editGameSaveBtn").addEventListener("click",()=>{
   const eventVal=document.getElementById("editEvent").value.trim();
   const siteVal=document.getElementById("editSite").value.trim();
-  const dateVal=document.getElementById("editDate").value.trim();
+  const dateVal=isoDateToPgn(document.getElementById("editDate").value);
   const tcVal=document.getElementById("editTimeControl").value.trim();
   const resultVal=document.getElementById("editResult").value;
   if(bulkEditIndices){

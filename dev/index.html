@@ -75,6 +75,8 @@ tr.game:hover td{background:var(--surface-alt)}
 .move-formatted{font-size:.88rem;line-height:1.7;padding-right:1.6rem;color:var(--text);word-break:break-word}
 .move-num{color:var(--text-faint);font-weight:600}
 .move-san{color:var(--text)}
+.move-san-editable{cursor:pointer;padding:.15rem .25rem;margin:-.15rem -.25rem;border-radius:.2rem}
+.move-san-editable:hover{background:var(--surface-alt)}
 .move-result{color:var(--result);font-weight:700}
 .move-comment{display:block;background:rgba(56,189,248,.09);border-left:3px solid var(--accent);color:var(--comment);padding:.4rem .6rem;margin:.35rem 0;border-radius:.25rem;font-style:italic}
 #columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.6rem;width:15rem;max-width:calc(100vw - 2rem);max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
@@ -111,7 +113,9 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.4rem}
 .modal-actions button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.88rem}
 .modal-actions button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+.modal-actions button.danger{color:var(--loss)}
 .modal-actions button:hover{border-color:var(--border-hover)}
+.modal-actions button.danger:hover{background:var(--danger-hover-bg);border-color:var(--loss)}
 .cb-col{display:none}#table.selecting .cb-col{display:table-cell}
 .toolbar button.danger.armed{background:var(--danger-strong);color:var(--danger-text);border-color:var(--danger-strong);font-weight:600}
 .toolbar button.danger.armed:hover{background:var(--danger-strong-hover);border-color:var(--danger-strong-hover)}
@@ -354,6 +358,17 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
 </div>
+<div id="editCommentModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2 id="editCommentTitle">Comment</h2>
+    <textarea id="editCommentText" rows="4" placeholder="Add a comment for this move…"></textarea>
+    <div class="modal-actions">
+      <button id="editCommentDeleteBtn" type="button" class="danger" style="margin-right:auto">Delete</button>
+      <button id="editCommentCancelBtn" type="button">Cancel</button>
+      <button id="editCommentSaveBtn" type="button" class="primary">Save</button>
+    </div>
+  </div>
+</div>
 <script>
 let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let selectionMode = null; let searchQuery = "";
 function gameMatchesSearch(g){
@@ -410,25 +425,67 @@ function cleanCommentText(text){
     .replace(/\s+/g, " ")
     .trim();
 }
-function formatMovesWithComments(movetext){
-  if(!movetext) return "";
+function tokenizeMovetext(movetext){
   const re=/(\d+\.(?:\.\.)?)|(\{[^}]*\})|(\S+)/g;
-  let html=""; let lineOpen=false; let m;
+  const tokens=[]; let m;
   while((m=re.exec(movetext))!==null){
-    if(m[2]){
-      const cleaned=cleanCommentText(m[2].slice(1,-1));
+    if(m[2]){ tokens.push({type:"comment", raw:m[2], start:m.index, end:m.index+m[0].length}); continue; }
+    const text=m[1]||m[3];
+    let type="san";
+    if(m[1]) type="num";
+    else if(/^(1-0|0-1|1\/2-1\/2|\*)$/.test(text)) type="result";
+    tokens.push({type, text, start:m.index, end:m.index+m[0].length});
+  }
+  return tokens;
+}
+function getMoveCommentInfo(movetext, moveIdx){
+  const tokens=tokenizeMovetext(movetext);
+  let cur=-1;
+  for(let i=0;i<tokens.length;i++){
+    if(tokens[i].type!=="san") continue;
+    cur++;
+    if(cur!==moveIdx) continue;
+    const tok=tokens[i]; const next=tokens[i+1];
+    if(next && next.type==="comment"){
+      return { sanText:tok.text, insertAt:tok.end, hasComment:true, commentStart:next.start, commentEnd:next.end, commentText:cleanCommentText(next.raw.slice(1,-1)) };
+    }
+    return { sanText:tok.text, insertAt:tok.end, hasComment:false, commentText:"" };
+  }
+  return null;
+}
+function applyCommentEdit(movetext, moveIdx, newText){
+  const info=getMoveCommentInfo(movetext, moveIdx);
+  if(!info) return movetext;
+  const trimmed=newText.trim();
+  if(info.hasComment){
+    if(!trimmed){
+      let start=info.commentStart;
+      if(movetext[start-1]===" ") start--;
+      return movetext.slice(0,start)+movetext.slice(info.commentEnd);
+    }
+    return movetext.slice(0,info.commentStart)+"{"+trimmed+"}"+movetext.slice(info.commentEnd);
+  }
+  if(!trimmed) return movetext;
+  return movetext.slice(0,info.insertAt)+" {"+trimmed+"}"+movetext.slice(info.insertAt);
+}
+function formatMovesWithComments(movetext, gameIdx){
+  if(!movetext) return "";
+  const tokens=tokenizeMovetext(movetext);
+  let html=""; let lineOpen=false; let moveIdx=0;
+  tokens.forEach(t=>{
+    if(t.type==="comment"){
+      const cleaned=cleanCommentText(t.raw.slice(1,-1));
       if(cleaned){
         if(lineOpen){ html+="</div>"; lineOpen=false; }
         html+=`<div class="move-comment">${esc(cleaned)}</div>`;
       }
-    } else {
-      if(!lineOpen){ html+=`<div class="move-line">`; lineOpen=true; }
-      const text=m[1]||m[3];
-      if(m[1]) html+=`<span class="move-num">${esc(text)}</span> `;
-      else if(/^(1-0|0-1|1\/2-1\/2|\*)$/.test(text)) html+=`<span class="move-result">${esc(text)}</span> `;
-      else html+=`<span class="move-san">${esc(text)}</span> `;
+      return;
     }
-  }
+    if(!lineOpen){ html+=`<div class="move-line">`; lineOpen=true; }
+    if(t.type==="num") html+=`<span class="move-num">${esc(t.text)}</span> `;
+    else if(t.type==="result") html+=`<span class="move-result">${esc(t.text)}</span> `;
+    else { html+=`<span class="move-san move-san-editable" data-game-idx="${gameIdx}" data-move-idx="${moveIdx}" role="button" tabindex="0">${esc(t.text)}</span> `; moveIdx++; }
+  });
   if(lineOpen) html+="</div>";
   return html;
 }
@@ -538,7 +595,7 @@ function render(){
       +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn" title="Copies the PGN, then opens chess.com to paste it in">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
-    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
+    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateActionButtons(); renderMobileList(filtered); }
 function renderMobileList(filtered){
@@ -601,7 +658,7 @@ function openGameSheet(g){
   document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
   document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:var(--result)">${esc(g.headers.Result||"")}</span>`;
   const body=document.getElementById("sheetBody");
-  body.innerHTML=`<div class="sheet-embed-sticky"><div class="lichess-embed-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext)}</div></div>`;
+  body.innerHTML=`<div class="sheet-embed-sticky"><div class="lichess-embed-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div>`;
   ensureLichessEmbed(g, body.querySelector(".lichess-embed-wrap"));
   document.body.classList.add("sheet-open");
   history.pushState({sheet:true},"");
@@ -692,6 +749,49 @@ document.getElementById("editGameSaveBtn").addEventListener("click",()=>{
 document.getElementById("sheetEditBtn").addEventListener("click",()=>{
   const g=games.find(x=>x.idx===currentSheetGameIdx); if(g) openEditGameModal(g);
 });
+document.getElementById("sheetBody").addEventListener("click",(e)=>{
+  const moveSpan=e.target.closest(".move-san-editable");
+  if(moveSpan){ openCommentModal(parseInt(moveSpan.dataset.gameIdx), parseInt(moveSpan.dataset.moveIdx)); }
+});
+let commentEditGameIdx=null, commentEditMoveIdx=null;
+function openCommentModal(gameIdx, moveIdx){
+  const g=games.find(x=>x.idx===gameIdx); if(!g) return;
+  const info=getMoveCommentInfo(g.movetext, moveIdx); if(!info) return;
+  commentEditGameIdx=gameIdx; commentEditMoveIdx=moveIdx;
+  document.getElementById("editCommentTitle").textContent="Comment after "+info.sanText;
+  document.getElementById("editCommentText").value=info.commentText;
+  document.getElementById("editCommentDeleteBtn").classList.toggle("hidden", !info.hasComment);
+  document.getElementById("editCommentModal").classList.remove("hidden");
+  document.getElementById("editCommentText").focus();
+}
+function closeCommentModal(){ document.getElementById("editCommentModal").classList.add("hidden"); commentEditGameIdx=null; commentEditMoveIdx=null; }
+function refreshOpenDetailViews(gameIdx){
+  const g=games.find(x=>x.idx===gameIdx); if(!g) return;
+  const rowFormatted=document.querySelector("#pgnrow-"+gameIdx+" .move-formatted");
+  if(rowFormatted) rowFormatted.innerHTML=formatMovesWithComments(g.movetext, g.idx);
+  if(document.body.classList.contains("sheet-open") && currentSheetGameIdx===gameIdx){
+    const sheetFormatted=document.querySelector(".sheet-moves .move-formatted");
+    if(sheetFormatted) sheetFormatted.innerHTML=formatMovesWithComments(g.movetext, g.idx);
+  }
+}
+function saveCommentEdit(newText){
+  const i=games.findIndex(x=>x.idx===commentEditGameIdx); if(i===-1){ closeCommentModal(); return; }
+  const g=games[i];
+  const newMovetext=applyCommentEdit(g.movetext, commentEditMoveIdx, newText);
+  const gameIdx=g.idx;
+  games[i]=buildGameRecord({headers:g.headers, movetext:newMovetext}, g.idx, playerName);
+  closeCommentModal();
+  refreshOpenDetailViews(gameIdx);
+  saveToStorage();
+}
+document.getElementById("editCommentSaveBtn").addEventListener("click",()=>{
+  saveCommentEdit(document.getElementById("editCommentText").value);
+});
+document.getElementById("editCommentDeleteBtn").addEventListener("click",()=>{
+  saveCommentEdit("");
+});
+document.getElementById("editCommentCancelBtn").addEventListener("click", closeCommentModal);
+document.getElementById("editCommentModal").addEventListener("click",(e)=>{ if(e.target.id==="editCommentModal") closeCommentModal(); });
 function onSelectAllChange(e){
   const cbs=[...document.querySelectorAll("#rows input[type='checkbox']")];
   selected.clear();
@@ -800,6 +900,8 @@ document.getElementById("rows").addEventListener("click",(e)=>{
     if(g&&container){ g.lichessId=null; ensureLichessEmbed(g, container); } return; }
   const editBtn=e.target.closest("button.edit-game-btn");
   if(editBtn){ e.stopPropagation(); const i=parseInt(editBtn.dataset.i); const g=games.find(x=>x.idx===i); if(g) openEditGameModal(g); return; }
+  const moveSpan=e.target.closest(".move-san-editable");
+  if(moveSpan){ e.stopPropagation(); openCommentModal(parseInt(moveSpan.dataset.gameIdx), parseInt(moveSpan.dataset.moveIdx)); return; }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }

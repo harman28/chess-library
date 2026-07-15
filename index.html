@@ -111,12 +111,34 @@ tr.game:hover td{background:var(--surface-alt)}
 .pgnwrap-actions{position:absolute;bottom:.5rem;right:.5rem;display:flex;gap:.3rem}
 .pgnwrap-actions button{background:rgba(15,23,42,.7);border:none;color:var(--text-dim);cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}
 .pgnwrap-actions button:hover{color:var(--text);background:rgba(30,41,59,.9)}
-.lichess-embed-wrap{flex:0 0 360px;order:2}
+.chess-widget-wrap{flex:0 0 360px;order:2;display:flex;flex-direction:column;align-items:center;gap:.4rem;width:360px;box-sizing:border-box}
 .pgnwrap{order:1}
-.lichess-board-crop{width:360px;height:458px;overflow:hidden;border:1px solid var(--border);border-radius:.4rem;background:#161512}
-.lichess-frame{width:360px;height:540px;border:none;display:block}
-.lichess-embed-status{color:var(--text-dim);font-size:.85rem;padding:1rem;text-align:center}
-.lichess-retry{margin-left:.5rem;background:var(--surface-alt);color:var(--text);border:1px solid var(--border);padding:.2rem .5rem;border-radius:.25rem;cursor:pointer;font-size:.78rem}
+.cw-nameplate{width:100%;box-sizing:border-box;font-size:.82rem;font-weight:600;color:var(--text-dim);padding:.35rem .6rem;background:var(--surface-alt);border-radius:.3rem}
+.cw-board-wrap{outline:none;width:100%}
+.cw-board{position:relative;width:360px;height:360px;border:1px solid var(--border);border-radius:.4rem;overflow:hidden;box-shadow:0 2px 10px var(--shadow)}
+.cw-squares{position:absolute;inset:0}
+.cw-sq{position:absolute;width:12.5%;height:12.5%;box-sizing:border-box}
+.cw-sq.light{background:#8ca2b4}
+.cw-sq.dark{background:#5f7891}
+.cw-sq.cw-lastmove.light{background:#b9c363}
+.cw-sq.cw-lastmove.dark{background:#9aa54f}
+.cw-pieces{position:absolute;inset:0;pointer-events:none}
+.cw-piece{position:absolute;width:12.5%;height:12.5%;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
+.cw-coord{position:absolute;font-size:.62rem;font-weight:700;line-height:1;pointer-events:none}
+.cw-coord.cw-file{right:2px;bottom:1px}
+.cw-coord.cw-rank{left:2px;top:1px}
+.cw-sq.light .cw-coord{color:#5f7891}
+.cw-sq.dark .cw-coord{color:#8ca2b4}
+.cw-controls{display:flex;gap:.3rem;width:100%;box-sizing:border-box}
+.cw-controls .cw-btn{flex:1;background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.3rem;padding:.55rem 0;cursor:pointer;font-size:1.2rem;line-height:1}
+.cw-controls .cw-btn:hover:not(:disabled){background:var(--border)}
+.cw-controls .cw-btn:disabled{opacity:.35;cursor:not-allowed}
+.cw-error{color:var(--text-dim);font-size:.85rem;padding:1rem;text-align:center;width:360px}
+.move-comment-btn{background:none;border:none;color:var(--text-faint);cursor:pointer;font-size:.72rem;padding:0 .2rem;vertical-align:middle;opacity:.55}
+.move-comment-btn:hover{opacity:1;color:var(--accent)}
+.move-comment-btn.has-comment{opacity:.9;color:var(--comment)}
+.move-san-editable.cw-active{background:var(--accent);color:var(--accent-text);border-radius:.2rem}
+.move-variation{color:var(--text-faint);font-style:italic;font-size:.85em}
 button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:var(--border)}
 .hidden{display:none!important}.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-faint);font-size:.95rem}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50}
@@ -197,8 +219,9 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .sheet-body{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column;padding:0}
 .sheet-embed-sticky{flex:0 0 auto;padding:.75rem 1rem;border-bottom:1px solid var(--border)}
 .sheet-moves{flex:1 1 auto;overflow-y:auto;padding:.75rem 1rem 1.5rem}
-.game-sheet .lichess-board-crop{width:260px;max-width:100%;height:358px;margin:0 auto}
-.game-sheet .lichess-frame{width:260px;max-width:100%;height:430px}
+.game-sheet .chess-widget-wrap{width:260px;margin:0 auto}
+.game-sheet .cw-board{width:260px;height:260px}
+.game-sheet .cw-error{width:260px}
 .sheet-moves .move-formatted{padding-right:0}
 
 @media (max-width:700px){
@@ -208,6 +231,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   .filters{flex-wrap:wrap}
   .toolbar .right{flex-wrap:wrap}
   #mobileSelectAllRow.selecting{display:block;padding:.3rem 0 .6rem}
+  .move-comment-btn{padding:.55rem;font-size:.85rem;min-width:1.9rem;min-height:1.9rem;display:inline-flex;align-items:center;justify-content:center}
 }
 </style></head><body>
 <h1 class="logo-h1"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%23e8edf5%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23e8b93e%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-dark"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%2C%20light%20variant%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%230d1420%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23c99a1f%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%23f3efe6%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%230d1420%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%23f3efe6%22%20opacity%3D%220.6%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%230d1420%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23c99a1f%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-light"></h1>
@@ -391,6 +415,426 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   </div>
 </div>
 <script>
+const PIECE_SVG = {"wK": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22translate%280%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%2225.929%22%20x2%3D%2231.75%22%20y1%3D%228.599%22%20y2%3D%228.599%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%2221.696%22%20x2%3D%2230.163%22%20y1%3D%2212.965%22%20y2%3D%2212.965%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%2292.075%22%20x2%3D%2298.954%22%20y1%3D%228.599%22%20y2%3D%228.599%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2223.283%22%20x2%3D%2228.575%22%20y1%3D%227.144%22%20y2%3D%227.144%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22j%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.215%200%200%201%20-2.405%200%29%22%2F%3E%3Cg%20transform%3D%22translate%28-17.462%29%22%3E%3Cpath%20fill%3D%22%23a6a6a6%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M25.9291%201.323v3.4395%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cellipse%20cx%3D%2225.929%22%20cy%3D%227.144%22%20fill%3D%22url%28%23e%29%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20rx%3D%222.117%22%20ry%3D%222.91%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M94.7208%2011.1125s-2.1166-1.0583-2.1166-3.175c0-1.0583%201.001-2.1167%202.1166-2.1167%202.1167%200%203.7042%201.5875%203.7042%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%20transform%3D%22translate%28-72.496%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M21.9604%2011.1125s-.2646%202.1167-.2646%203.175c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-3.175-.2646-3.175-1.323.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23h%29%22%20d%3D%22m29.3687%2011.1125.7938%203.175-1.852.2646-.5293-2.9104z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22url%28%23i%29%22%20d%3D%22M29.6333%2011.1125s2.1167-1.0583%202.1167-3.175c0-1.0583-1.001-2.1167-2.1167-2.1167-2.1167%200-3.7042%201.5875-3.7042%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23j%29%22%20d%3D%22M30.1625%206.35c0%202.6458-.7938%203.7042-2.1167%204.7625%202.1167%200%203.7042-1.852%203.7042-3.175%200-.882-1.5876-1.5875-1.5876-1.5875%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M22.225%2011.1125s-.5292%202.1167-.5292%203.175c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.5292-3.175-.5292-3.175-1.323.5292-3.7042.5292-3.7042.5292s-2.3812%200-3.7042-.5292%22%2F%3E%3Cpath%20fill%3D%22%23a6a6a6%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M24.8708%202.3813h2.1167%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M29.8979%2012.7c-1.323.5292-3.9688.5292-3.9688.5292s-2.6458%200-3.9687-.5292%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M29.6333%2011.1125s2.1167-1.0583%202.1167-3.175c0-1.0583-1.001-2.1167-2.1167-2.1167-2.1167%200-3.7042%201.5875-3.7042%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E", "wQ": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22translate%280%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22k%22%20x1%3D%2276.2%22%20x2%3D%2284.667%22%20y1%3D%2212.965%22%20y2%3D%2212.965%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22j%22%20x1%3D%2219.05%22%20x2%3D%2222.225%22%20y1%3D%225.821%22%20y2%3D%225.821%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%2229.633%22%20x2%3D%2232.808%22%20y1%3D%225.821%22%20y2%3D%225.821%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20x1%3D%2226.458%22%20x2%3D%2229.633%22%20y1%3D%223.44%22%20y2%3D%223.44%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%2222.225%22%20x2%3D%2225.4%22%20y1%3D%223.44%22%20y2%3D%223.44%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2220.637%22%20x2%3D%2231.221%22%20y1%3D%228.202%22%20y2%3D%228.202%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22l%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.215%200%200%201%20-2.405%200%29%22%2F%3E%3Cg%20transform%3D%22translate%28-17.462%29%22%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22m22.7541%2012.9646-2.1166-7.1438c3.175%202.9104%203.175%201.323%203.175-2.3812%202.1166%202.6458%202.1166%202.6458%204.2333%200%200%203.7042-.013%205.3096%203.175%202.3812l-2.1167%207.1438%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m29.1041%2012.9646-2.1166.2646s1.0583-2.6459%201.0583-6.8792c.7938%201.0583%202.3813%201.0583%202.3813%201.0583s-1.5875%203.7042-1.323%205.5563%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22m22.225%2011.1125-1.5875-5.2917c3.175%202.9105%203.175%201.323%203.175-2.3812%202.1166%203.4396%202.1166%203.4396%204.2333%200%200%203.7042-.013%205.3096%203.175%202.3812l-1.5875%205.2917%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Ccircle%20cx%3D%2223.812%22%20cy%3D%223.44%22%20r%3D%221.058%22%20fill%3D%22url%28%23g%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Ccircle%20cx%3D%2228.046%22%20cy%3D%223.44%22%20r%3D%221.058%22%20fill%3D%22url%28%23h%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Ccircle%20cx%3D%2231.221%22%20cy%3D%225.821%22%20r%3D%221.058%22%20fill%3D%22url%28%23i%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Ccircle%20cx%3D%2220.637%22%20cy%3D%225.821%22%20r%3D%221.058%22%20fill%3D%22url%28%23j%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22url%28%23k%29%22%20d%3D%22M76.4646%2011.1125s-.2646%202.1167-.2646%203.175c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-3.175-.2646-3.175-1.3229.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%20transform%3D%22translate%28-54.504%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23l%29%22%20d%3D%22m83.873%2011.1125.7937%203.175-1.852.2646-.5293-2.9104z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-54.504%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M22.225%2011.1125s-.5292%202.1167-.5291%203.175c1.5875.5292%204.2333.5292%204.2333.5292s2.6458%200%204.2333-.5292c0-1.0583-.5292-3.175-.5292-3.175-1.323.5292-3.7042.5292-3.7042.5292s-2.3812%200-3.7041-.5292%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M29.8979%2012.7c-1.323.5292-3.9688.5292-3.9688.5292s-2.6458%200-3.9687-.5292%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E", "wR": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22translate%280%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%224.498%22%20x2%3D%2212.435%22%20y1%3D%225.806%22%20y2%3D%225.806%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%224.233%22%20x2%3D%2212.7%22%20y1%3D%2213.758%22%20y2%3D%2213.758%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2241.275%22%20x2%3D%2247.625%22%20y1%3D%229.79%22%20y2%3D%229.79%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22j%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.215%200%200%201%20-2.405%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22m41.275%2012.9646.5292-6.35h5.2916l.5292%206.35%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m9.525%206.8792.5291%206.35%201.5875-.2646-.5291-6.35z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%222.4%22%20stroke-width%3D%221.058%22%20d%3D%22m41.275%2012.7.5292-5.027m5.2916%200%20.5292%205.027%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M4.4979%2012.7s-.2646.5292-.2646%201.5875c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.323.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23h%29%22%20d%3D%22m12.4354%2012.7.2646%201.5875-1.8521.2646-.2646-1.323z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M4.498%2012.7s-.2647.5292-.2646%201.5875c1.5875.5292%204.2333.5292%204.2333.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.3229.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23i%29%22%20d%3D%22M5.2916%203.9688S4.498%206.35%204.498%207.4083c1.5875.5292%203.9688%200%203.9688%200s2.3812.5292%203.9687%200c0-1.0583-.5292-3.4395-.5292-3.4395-1.3229.5291-3.4396.2645-3.4396.2645s-1.852.2646-3.175-.2645%22%2F%3E%3Cpath%20fill%3D%22url%28%23j%29%22%20d%3D%22m11.9062%205.2917.2646%202.1166-.7937.7938-.5292-4.2334h.7937%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M4.7625%203.9688S4.4979%206.35%204.4979%207.4083c1.323.5292%203.9688.5292%203.9688.5292s2.6458%200%203.9687-.5292c0-1.0583-.2646-3.4395-.2646-3.4395z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22m7.1437%203.7042-.1466%202.3812m2.6342-2.3812.1466%202.3812%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%22%20transform%3D%22translate%28.08%20.007%29%22%2F%3E%3C%2Fsvg%3E", "wB": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22translate%280%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%226.879%22%20x2%3D%2210.054%22%20y1%3D%222.91%22%20y2%3D%222.91%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%224.763%22%20x2%3D%2212.171%22%20y1%3D%2213.758%22%20y2%3D%2213.758%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2240.766%22%20x2%3D%2248.134%22%20y1%3D%228.202%22%20y2%3D%228.202%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.094%200%200%201%20-1.265%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22M42.3333%2012.9646c-4.4979-5.5563%202.1167-9.525%202.1167-9.525s6.6146%203.9687%202.1167%209.525%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22M8.202%204.2333c2.1167.7938%203.7042%206.6146-.2645%208.9959l2.6458-.2646c4.2334-4.498.5292-8.4667-2.1166-8.9959Z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%222.4%22%20stroke-width%3D%221.058%22%20d%3D%22M42.3333%2012.9646C37.8354%206.8792%2044.45%203.9687%2044.45%203.9687s6.6146%202.9105%202.1167%208.9959%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M5.027%2012.7s-.2645.5292-.2645%201.5875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.3229.5292-3.4396.5292-3.4396.5292s-2.1166%200-3.4395-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23h%29%22%20d%3D%22m11.9062%2012.7.2646%201.5875-1.852.2646-.2646-1.323z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M5.027%2012.7s-.2645.5292-.2645%201.5875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.3229.5292-3.4396.5292-3.4396.5292s-2.1166%200-3.4395-.5292%22%2F%3E%3Ccircle%20cx%3D%228.467%22%20cy%3D%222.91%22%20r%3D%221.058%22%20fill%3D%22url%28%23i%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%222.4%22%20stroke-width%3D%221.058%22%20d%3D%22M8.4667%203.9688c3.175%201.5875%201.0583%203.7041%200%204.7625%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3C%2Fsvg%3E", "wN": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22translate%280%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%224.085%22%20x2%3D%2213.229%22%20y1%3D%228.864%22%20y2%3D%228.864%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9922%202.646%201.3229%204.2334%201.3229%201.5875%200%204.2333-.3307%204.2333-1.323%200-.9921-2.7787-1.3229-4.2333-1.3229s-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.094%200%200%201%20-1.265%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c-.7937-2.3813%201.0584-3.9688%201.0584-6.35%200-3.9688-4.7625-5.027-4.7625-5.027v1.3228s-3.9688%202.9104-4.2334%203.175-.1183.5571%200%20.7938c.2646.5291.5292.7937.7938%201.0583q.3968.3969.7937%200c.2646-.2646.7938-.5292%201.0584-.5292.2645%200%201.0583.2646%201.3229.2646s1.3229-.2646%201.852-.7937C8.7313%209.525%207.9376%209.525%207.1438%2010.054c-.7937.5292-2.3812%202.1167-2.3812%204.2334%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m-6.0854%2012.7.2645%201.5875-2.3812.5292c-.5292-3.9688%202.9104-4.2334%202.9104-6.8792.7938.7937-.7937%204.7625-.7937%204.7625%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%2817.992%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c-.7937-2.3813%201.0584-3.9688%201.0584-6.35%200-3.9688-4.7625-5.027-4.7625-5.027v1.3228s-3.9688%202.9104-4.2334%203.175-.1183.5571%200%20.7938c.2646.5291.5292.7937.7938%201.0583q.3968.3969.7937%200c.2646-.2646.7938-.5292%201.0584-.5292.2645%200%201.0583.2646%201.3229.2646s1.3229-.2646%201.852-.7937C8.7313%209.525%207.9376%209.525%207.1438%2010.054c-.7937.5292-2.3812%202.1167-2.3812%204.2334%22%2F%3E%3Ccircle%20cx%3D%228.731%22%20cy%3D%226.085%22%20r%3D%22.529%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M11.9062%2012.7c-1.3229.5292-3.4395.5292-3.4395.5292s-2.1167%200-3.4396-.5292%22%2F%3E%3C%2Fsvg%3E", "wP": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22b%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22c%22%20gradientTransform%3D%22translate%280%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ccc%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%224.763%22%20x2%3D%2212.171%22%20y1%3D%229.525%22%20y2%3D%229.525%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20gradientTransform%3D%22translate%280%202.117%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9922%202.646%201.3229%204.2334%201.3229%201.5875%200%204.2333-.3307%204.2333-1.323%200-.9921-2.7787-1.3229-4.2333-1.3229s-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.094%200%200%201%20-1.265%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-2.1167-.7937-2.6458-2.3812-4.2333%201.5875-1.5875.7937-2.6459-.2646-3.7042.7937-.7938%200-2.1167-1.0583-2.1167S6.6146%205.5563%207.4083%206.35c-1.0583%201.0583-1.852%202.1167-.2646%203.7042-1.5875%201.5875-2.3812%202.1166-2.3812%204.2333%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m12.1708%2014.2875-1.852.5292c0-.836-.2477-1.6307-.531-2.3352-.434-1.0793-.952-1.947-.792-2.4273.2646-.7938.2646-1.0584.2646-1.5875%200-1.0584-.7937-1.323-.5292-2.1167.2646-.7938%200-1.5875-.7937-1.852%201.323-.5293%201.6436%201.3656%201.852%201.852.3387.79%201.0584%202.3812%200%203.7042%201.8522%201.5875%202.3813%203.7217%202.3813%204.2333%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-2.1167-.7937-2.6458-2.3812-4.2333%201.5875-1.5875.7937-2.6459-.2646-3.7042.7937-.7938%200-2.1167-1.0583-2.1167S6.6146%205.5563%207.4083%206.35c-1.0583%201.0583-1.852%202.1167-.2646%203.7042-1.5875%201.5875-2.3812%202.1166-2.3812%204.2333%22%2F%3E%3C%2Fsvg%3E", "bK": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22scale%28.07%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c8c8c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%20gradientTransform%3D%22matrix%28.07%200%200%20.07%20-53.975%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23595959%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%2225.929%22%20x2%3D%2231.75%22%20y1%3D%228.599%22%20y2%3D%228.599%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%2221.696%22%20x2%3D%2230.163%22%20y1%3D%2212.965%22%20y2%3D%2212.965%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%2292.075%22%20x2%3D%2298.954%22%20y1%3D%228.599%22%20y2%3D%228.599%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2223.283%22%20x2%3D%2228.575%22%20y1%3D%227.144%22%20y2%3D%227.144%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22j%22%20x1%3D%2228.046%22%20x2%3D%2231.75%22%20y1%3D%228.463%22%20y2%3D%228.463%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20x1%3D%2227.781%22%20x2%3D%2230.162%22%20y1%3D%2212.832%22%20y2%3D%2212.832%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.215%200%200%201%20-2.405%200%29%22%2F%3E%3Cg%20transform%3D%22matrix%28-1%200%200%201%2034.396%200%29%22%3E%3Cpath%20fill%3D%22%23a6a6a6%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M25.9291%201.323v3.4395%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cellipse%20cx%3D%2225.929%22%20cy%3D%227.144%22%20fill%3D%22url%28%23e%29%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20rx%3D%222.117%22%20ry%3D%222.91%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M94.7208%2011.1125s-2.1166-1.0583-2.1166-3.175c0-1.0583%201.001-2.1167%202.1166-2.1167%202.1167%200%203.7042%201.5875%203.7042%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%20transform%3D%22translate%28-72.496%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M21.9604%2011.1125s-.2646%202.1167-.2646%203.175c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-3.175-.2646-3.175-1.323.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23h%29%22%20d%3D%22m29.3687%2011.1125.7938%203.175-1.852.2646-.5293-2.9104z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22url%28%23i%29%22%20d%3D%22M29.6333%2011.1125s2.1167-1.0583%202.1167-3.175c0-1.0583-1.001-2.1167-2.1167-2.1167-2.1167%200-3.7042%201.5875-3.7042%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23j%29%22%20d%3D%22M28.0458%206.6146c1.852.2646%202.9104%202.6458%201.5875%204.2333C31.75%2010.0542%2031.75%209.2604%2031.75%207.9375c0-3.175-3.7042-1.323-3.7042-1.323%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M29.6333%2011.1125s2.1167-1.0583%202.1167-3.175c0-1.0583-1.001-2.1167-2.1167-2.1167-2.1167%200-3.7042%201.5875-3.7042%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M22.225%2011.1125s-.5292%202.1167-.5292%203.175c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.5292-3.175-.5292-3.175-1.323.5292-3.7042.5292-3.7042.5292s-2.3812%200-3.7042-.5292%22%2F%3E%3Cpath%20fill%3D%22%23a6a6a6%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M24.8708%202.3813h2.1167%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M29.8979%2012.7c-1.323.5292-3.9688.5292-3.9688.5292s-2.6458%200-3.9687-.5292%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E", "bQ": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22scale%28.07%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c8c8c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%20gradientTransform%3D%22matrix%28.07%200%200%20.07%20-53.975%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23595959%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22k%22%20x1%3D%2276.2%22%20x2%3D%2284.667%22%20y1%3D%2212.965%22%20y2%3D%2212.965%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2220.637%22%20x2%3D%2231.221%22%20y1%3D%228.202%22%20y2%3D%228.202%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22l%22%20x1%3D%2282.285%22%20x2%3D%2284.667%22%20y1%3D%2212.832%22%20y2%3D%2212.832%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22j%22%20x1%3D%2219.05%22%20x2%3D%2222.225%22%20y1%3D%225.821%22%20y2%3D%225.821%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%2229.633%22%20x2%3D%2232.808%22%20y1%3D%225.821%22%20y2%3D%225.821%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20x1%3D%2226.458%22%20x2%3D%2229.633%22%20y1%3D%223.44%22%20y2%3D%223.44%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%2222.225%22%20x2%3D%2225.4%22%20y1%3D%223.44%22%20y2%3D%223.44%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%2226.988%22%20x2%3D%2230.427%22%20y1%3D%229.79%22%20y2%3D%229.79%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.215%200%200%201%20-2.405%200%29%22%2F%3E%3Cg%20transform%3D%22matrix%28-1%200%200%201%2034.396%200%29%22%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22m22.7541%2012.9646-2.1166-7.1438c3.175%202.9104%203.175%201.323%203.175-2.3812%202.1166%202.6458%202.1166%202.6458%204.2333%200%200%203.7042-.013%205.3096%203.175%202.3812l-2.1167%207.1438%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m29.1041%2012.9646-2.1166.2646s1.0583-2.6459%201.0583-6.8792c.7938%201.0583%202.3813%201.0583%202.3813%201.0583s-1.5875%203.7042-1.323%205.5563%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22m22.225%2011.1125-1.5875-5.2917c3.175%202.9105%203.175%201.323%203.175-2.3812%202.1166%203.4396%202.1166%203.4396%204.2333%200%200%203.7042-.013%205.3096%203.175%202.3812l-1.5875%205.2917%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Ccircle%20cx%3D%2223.813%22%20cy%3D%223.44%22%20r%3D%221.058%22%20fill%3D%22url%28%23g%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Ccircle%20cx%3D%2228.046%22%20cy%3D%223.44%22%20r%3D%221.058%22%20fill%3D%22url%28%23h%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Ccircle%20cx%3D%2231.221%22%20cy%3D%225.821%22%20r%3D%221.058%22%20fill%3D%22url%28%23i%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Ccircle%20cx%3D%2220.637%22%20cy%3D%225.821%22%20r%3D%221.058%22%20fill%3D%22url%28%23j%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3Cpath%20fill%3D%22url%28%23k%29%22%20d%3D%22M76.4646%2011.1125s-.2646%202.1167-.2646%203.175c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-3.175-.2646-3.175-1.3229.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%20transform%3D%22translate%28-54.504%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23l%29%22%20d%3D%22m83.873%2011.1125.7937%203.175-1.852.2646-.5293-2.9104z%22%20style%3D%22font-variation-settings%3Anormal%22%20transform%3D%22translate%28-54.504%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M22.225%2011.1125s-.5292%202.1167-.5291%203.175c1.5875.5292%204.2333.5292%204.2333.5292s2.6458%200%204.2333-.5292c0-1.0583-.5292-3.175-.5292-3.175-1.323.5292-3.7042.5292-3.7042.5292s-2.3812%200-3.7041-.5292%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M29.8979%2012.7c-1.323.5292-3.9688.5292-3.9688.5292s-2.6458%200-3.9687-.5292%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E", "bR": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22scale%28.07%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c8c8c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%20gradientTransform%3D%22matrix%28.07%200%200%20.07%20-53.975%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23595959%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%224.498%22%20x2%3D%2212.435%22%20y1%3D%225.806%22%20y2%3D%225.806%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%224.233%22%20x2%3D%2212.7%22%20y1%3D%2213.758%22%20y2%3D%2213.758%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2241.275%22%20x2%3D%2247.625%22%20y1%3D%229.79%22%20y2%3D%229.79%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22j%22%20x1%3D%2210.848%22%20x2%3D%2212.171%22%20y1%3D%226.085%22%20y2%3D%226.085%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20x1%3D%2210.583%22%20x2%3D%2212.7%22%20y1%3D%2213.626%22%20y2%3D%2213.626%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%229.525%22%20x2%3D%2211.642%22%20y1%3D%229.922%22%20y2%3D%229.922%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.215%200%200%201%20-2.405%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22m41.275%2012.9646.5292-6.35h5.2916l.5292%206.35%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%28-1%200%200%201%2052.917%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m9.525%206.8792.5291%206.35%201.5875-.2646-.5291-6.35z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%28-1%200%200%201%2016.933%200%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%222.4%22%20stroke-width%3D%221.058%22%20d%3D%22m41.275%2012.7.5292-5.027m5.2916%200%20.5292%205.027%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%28-1%200%200%201%2052.917%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M4.4979%2012.7s-.2646.5292-.2646%201.5875c1.5875.5292%204.2334.5292%204.2334.5292s2.6458%200%204.2333-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.323.5292-3.9687.5292-3.9687.5292s-2.6459%200-3.9688-.5292%22%20transform%3D%22matrix%28-1%200%200%201%2016.933%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23h%29%22%20d%3D%22m12.4354%2012.7.2646%201.5875-1.8521.2646-.2646-1.323z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%28-1%200%200%201%2016.933%200%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M12.4355%2012.7s.2646.5292.2645%201.5875c-1.5875.5292-4.2333.5292-4.2333.5292s-2.6458%200-4.2333-.5292c0-1.0583.2646-1.5875.2646-1.5875%201.3229.5292%203.9687.5292%203.9687.5292s2.6459%200%203.9688-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23i%29%22%20d%3D%22M5.2916%203.9688S4.498%206.35%204.498%207.4083c1.5875.5292%203.9688%200%203.9688%200s2.3812.5292%203.9687%200c0-1.0583-.5292-3.4395-.5292-3.4395-1.3229.5291-3.4396.2645-3.4396.2645s-1.852.2646-3.175-.2645%22%20transform%3D%22matrix%28-1%200%200%201%2016.933%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23j%29%22%20d%3D%22m11.9062%205.2917.2646%202.1166-.7937.7938-.5292-4.2334h.7937%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%28-1%200%200%201%2016.933%200%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M12.1708%203.9688s.2647%202.3812.2647%203.4395c-1.323.5292-3.9688.5292-3.9688.5292s-2.6458%200-3.9687-.5292c0-1.0583.2645-3.4396.2645-3.4396z%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22m7.1437%203.7042-.1466%202.3812m2.6342-2.3812.1466%202.3812%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%22%20transform%3D%22matrix%28-1%200%200%201%2016.854%20.007%29%22%2F%3E%3C%2Fsvg%3E", "bB": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22scale%28.07%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c8c8c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%20gradientTransform%3D%22matrix%28.07%200%200%20.07%20-53.975%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23595959%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%224.763%22%20x2%3D%2212.171%22%20y1%3D%2213.758%22%20y2%3D%2213.758%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%2240.766%22%20x2%3D%2248.134%22%20y1%3D%228.202%22%20y2%3D%228.202%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22i%22%20x1%3D%226.879%22%20x2%3D%2210.054%22%20y1%3D%222.91%22%20y2%3D%222.91%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22h%22%20x1%3D%224.762%22%20x2%3D%226.879%22%20y1%3D%2213.626%22%20y2%3D%2213.626%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%2240.412%22%20x2%3D%2244.979%22%20y1%3D%228.599%22%20y2%3D%228.599%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9921%202.646%201.3229%204.2334%201.3229s4.2333-.3308%204.2333-1.323-2.7788-1.3229-4.2333-1.3229-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.094%200%200%201%20-1.265%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22M42.3333%2012.9646c-4.4979-5.5563%202.1167-9.525%202.1167-9.525s6.6146%203.9687%202.1167%209.525%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22M44.7146%204.2333c-1.8521%202.1167-3.7042%206.6146.2646%208.9959l-2.6459-.2646C38.1%208.4666%2041.8042%204.4979%2044.45%203.9687Z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%222.4%22%20stroke-width%3D%221.058%22%20d%3D%22M42.3333%2012.9646C37.8354%206.8792%2044.45%203.9687%2044.45%203.9687s6.6146%202.9105%202.1167%208.9959%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22translate%28-35.983%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22M5.027%2012.7s-.2645.5292-.2645%201.5875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.3229.5292-3.4396.5292-3.4396.5292s-2.1166%200-3.4395-.5292%22%2F%3E%3Cpath%20fill%3D%22url%28%23h%29%22%20d%3D%22m5.027%2012.7-.2645%201.5875%201.852.2646.2647-1.323z%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M5.027%2012.7s-.2645.5292-.2645%201.5875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-1.0583-.2646-1.5875-.2646-1.5875-1.3229.5292-3.4396.5292-3.4396.5292s-2.1166%200-3.4395-.5292%22%2F%3E%3Ccircle%20cx%3D%228.467%22%20cy%3D%222.91%22%20r%3D%221.058%22%20fill%3D%22url%28%23i%29%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%222.4%22%20stroke-width%3D%221.058%22%20d%3D%22M8.4667%203.9688c3.175%201.5875%201.0583%203.7041%200%204.7625%22%20style%3D%22font-variation-settings%3Anormal%22%2F%3E%3C%2Fsvg%3E", "bN": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22scale%28.07%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c8c8c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%20gradientTransform%3D%22matrix%28.07%200%200%20.07%20-53.975%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23595959%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%224.085%22%20x2%3D%2213.229%22%20y1%3D%228.864%22%20y2%3D%228.864%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%224.762%22%20x2%3D%2210.583%22%20y1%3D%2211.509%22%20y2%3D%2211.509%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%224.233%22%20x2%3D%229.898%22%20y1%3D%225.953%22%20y2%3D%225.953%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9922%202.646%201.3229%204.2334%201.3229%201.5875%200%204.2333-.3307%204.2333-1.323%200-.9921-2.7787-1.3229-4.2333-1.3229s-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.094%200%200%201%20-1.265%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c-.7937-2.3813%201.0584-3.9688%201.0584-6.35%200-3.9688-4.7625-5.027-4.7625-5.027v1.3228s-3.9688%202.9104-4.2334%203.175-.1183.5571%200%20.7938c.2646.5291.5292.7937.7938%201.0583q.3968.3969.7937%200c.2646-.2646.7938-.5292%201.0584-.5292.2645%200%201.0583.2646%201.3229.2646s1.3229-.2646%201.852-.7937C8.7313%209.525%207.9376%209.525%207.1438%2010.054c-.7937.5292-2.3812%202.1167-2.3812%204.2334%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22M8.4667%203.175c1.3229%201.0583%201.852%201.852%201.0583%202.3812s-2.6458.7938-4.7625%203.175l-.5292-1.3229%204.2334-3.175%22%2F%3E%3Cpath%20fill%3D%22url%28%23g%29%22%20d%3D%22m6.6146%2014.8167-1.8521-.5292c0-2.1167%201.5875-3.9688%202.3812-4.498.7938-.529%202.1167-.2645%203.4396-1.5874%200%20.5291-1.852%201.852-2.3812%202.3812-.7938.7938-1.5875%202.6459-1.5875%204.2334%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c-.7937-2.3813%201.0584-3.9688%201.0584-6.35%200-3.9688-4.7625-5.027-4.7625-5.027v1.3228s-3.9688%202.9104-4.2334%203.175-.1183.5571%200%20.7938c.2646.5291.5292.7937.7938%201.0583q.3968.3969.7937%200c.2646-.2646.7938-.5292%201.0584-.5292.2645%200%201.0583.2646%201.3229.2646s1.3229-.2646%201.852-.7937C8.7313%209.525%207.9376%209.525%207.1438%2010.054c-.7937.5292-2.3812%202.1167-2.3812%204.2334%22%2F%3E%3Ccircle%20cx%3D%228.731%22%20cy%3D%226.085%22%20r%3D%22.529%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M11.9062%2012.7c-1.3229.5292-3.4395.5292-3.4395.5292s-1.8521%200-3.175-.5292%22%2F%3E%3C%2Fsvg%3E", "bP": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016.933%2016.933%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22c%22%3E%3Cstop%20offset%3D%220%22%20stop-opacity%3D%22.2%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22b%22%20gradientTransform%3D%22scale%28.07%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%238c8c8c%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22a%22%20gradientTransform%3D%22matrix%28.07%200%200%20.07%20-53.975%202.117%29%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23595959%22%2F%3E%3C%2FlinearGradient%3E%3ClinearGradient%20id%3D%22e%22%20x1%3D%224.763%22%20x2%3D%2212.171%22%20y1%3D%229.525%22%20y2%3D%229.525%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23a%22%2F%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%224.763%22%20x2%3D%228.996%22%20y1%3D%229.611%22%20y2%3D%229.611%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23b%22%2F%3E%3ClinearGradient%20id%3D%22d%22%20x1%3D%224.233%22%20x2%3D%22103.049%22%20y1%3D%2224.342%22%20y2%3D%2224.342%22%20gradientTransform%3D%22matrix%281%200%200%201.25%20.794%20-3.043%29%22%20gradientUnits%3D%22userSpaceOnUse%22%20href%3D%22%23c%22%2F%3E%3C%2Fdefs%3E%3Cpath%20fill%3D%22url%28%23d%29%22%20d%3D%22M5.027%2014.8167c0%20.9922%202.646%201.3229%204.2334%201.3229%201.5875%200%204.2333-.3307%204.2333-1.323%200-.9921-2.7787-1.3229-4.2333-1.3229s-4.2333.3308-4.2333%201.323%22%20class%3D%22UnoptimicedTransforms%22%20style%3D%22font-variation-settings%3Anormal%3B-inkscape-stroke%3Anone%22%20transform%3D%22matrix%281.094%200%200%201%20-1.265%200%29%22%2F%3E%3Cpath%20fill%3D%22url%28%23e%29%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-2.1167-.7937-2.6458-2.3812-4.2333%201.5875-1.5875.7937-2.6459-.2646-3.7042.7937-.7938%200-2.1167-1.0583-2.1167S6.6146%205.5563%207.4083%206.35c-1.0583%201.0583-1.852%202.1167-.2646%203.7042-1.5875%201.5875-2.3812%202.1166-2.3812%204.2333%22%2F%3E%3Cpath%20fill%3D%22url%28%23f%29%22%20d%3D%22m4.7625%2014.2875%201.852.5292c0-2.1167%201.5876-3.9688%201.323-4.7625s-.2646-1.0584-.2646-1.5875c0-1.0584.7938-1.323.5292-2.1167-.2646-.7938%200-1.5875.7937-1.852-1.3229-.5293-1.6436%201.3656-1.852%201.852-.3386.79-1.0584%202.3812%200%203.7042-1.8521%201.5875-2.3813%203.7217-2.3813%204.2333%22%2F%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.058%22%20d%3D%22M4.7625%2014.2875c1.5875.5292%203.7042.5292%203.7042.5292s2.1166%200%203.7041-.5292c0-2.1167-.7937-2.6458-2.3812-4.2333%201.5875-1.5875.7937-2.6459-.2646-3.7042.7937-.7938%200-2.1167-1.0583-2.1167S6.6146%205.5563%207.4083%206.35c-1.0583%201.0583-1.852%202.1167-.2646%203.7042-1.5875%201.5875-2.3812%202.1166-2.3812%204.2333%22%2F%3E%3C%2Fsvg%3E"};
+function initialBoard(){
+  const b = Array.from({length:8},()=>Array(8).fill(null));
+  const back = ["R","N","B","Q","K","B","N","R"];
+  for(let f=0; f<8; f++){
+    b[0][f] = {type:back[f], color:"w"};
+    b[1][f] = {type:"P", color:"w"};
+    b[6][f] = {type:"P", color:"b"};
+    b[7][f] = {type:back[f], color:"b"};
+  }
+  return b;
+}
+function cloneBoard(b){ return b.map(row=>row.map(c=>c?{...c}:null)); }
+function sqToRC(sq){ return { f: "abcdefgh".indexOf(sq[0]), r: parseInt(sq[1],10)-1 }; }
+function rcToSq(f,r){ return "abcdefgh"[f]+(r+1); }
+function pathClear(board, f1,r1,f2,r2){
+  const df = Math.sign(f2-f1), dr = Math.sign(r2-r1);
+  let f=f1+df, r=r1+dr;
+  while(f!==f2 || r!==r2){
+    if(board[r][f]) return false;
+    f+=df; r+=dr;
+  }
+  return true;
+}
+function canReach(board, piece, f1,r1,f2,r2){
+  const df=f2-f1, dr=r2-r1;
+  if(df===0 && dr===0) return false;
+  switch(piece.type){
+    case "N": { const a=Math.abs(df), b=Math.abs(dr); return (a===1&&b===2)||(a===2&&b===1); }
+    case "B": return Math.abs(df)===Math.abs(dr) && pathClear(board,f1,r1,f2,r2);
+    case "R": return (df===0||dr===0) && pathClear(board,f1,r1,f2,r2);
+    case "Q": return ((df===0||dr===0) || Math.abs(df)===Math.abs(dr)) && pathClear(board,f1,r1,f2,r2);
+    case "K": return Math.abs(df)<=1 && Math.abs(dr)<=1;
+    default: return false;
+  }
+}
+function isSquareAttacked(board, f, r, byColor){
+  const pawnDir = byColor==="w" ? -1 : 1;
+  for(const df of [-1,1]){
+    const pf=f+df, pr=r+pawnDir;
+    if(pf>=0&&pf<8&&pr>=0&&pr<8){
+      const p=board[pr][pf];
+      if(p && p.color===byColor && p.type==="P") return true;
+    }
+  }
+  for(let rr=0; rr<8; rr++) for(let ff=0; ff<8; ff++){
+    const p=board[rr][ff];
+    if(!p || p.color!==byColor || p.type==="P") continue;
+    if(canReach(board, p, ff, rr, f, r)) return true;
+  }
+  return false;
+}
+function findKing(board, color){
+  for(let r=0;r<8;r++) for(let f=0;f<8;f++){
+    const p=board[r][f];
+    if(p && p.color===color && p.type==="K") return {f,r};
+  }
+  return null;
+}
+function leavesOwnKingInCheck(board, color, from, to, promo){
+  const b2 = cloneBoard(board);
+  b2[to.r][to.f] = promo ? {type:promo,color} : b2[from.r][from.f];
+  b2[from.r][from.f] = null;
+  const k = findKing(b2, color);
+  if(!k) return false;
+  return isSquareAttacked(b2, k.f, k.r, color==="w"?"b":"w");
+}
+function applySanMove(board, sanRaw, color, state){
+  let san = sanRaw.replace(/[+#]/g,"").replace(/[!?]+$/,"");
+  const isWhite = color==="w";
+  if(san==="O-O"||san==="0-0"){
+    const rank = isWhite?0:7;
+    const king={...board[rank][4]}, rook={...board[rank][7]};
+    board[rank][6] = king; board[rank][4]=null;
+    board[rank][5] = rook; board[rank][7]=null;
+    state.enPassant = null;
+    return { from:rcToSq(4,rank), to:rcToSq(6,rank), piece:king, isCastle:true, rookFrom:rcToSq(7,rank), rookTo:rcToSq(5,rank), promo:null, capturedSquare:null, capturedPiece:null };
+  }
+  if(san==="O-O-O"||san==="0-0-0"){
+    const rank = isWhite?0:7;
+    const king={...board[rank][4]}, rook={...board[rank][0]};
+    board[rank][2] = king; board[rank][4]=null;
+    board[rank][3] = rook; board[rank][0]=null;
+    state.enPassant = null;
+    return { from:rcToSq(4,rank), to:rcToSq(2,rank), piece:king, isCastle:true, rookFrom:rcToSq(0,rank), rookTo:rcToSq(3,rank), promo:null, capturedSquare:null, capturedPiece:null };
+  }
+  let promo=null;
+  const promoM = san.match(/=([QRBN])$/);
+  if(promoM){ promo=promoM[1]; san=san.slice(0,promoM.index); }
+  const m = san.match(/^([KQRBN])?([a-h])?([1-8])?(x)?([a-h][1-8])$/);
+  if(!m) throw new Error("Unparseable SAN: "+sanRaw);
+  const pieceType = m[1]||"P";
+  const disambigFile = m[2]?"abcdefgh".indexOf(m[2]):null;
+  const disambigRank = m[3]?parseInt(m[3],10)-1:null;
+  const isCapture = !!m[4];
+  const dest = sqToRC(m[5]);
+  let from=null, epCapture=false;
+  if(pieceType==="P"){
+    if(isCapture){
+      const srcFile = disambigFile;
+      if(srcFile==null) throw new Error("Pawn capture missing origin file: "+sanRaw);
+      const srcRank = isWhite?dest.r-1:dest.r+1;
+      from = { f:srcFile, r:srcRank };
+      if(!board[dest.r][dest.f]) epCapture = true;
+    } else {
+      const oneStepRank = isWhite?dest.r-1:dest.r+1;
+      const twoStepRank = isWhite?dest.r-2:dest.r+2;
+      const startRank = isWhite?1:6;
+      if(board[oneStepRank] && board[oneStepRank][dest.f] && board[oneStepRank][dest.f].type==="P" && board[oneStepRank][dest.f].color===color){
+        from = { f:dest.f, r:oneStepRank };
+      } else if(twoStepRank===startRank && board[startRank][dest.f] && board[startRank][dest.f].type==="P" && board[startRank][dest.f].color===color && !board[oneStepRank][dest.f]){
+        from = { f:dest.f, r:twoStepRank };
+      } else {
+        throw new Error("Cannot find source pawn for: "+sanRaw);
+      }
+    }
+  } else {
+    let candidates=[];
+    for(let r=0;r<8;r++) for(let f=0;f<8;f++){
+      const p = board[r][f];
+      if(!p || p.color!==color || p.type!==pieceType) continue;
+      if(disambigFile!=null && f!==disambigFile) continue;
+      if(disambigRank!=null && r!==disambigRank) continue;
+      if(!canReach(board, p, f, r, dest.f, dest.r)) continue;
+      candidates.push({f,r});
+    }
+    if(candidates.length===0) throw new Error("No source piece found for: "+sanRaw);
+    if(candidates.length>1){
+      const legal = candidates.filter(c=>!leavesOwnKingInCheck(board, color, c, dest, promo));
+      if(legal.length>=1) candidates=legal;
+    }
+    if(candidates.length>1) throw new Error("Ambiguous move: "+sanRaw);
+    from = candidates[0];
+  }
+  const movingPiece = board[from.r][from.f];
+  if(!movingPiece) throw new Error("No piece at computed source for: "+sanRaw);
+  let epCapturedSquare=null, epCapturedPiece=null;
+  if(epCapture){
+    epCapturedSquare = { f:dest.f, r:from.r };
+    epCapturedPiece = board[epCapturedSquare.r][epCapturedSquare.f];
+    board[epCapturedSquare.r][epCapturedSquare.f]=null;
+  }
+  const capturedAtDest = board[dest.r][dest.f];
+  board[from.r][from.f]=null;
+  board[dest.r][dest.f] = promo ? {type:promo,color} : {...movingPiece};
+  if(pieceType==="P" && Math.abs(dest.r-from.r)===2){
+    state.enPassant = rcToSq(dest.f, (dest.r+from.r)/2);
+  } else {
+    state.enPassant = null;
+  }
+  const capturedSquare = epCapturedSquare ? rcToSq(epCapturedSquare.f,epCapturedSquare.r) : (capturedAtDest ? rcToSq(dest.f,dest.r) : null);
+  const capturedPiece = epCapturedPiece ? {...epCapturedPiece} : (capturedAtDest ? {...capturedAtDest} : null);
+  return {
+    from: rcToSq(from.f,from.r), to: rcToSq(dest.f,dest.r),
+    piece: {...movingPiece}, isCastle:false, rookFrom:null, rookTo:null,
+    promo: promo, capturedSquare, capturedPiece,
+  };
+}
+function computeBoardStates(sanMoves){
+  const states=[];
+  let board = initialBoard();
+  const engineState = { enPassant:null };
+  states.push({ board:cloneBoard(board), lastMove:null, sanRaw:null });
+  for(let i=0;i<sanMoves.length;i++){
+    const color = i%2===0?"w":"b";
+    const lastMove = applySanMove(board, sanMoves[i], color, engineState);
+    states.push({ board:cloneBoard(board), lastMove, sanRaw:sanMoves[i] });
+  }
+  return states;
+}
+function extractMainlineSan(movetext){
+  if(!movetext) return [];
+  return tokenizeMovetext(movetext).filter(t=>t.type==="san" && !t.inVariation).map(t=>t.text);
+}
+
+let _cwAudioCtx=null;
+function _cwGetAudioCtx(){
+  if(_cwAudioCtx) return _cwAudioCtx;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  _cwAudioCtx = new AC();
+  return _cwAudioCtx;
+}
+function _cwPlayNoiseBurst(duration, filterFreq, gainPeak, delay){
+  const ctx=_cwGetAudioCtx(); if(!ctx) return;
+  const now=ctx.currentTime+(delay||0);
+  const bufferSize=Math.max(1,Math.floor(ctx.sampleRate*duration));
+  const buffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*(1-i/bufferSize);
+  const noise=ctx.createBufferSource(); noise.buffer=buffer;
+  const filter=ctx.createBiquadFilter(); filter.type="bandpass"; filter.frequency.value=filterFreq; filter.Q.value=1.1;
+  const gain=ctx.createGain();
+  gain.gain.setValueAtTime(gainPeak||0.35, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now+duration);
+  noise.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+  noise.start(now);
+}
+function _cwPlayTone(freq, duration, delay){
+  const ctx=_cwGetAudioCtx(); if(!ctx) return;
+  const now=ctx.currentTime+(delay||0);
+  const osc=ctx.createOscillator(); osc.type="sine"; osc.frequency.value=freq;
+  const gain=ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.22, now+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now+duration);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(now); osc.stop(now+duration+0.02);
+}
+function playChessSound(kind){
+  try{
+    if(kind==="move") _cwPlayNoiseBurst(0.045, 1500, 0.3, 0);
+    else if(kind==="capture") _cwPlayNoiseBurst(0.07, 700, 0.4, 0);
+    else if(kind==="castle"){ _cwPlayNoiseBurst(0.045,1500,0.3,0); _cwPlayNoiseBurst(0.045,1350,0.28,0.09); }
+    else if(kind==="check"){ _cwPlayNoiseBurst(0.045,1500,0.3,0); _cwPlayTone(1568,0.14,0.03); }
+    else if(kind==="checkmate"){ _cwPlayTone(784,0.16,0); _cwPlayTone(523,0.22,0.13); }
+  }catch(_){}
+}
+function classifyChessSound(state){
+  const raw = state.sanRaw || "";
+  if(raw.endsWith("#")) return "checkmate";
+  if(raw.endsWith("+")) return "check";
+  if(state.lastMove && state.lastMove.isCastle) return "castle";
+  if(state.lastMove && state.lastMove.capturedPiece) return "capture";
+  return "move";
+}
+
+function createChessWidget(container, g){
+  const sanMoves = extractMainlineSan(g.movetext);
+  let states;
+  try{
+    states = computeBoardStates(sanMoves);
+  } catch(err){
+    container.innerHTML = `<div class="cw-error">Couldn’t render this game’s moves.</div>`;
+    return { goToPly:()=>{}, refreshHighlight:()=>{} };
+  }
+  let ply = 0;
+  let orientation = g.color==="black" ? "black" : "white";
+  const scope = container.closest("#sheetBody") || container.closest(".detail-flex") || document;
+  const reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  container.innerHTML = `<div class="cw-nameplate cw-nameplate-top"></div>`
+    + `<div class="cw-board-wrap" tabindex="0"><div class="cw-board"><div class="cw-squares"></div><div class="cw-pieces"></div></div></div>`
+    + `<div class="cw-nameplate cw-nameplate-bottom"></div>`
+    + `<div class="cw-controls">`
+    + `<button class="cw-btn cw-first" title="First move" aria-label="First move">⏮</button>`
+    + `<button class="cw-btn cw-prev" title="Previous move" aria-label="Previous move">‹</button>`
+    + `<button class="cw-btn cw-flip" title="Flip board" aria-label="Flip board">⇅</button>`
+    + `<button class="cw-btn cw-next" title="Next move" aria-label="Next move">›</button>`
+    + `<button class="cw-btn cw-last" title="Last move" aria-label="Last move">⏭</button>`
+    + `</div>`;
+  const squaresEl = container.querySelector(".cw-squares");
+  const piecesEl = container.querySelector(".cw-pieces");
+  const boardWrap = container.querySelector(".cw-board-wrap");
+  const nameTop = container.querySelector(".cw-nameplate-top");
+  const nameBottom = container.querySelector(".cw-nameplate-bottom");
+  const prevBtn=container.querySelector(".cw-prev"), nextBtn=container.querySelector(".cw-next"),
+        firstBtn=container.querySelector(".cw-first"), lastBtn=container.querySelector(".cw-last"),
+        flipBtn=container.querySelector(".cw-flip");
+
+  let squareEls = {};
+  let pieceEls = {};
+
+  function colFor(f){ return orientation==="white" ? f : 7-f; }
+  function rowFor(r){ return orientation==="white" ? 7-r : r; }
+  function pctPos(f,r){ return { left: colFor(f)*12.5, top: rowFor(r)*12.5 }; }
+
+  function renderSquares(){
+    squaresEl.innerHTML=""; squareEls={};
+    for(let r=0;r<8;r++) for(let f=0;f<8;f++){
+      const sqName="abcdefgh"[f]+(r+1);
+      const div=document.createElement("div");
+      const pos=pctPos(f,r);
+      div.className="cw-sq "+((f+r)%2===0?"dark":"light");
+      div.style.left=pos.left+"%"; div.style.top=pos.top+"%";
+      if(colFor(f)===0){ const lab=document.createElement("span"); lab.className="cw-coord cw-rank"; lab.textContent=r+1; div.appendChild(lab); }
+      if(rowFor(r)===7){ const lab=document.createElement("span"); lab.className="cw-coord cw-file"; lab.textContent="abcdefgh"[f]; div.appendChild(lab); }
+      squaresEl.appendChild(div);
+      squareEls[sqName]=div;
+    }
+  }
+  function updateNameplates(){
+    const bottomColor = orientation==="white" ? "White" : "Black";
+    const topColor = orientation==="white" ? "Black" : "White";
+    nameTop.textContent = g.headers[topColor] || topColor;
+    nameBottom.textContent = g.headers[bottomColor] || bottomColor;
+  }
+  function makePieceEl(piece){
+    const el=document.createElement("div");
+    el.className="cw-piece";
+    el.style.backgroundImage='url("'+PIECE_SVG[piece.color+piece.type]+'")';
+    return el;
+  }
+  function setPiecePos(el, f, r, animate){
+    const pos=pctPos(f,r);
+    el.style.transition=(animate && !reduceMotion) ? "left .18s ease, top .18s ease" : "none";
+    el.style.left=pos.left+"%"; el.style.top=pos.top+"%";
+  }
+  function fullRedrawPieces(){
+    piecesEl.innerHTML=""; pieceEls={};
+    const board=states[ply].board;
+    for(let r=0;r<8;r++) for(let f=0;f<8;f++){
+      const piece=board[r][f];
+      if(!piece) continue;
+      const el=makePieceEl(piece);
+      setPiecePos(el, f, r, false);
+      piecesEl.appendChild(el);
+      pieceEls["abcdefgh"[f]+(r+1)]=el;
+    }
+  }
+  function lastMoveSquares(state){
+    if(!state.lastMove) return [];
+    const lm=state.lastMove;
+    const sqs=[lm.from, lm.to];
+    if(lm.isCastle){ sqs.push(lm.rookFrom, lm.rookTo); }
+    if(lm.capturedSquare) sqs.push(lm.capturedSquare);
+    return sqs;
+  }
+  function updateHighlightSquares(){
+    Object.values(squareEls).forEach(el=>el.classList.remove("cw-lastmove"));
+    if(ply>0) lastMoveSquares(states[ply]).forEach(sq=>{ if(squareEls[sq]) squareEls[sq].classList.add("cw-lastmove"); });
+  }
+  function highlightMove(){
+    const prevActive = scope.querySelector(".move-san-editable.cw-active");
+    if(prevActive) prevActive.classList.remove("cw-active");
+    if(ply>0){
+      const span = scope.querySelector('.move-san-editable[data-ply="'+ply+'"]');
+      if(span){ span.classList.add("cw-active"); if(span.scrollIntoView) span.scrollIntoView({block:"nearest"}); }
+    }
+  }
+  function updateButtons(){
+    prevBtn.disabled = ply===0; firstBtn.disabled = ply===0;
+    nextBtn.disabled = ply===states.length-1; lastBtn.disabled = ply===states.length-1;
+  }
+  function animateSingleStep(forward){
+    const state = forward ? states[ply] : states[ply+1];
+    const lm = state.lastMove;
+    if(!lm){ fullRedrawPieces(); return; }
+    if(forward && lm.capturedSquare && pieceEls[lm.capturedSquare]){
+      const capEl=pieceEls[lm.capturedSquare];
+      delete pieceEls[lm.capturedSquare];
+      capEl.style.transition="opacity .12s ease"; capEl.style.opacity="0";
+      setTimeout(()=>capEl.remove(), 150);
+    }
+    const fromKey = forward?lm.from:lm.to, toKey = forward?lm.to:lm.from;
+    const toRC = sqToRC(toKey);
+    const movingEl = pieceEls[fromKey];
+    if(movingEl){
+      delete pieceEls[fromKey];
+      setPiecePos(movingEl, toRC.f, toRC.r, true);
+      pieceEls[toKey]=movingEl;
+      if(lm.promo){
+        const targetType = forward ? lm.promo : "P";
+        const color = lm.piece.color;
+        setTimeout(()=>{ movingEl.style.backgroundImage='url("'+PIECE_SVG[color+targetType]+'")'; }, forward?150:0);
+      }
+    }
+    if(lm.isCastle){
+      const rFromKey = forward?lm.rookFrom:lm.rookTo, rToKey = forward?lm.rookTo:lm.rookFrom;
+      const rToRC = sqToRC(rToKey);
+      const rookEl = pieceEls[rFromKey];
+      if(rookEl){
+        delete pieceEls[rFromKey];
+        setPiecePos(rookEl, rToRC.f, rToRC.r, true);
+        pieceEls[rToKey]=rookEl;
+      }
+    }
+    if(!forward && lm.capturedPiece && lm.capturedSquare){
+      const capRC=sqToRC(lm.capturedSquare);
+      const el=makePieceEl(lm.capturedPiece);
+      setPiecePos(el, capRC.f, capRC.r, false);
+      el.style.opacity="0";
+      piecesEl.appendChild(el);
+      pieceEls[lm.capturedSquare]=el;
+      requestAnimationFrame(()=>{ el.style.transition="opacity .15s ease"; el.style.opacity="1"; });
+    }
+    playChessSound(classifyChessSound(state));
+  }
+  function goToPly(targetPly){
+    targetPly=Math.max(0, Math.min(states.length-1, targetPly));
+    try{ boardWrap.focus({preventScroll:true}); }catch(_){}
+    if(targetPly===ply) return;
+    const fromPly=ply;
+    const isStep=Math.abs(targetPly-fromPly)===1;
+    ply=targetPly;
+    if(isStep){ animateSingleStep(ply>fromPly); }
+    else { fullRedrawPieces(); if(ply>0) playChessSound(classifyChessSound(states[ply])); }
+    updateHighlightSquares();
+    updateButtons();
+    highlightMove();
+  }
+  prevBtn.addEventListener("click",()=>goToPly(ply-1));
+  nextBtn.addEventListener("click",()=>goToPly(ply+1));
+  firstBtn.addEventListener("click",()=>goToPly(0));
+  lastBtn.addEventListener("click",()=>goToPly(states.length-1));
+  flipBtn.addEventListener("click",()=>{
+    orientation = orientation==="white"?"black":"white";
+    renderSquares();
+    Object.entries(pieceEls).forEach(([sq, el])=>{ const rc=sqToRC(sq); setPiecePos(el, rc.f, rc.r, false); });
+    updateHighlightSquares();
+    updateNameplates();
+    try{ boardWrap.focus({preventScroll:true}); }catch(_){}
+  });
+  boardWrap.addEventListener("keydown",(e)=>{
+    if(e.key==="ArrowLeft"){ e.preventDefault(); goToPly(ply-1); }
+    else if(e.key==="ArrowRight"){ e.preventDefault(); goToPly(ply+1); }
+  });
+
+  renderSquares();
+  fullRedrawPieces();
+  updateHighlightSquares();
+  updateButtons();
+  highlightMove();
+  updateNameplates();
+
+  const widget = { goToPly, refreshHighlight: highlightMove };
+  container._chessWidget = widget;
+  return widget;
+}
+
 let games = []; let playerName = ""; let selected = new Set(); let activeFilters = new Set(["all"]); let selectionMode = null; let searchQuery = "";
 function gameMatchesSearch(g){
   if(!searchQuery) return true;
@@ -447,15 +891,18 @@ function cleanCommentText(text){
     .trim();
 }
 function tokenizeMovetext(movetext){
-  const re=/(\d+\.(?:\.\.)?)|(\{[^}]*\})|(\S+)/g;
-  const tokens=[]; let m;
+  const re=/(\d+\.(?:\.\.)?)|(\{[^}]*\})|(\()|(\))|(\$\d+)|([^\s()]+)/g;
+  const tokens=[]; let m; let depth=0;
   while((m=re.exec(movetext))!==null){
-    if(m[2]){ tokens.push({type:"comment", raw:m[2], start:m.index, end:m.index+m[0].length}); continue; }
-    const text=m[1]||m[3];
+    if(m[3]){ depth++; tokens.push({type:"parenOpen", raw:"(", start:m.index, end:m.index+1, inVariation:true}); continue; }
+    if(m[4]){ tokens.push({type:"parenClose", raw:")", start:m.index, end:m.index+1, inVariation:true}); depth=Math.max(0,depth-1); continue; }
+    if(m[5]){ tokens.push({type:"nag", text:m[5], start:m.index, end:m.index+m[0].length, inVariation:depth>0}); continue; }
+    if(m[2]){ tokens.push({type:"comment", raw:m[2], start:m.index, end:m.index+m[0].length, inVariation:depth>0}); continue; }
+    const text=m[1]||m[6];
     let type="san";
     if(m[1]) type="num";
     else if(/^(1-0|0-1|1\/2-1\/2|\*)$/.test(text)) type="result";
-    tokens.push({type, text, start:m.index, end:m.index+m[0].length});
+    tokens.push({type, text, start:m.index, end:m.index+m[0].length, inVariation:depth>0});
   }
   return tokens;
 }
@@ -463,11 +910,11 @@ function getMoveCommentInfo(movetext, moveIdx){
   const tokens=tokenizeMovetext(movetext);
   let cur=-1;
   for(let i=0;i<tokens.length;i++){
-    if(tokens[i].type!=="san") continue;
+    if(tokens[i].type!=="san" || tokens[i].inVariation) continue;
     cur++;
     if(cur!==moveIdx) continue;
     const tok=tokens[i]; const next=tokens[i+1];
-    if(next && next.type==="comment"){
+    if(next && next.type==="comment" && !next.inVariation){
       return { sanText:tok.text, insertAt:tok.end, hasComment:true, commentStart:next.start, commentEnd:next.end, commentText:cleanCommentText(next.raw.slice(1,-1)) };
     }
     return { sanText:tok.text, insertAt:tok.end, hasComment:false, commentText:"" };
@@ -492,23 +939,44 @@ function applyCommentEdit(movetext, moveIdx, newText){
 function formatMovesWithComments(movetext, gameIdx){
   if(!movetext) return "";
   const tokens=tokenizeMovetext(movetext);
-  let html=""; let lineOpen=false; let moveIdx=0;
-  tokens.forEach(t=>{
+  let out=""; let lineOpen=false; let moveIdx=0; let i=0;
+  while(i<tokens.length){
+    const t=tokens[i];
+    if(t.type==="parenOpen"){
+      let depth=1, j=i+1, buf="";
+      while(j<tokens.length && depth>0){
+        const tj=tokens[j];
+        if(tj.type==="parenOpen") depth++;
+        else if(tj.type==="parenClose"){ depth--; if(depth===0){ j++; break; } }
+        else if(tj.type==="comment"){ const c=cleanCommentText(tj.raw.slice(1,-1)); if(c) buf+=(buf?" ":"")+c; }
+        else if(tj.type!=="nag"){ buf+=(buf?" ":"")+tj.text; }
+        j++;
+      }
+      if(!lineOpen){ out+=`<div class="move-line">`; lineOpen=true; }
+      out+=`<span class="move-variation">(${esc(buf)})</span> `;
+      i=j; continue;
+    }
     if(t.type==="comment"){
       const cleaned=cleanCommentText(t.raw.slice(1,-1));
       if(cleaned){
-        if(lineOpen){ html+="</div>"; lineOpen=false; }
-        html+=`<div class="move-comment">${esc(cleaned)}</div>`;
+        if(lineOpen){ out+="</div>"; lineOpen=false; }
+        out+=`<div class="move-comment">${esc(cleaned)}</div>`;
       }
-      return;
+      i++; continue;
     }
-    if(!lineOpen){ html+=`<div class="move-line">`; lineOpen=true; }
-    if(t.type==="num") html+=`<span class="move-num">${esc(t.text)}</span> `;
-    else if(t.type==="result") html+=`<span class="move-result">${esc(t.text)}</span> `;
-    else { html+=`<span class="move-san move-san-editable" data-game-idx="${gameIdx}" data-move-idx="${moveIdx}" role="button" tabindex="0">${esc(t.text)}</span> `; moveIdx++; }
-  });
-  if(lineOpen) html+="</div>";
-  return html;
+    if(t.type==="nag" || t.type==="parenClose"){ i++; continue; }
+    if(!lineOpen){ out+=`<div class="move-line">`; lineOpen=true; }
+    if(t.type==="num"){ out+=`<span class="move-num">${esc(t.text)}</span> `; i++; continue; }
+    if(t.type==="result"){ out+=`<span class="move-result">${esc(t.text)}</span> `; i++; continue; }
+    const next=tokens[i+1];
+    const hasComment = !!(next && next.type==="comment" && !next.inVariation);
+    const ply=moveIdx+1;
+    out+=`<span class="move-san move-san-editable" data-game-idx="${gameIdx}" data-move-idx="${moveIdx}" data-ply="${ply}" role="button" tabindex="0">${esc(t.text)}</span>`
+       + `<button class="move-comment-btn${hasComment?' has-comment':''}" data-game-idx="${gameIdx}" data-move-idx="${moveIdx}" title="${hasComment?'Edit comment':'Add comment'}" aria-label="${hasComment?'Edit comment':'Add comment'}">${hasComment?'\u{1F4AC}':'\u270E'}</button> `;
+    moveIdx++; i++;
+  }
+  if(lineOpen) out+="</div>";
+  return out;
 }
 function buildGameRecord(b, idx, name){
   const c=classify(b, name);
@@ -633,7 +1101,7 @@ function render(){
       +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn" title="Copies the PGN, then opens chess.com to paste it in">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
-    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="lichess-embed-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
+    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateActionButtons(); renderMobileList(filtered); }
 let lastCheckedMobileIdx=null;
@@ -711,8 +1179,8 @@ function openGameSheet(g){
   document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
   document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:var(--result)">${esc(g.headers.Result||"")}</span>`;
   const body=document.getElementById("sheetBody");
-  body.innerHTML=`<div class="sheet-embed-sticky"><div class="lichess-embed-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div>`;
-  ensureLichessEmbed(g, body.querySelector(".lichess-embed-wrap"));
+  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div>`;
+  createChessWidget(body.querySelector(".chess-widget-wrap"), g);
   document.body.classList.add("sheet-open");
   history.pushState({sheet:true},"");
   document.getElementById("sheetCloseBtn").focus();
@@ -804,8 +1272,13 @@ document.getElementById("sheetEditBtn").addEventListener("click",()=>{
   const g=games.find(x=>x.idx===currentSheetGameIdx); if(g) openEditGameModal(g);
 });
 document.getElementById("sheetBody").addEventListener("click",(e)=>{
+  const commentBtn=e.target.closest(".move-comment-btn");
+  if(commentBtn){ openCommentModal(parseInt(commentBtn.dataset.gameIdx), parseInt(commentBtn.dataset.moveIdx)); return; }
   const moveSpan=e.target.closest(".move-san-editable");
-  if(moveSpan){ openCommentModal(parseInt(moveSpan.dataset.gameIdx), parseInt(moveSpan.dataset.moveIdx)); }
+  if(moveSpan){
+    const wrapEl=document.querySelector("#sheetBody .chess-widget-wrap");
+    if(wrapEl && wrapEl._chessWidget) wrapEl._chessWidget.goToPly(parseInt(moveSpan.dataset.ply,10));
+  }
 });
 let commentEditGameIdx=null, commentEditMoveIdx=null;
 function openCommentModal(gameIdx, moveIdx){
@@ -822,10 +1295,18 @@ function closeCommentModal(){ document.getElementById("editCommentModal").classL
 function refreshOpenDetailViews(gameIdx){
   const g=games.find(x=>x.idx===gameIdx); if(!g) return;
   const rowFormatted=document.querySelector("#pgnrow-"+gameIdx+" .move-formatted");
-  if(rowFormatted) rowFormatted.innerHTML=formatMovesWithComments(g.movetext, g.idx);
+  if(rowFormatted){
+    rowFormatted.innerHTML=formatMovesWithComments(g.movetext, g.idx);
+    const wrapEl=document.querySelector("#pgnrow-"+gameIdx+" .chess-widget-wrap");
+    if(wrapEl && wrapEl._chessWidget) wrapEl._chessWidget.refreshHighlight();
+  }
   if(document.body.classList.contains("sheet-open") && currentSheetGameIdx===gameIdx){
     const sheetFormatted=document.querySelector(".sheet-moves .move-formatted");
-    if(sheetFormatted) sheetFormatted.innerHTML=formatMovesWithComments(g.movetext, g.idx);
+    if(sheetFormatted){
+      sheetFormatted.innerHTML=formatMovesWithComments(g.movetext, g.idx);
+      const wrapEl=document.querySelector("#sheetBody .chess-widget-wrap");
+      if(wrapEl && wrapEl._chessWidget) wrapEl._chessWidget.refreshHighlight();
+    }
   }
 }
 function saveCommentEdit(newText){
@@ -922,40 +1403,19 @@ document.addEventListener("click",(e)=>{
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="columnsBtn"){ panel.classList.add("hidden"); }
 });
 function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
-function renderLichessIframe(container, id){
-  const bg=lightModeEnabled?"light":"dark";
-  container.innerHTML=`<div class="lichess-board-crop"><iframe class="lichess-frame" src="https://lichess.org/embed/game/${id}?theme=blue2&pieceSet=caliente&bg=${bg}" frameborder="0" allowtransparency="true"></iframe></div>`;
-}
-async function ensureLichessEmbed(g, container){
-  if(g.lichessId){ renderLichessIframe(container, g.lichessId); return; }
-  if(g.lichessLoading) return;
-  g.lichessLoading=true;
-  container.innerHTML=`<div class="lichess-embed-status">Loading Lichess embed…</div>`;
-  try{
-    const res=await fetch("https://lichess.org/api/import", {
-      method:"POST",
-      headers:{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json"},
-      body:"pgn="+encodeURIComponent(g.pgn)
-    });
-    if(!res.ok) throw new Error("HTTP "+res.status);
-    const data=await res.json();
-    g.lichessLoading=false; g.lichessId=data.id;
-    saveToStorage();
-    renderLichessIframe(container, data.id);
-  }catch(err){
-    g.lichessLoading=false;
-    container.innerHTML=`<div class="lichess-embed-status">Couldn't load Lichess embed.<button class="lichess-retry" data-i="${g.idx}">Retry</button></div>`;
-  }
-}
 document.getElementById("rows").addEventListener("click",(e)=>{
-  const retryBtn=e.target.closest("button.lichess-retry");
-  if(retryBtn){ e.stopPropagation(); const i=parseInt(retryBtn.dataset.i); const g=games.find(x=>x.idx===i);
-    const container=document.querySelector("#pgnrow-"+i+" .lichess-embed-wrap");
-    if(g&&container){ g.lichessId=null; ensureLichessEmbed(g, container); } return; }
   const editBtn=e.target.closest("button.edit-game-btn");
   if(editBtn){ e.stopPropagation(); const i=parseInt(editBtn.dataset.i); const g=games.find(x=>x.idx===i); if(g) openEditGameModal(g); return; }
+  const commentBtn=e.target.closest(".move-comment-btn");
+  if(commentBtn){ e.stopPropagation(); openCommentModal(parseInt(commentBtn.dataset.gameIdx), parseInt(commentBtn.dataset.moveIdx)); return; }
   const moveSpan=e.target.closest(".move-san-editable");
-  if(moveSpan){ e.stopPropagation(); openCommentModal(parseInt(moveSpan.dataset.gameIdx), parseInt(moveSpan.dataset.moveIdx)); return; }
+  if(moveSpan){
+    e.stopPropagation();
+    const detailFlex=moveSpan.closest(".detail-flex");
+    const wrapEl=detailFlex && detailFlex.querySelector(".chess-widget-wrap");
+    if(wrapEl && wrapEl._chessWidget) wrapEl._chessWidget.goToPly(parseInt(moveSpan.dataset.ply,10));
+    return;
+  }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
@@ -980,7 +1440,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   const el=document.getElementById("pgnrow-"+i); if(!el) return;
   const opening=!el.classList.contains("open");
   el.classList.toggle("open");
-  if(opening){ const g=games.find(x=>x.idx===i); const container=el.querySelector(".lichess-embed-wrap"); if(g&&container) ensureLichessEmbed(g, container); }
+  if(opening){ const g=games.find(x=>x.idx===i); const container=el.querySelector(".chess-widget-wrap"); if(g&&container) createChessWidget(container, g); }
 });
 let lastCheckedRowIdx=null;
 document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });

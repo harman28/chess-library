@@ -33,7 +33,8 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2rem;background:var(--bg);color:var(--text)}
 h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:600}
-.logo-h1{margin:0 0 1.5rem;line-height:0}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.logo-h1{margin:0;line-height:0}
 .logo-h1 img{height:3.4rem;width:auto}
 .logo-h1 .logo-dark{display:block}
 .logo-h1 .logo-light{display:none}
@@ -169,8 +170,8 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .modal-card label{color:var(--text-dim);font-size:.85rem;font-weight:500}
 .modal-card input[type="file"]{color:var(--text);font-size:.85rem}
 .modal-card textarea{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%}
-.modal-card input[type="text"],.modal-card input[type="date"],.modal-card select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
-.modal-card input[type="text"]:focus,.modal-card input[type="date"]:focus,.modal-card select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.modal-card input[type="text"],.modal-card input[type="password"],.modal-card input[type="date"],.modal-card select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
+.modal-card input[type="text"]:focus,.modal-card input[type="password"]:focus,.modal-card input[type="date"]:focus,.modal-card select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .modal-card input[type="date"]::-webkit-calendar-picker-indicator{filter:var(--date-icon-filter)}
 .modal-card textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.4rem}
@@ -187,6 +188,13 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .th-icon-btn{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;padding:.3rem .6rem;line-height:1}
 .th-icon-btn:hover{color:var(--text)}
 .settings-wrap{position:relative}
+.account-wrap{position:relative}
+#accountBtn{background:var(--accent);color:var(--accent-text);border:1px solid var(--accent);border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem;height:2.3rem;box-sizing:border-box;font-weight:600;font-family:inherit}
+#accountBtn:hover{filter:brightness(1.08)}
+#accountPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.9rem 1rem;width:14rem;max-width:calc(100vw - 2rem);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
+.account-panel-username{color:var(--text);font-size:.9rem;font-weight:600;word-break:break-all}
+.account-logout-row{width:100%;background:var(--surface-alt);border:1px solid var(--border);border-radius:.4rem;color:var(--text);padding:.5rem .7rem;font-size:.85rem;cursor:pointer;text-align:left;font-family:inherit}
+.account-logout-row:hover{border-color:var(--border-hover)}
 .toolbar .icon-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1;height:2.3rem;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
 .icon-btn:hover{background:var(--border)}
 #settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.9rem 1rem;width:16rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
@@ -203,6 +211,13 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .save-link-actions{display:flex;justify-content:flex-end}
 .save-link-actions button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.85rem}
 .save-link-actions button:hover{border-color:var(--border-hover)}
+.auth-error{background:var(--danger-hover-bg);border:1px solid var(--loss);color:var(--loss);border-radius:.4rem;padding:.5rem .7rem;font-size:.82rem;line-height:1.4}
+.auth-switch{color:var(--text-dim);font-size:.85rem;text-align:center}
+.link-btn{background:none;border:none;color:var(--accent);cursor:pointer;font-size:inherit;padding:0;font-family:inherit;text-decoration:underline}
+.auth-google-wrap{display:flex;flex-direction:column;gap:.6rem}
+.auth-divider{display:flex;align-items:center;gap:.6rem;color:var(--text-faint);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--border)}
+#googleSignInBtn{display:flex;justify-content:center}
 
 /* ---------- mobile card list + bottom sheet ---------- */
 .mobile-only{display:none}
@@ -274,13 +289,23 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   .fgroup button:not(:last-child){border-right:1px solid var(--border)!important}
 }
 </style></head><body>
+<div class="page-header">
 <h1 class="logo-h1"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%23e8edf5%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23e8b93e%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-dark"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%2C%20light%20variant%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%230d1420%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23c99a1f%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%23f3efe6%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%230d1420%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%23f3efe6%22%20opacity%3D%220.6%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%230d1420%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23c99a1f%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-light"></h1>
+<div class="account-wrap">
+  <button id="accountBtn" type="button" class="primary"><span id="accountBtnLabel">Log In</span></button>
+  <div id="accountPanel" class="hidden">
+    <div class="columns-panel-header">Account</div>
+    <div id="accountPanelUsername" class="account-panel-username"></div>
+    <button id="logoutBtn" type="button" class="account-logout-row">Log Out</button>
+  </div>
+</div>
+</div>
 <div class="landing" id="landing">
 <div class="landing-inner">
 <div class="hero">
 <p class="tagline">A private viewer for your over-the-board games.</p>
 <p class="hero-note">Filter, browse, and re-live your games. Or open an analysis board to analyse.</p>
-<p class="hero-note">Your games stay on your device. Nothing is uploaded anywhere unless you explicitly create a reusable link.</p>
+<p class="hero-note">Your games stay on your device unless you log in — then your library syncs to your account so you can pick up where you left off on any device.</p>
 </div>
 <div class="card">
 <h2>Get Started</h2>
@@ -312,9 +337,6 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 <div class="toolbar">
   <div class="right">
     <div class="normal-toolbar" id="normalToolbar">
-    <div class="save-library-wrap">
-      <button id="saveLibraryBtn" type="button" class="primary"><span class="btn-label-full">Save My Library</span><span class="btn-label-short">Save</span></button>
-    </div>
     <div class="util-group" id="utilGroup">
     <button id="addGamesBtn" type="button"><span class="btn-icon">+</span><span class="btn-label">Add Game(s)</span></button>
     <button id="enterSelectionBtn" type="button"><span class="btn-icon">✎</span><span class="btn-label">Edit</span></button>
@@ -409,16 +431,24 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
 </div>
-<div id="saveLibraryModal" class="modal-overlay hidden">
+<div id="authModal" class="modal-overlay hidden">
   <div class="modal-card">
-    <h2>Save My Library</h2>
-    <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
-    <div class="save-link-box" id="saveLibraryLink"></div>
-    <div class="save-link-actions">
-      <button id="copyLibraryLinkBtn" type="button">Copy</button>
-    </div>
+    <h2 id="authModalTitle">Log In</h2>
+    <div id="authError" class="auth-error hidden"></div>
+    <label>Username</label>
+    <input type="text" id="authUsername" autocomplete="username" spellcheck="false">
+    <label>Password</label>
+    <input type="password" id="authPassword" autocomplete="current-password">
     <div class="modal-actions">
-      <button id="saveLibraryDoneBtn" type="button" class="primary">Done</button>
+      <button id="authCancelBtn" type="button">Cancel</button>
+      <button id="authSubmitBtn" type="button" class="primary">Log In</button>
+    </div>
+    <div class="auth-switch">
+      <span id="authSwitchText">Don't have an account?</span> <button id="authSwitchBtn" type="button" class="link-btn">Sign Up</button>
+    </div>
+    <div id="authGoogleWrap" class="auth-google-wrap hidden">
+      <div class="auth-divider"><span>or</span></div>
+      <div id="googleSignInBtn"></div>
     </div>
   </div>
 </div>
@@ -1109,7 +1139,7 @@ function loadGames(pgnText, name){
 }
 const STORAGE_KEY="chessLibraryData"+(location.pathname.startsWith("/dev/")?"_dev":"");
 const SCHEMA_VERSION=5;
-function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}, lightModeEnabled})); }catch(_){} }
+function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}, lightModeEnabled})); }catch(_){} scheduleAuthSync(); }
 
 const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];
 const KNOWN_KEY_FOR_HEADER={Site:'site',Round:'round',ECO:'eco',WhiteElo:'whiteelo',BlackElo:'blackelo',TimeControl:'time',Termination:'term',Opening:'opening',Variation:'variation'};
@@ -1792,37 +1822,142 @@ document.addEventListener("click",(e)=>{
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="settingsBtn"){ closeSettingsPanel(); }
 });
 const API_BASE="https://chess-library-api.up.railway.app";
-const API_LIBRARIES_PATH="/api/libraries";
-document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
-  const btn=document.getElementById("saveLibraryBtn");
-  const oldLabel=btn.innerHTML;
-  btn.disabled=true; btn.textContent="Saving…";
+const IS_DEV=location.pathname.startsWith("/dev/");
+const API_LIBRARIES_PATH=IS_DEV?"/api/dev/libraries":"/api/libraries";
+const API_AUTH_PATH=IS_DEV?"/api/dev/auth":"/api/auth";
+const API_LIBRARY_MINE_PATH=IS_DEV?"/api/dev/library/mine":"/api/library/mine";
+const AUTH_TOKEN_KEY="chessLibraryAuthToken"+(IS_DEV?"_dev":"");
+let authToken=null; let authUsername=null; let authMode="login"; let authSyncTimer=null;
+function updateAccountUI(){
+  document.getElementById("accountBtnLabel").textContent=authUsername||"Log In";
+  document.getElementById("accountPanelUsername").textContent=authUsername?("Signed in as "+authUsername):"";
+}
+document.getElementById("accountBtn").addEventListener("click",(e)=>{
+  e.stopPropagation();
+  if(!authUsername){ openAuthModal("login"); return; }
+  const panel=document.getElementById("accountPanel");
+  const opening=panel.classList.contains("hidden");
+  panel.classList.toggle("hidden");
+  if(opening) positionPanelMobile(panel, e.currentTarget);
+});
+document.addEventListener("click",(e)=>{
+  const panel=document.getElementById("accountPanel");
+  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="accountBtn"){ panel.classList.add("hidden"); }
+});
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+  document.getElementById("accountPanel").classList.add("hidden");
+  const oldToken=authToken;
+  authToken=null; authUsername=null;
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  updateAccountUI();
+  if(oldToken){
+    try{ await fetch(API_BASE+API_AUTH_PATH+"/logout", {method:"POST", headers:{"Authorization":"Bearer "+oldToken}}); }catch(_){}
+  }
+  resetToUpload();
+});
+function updateAuthModalMode(){
+  const isLogin=authMode==="login";
+  document.getElementById("authModalTitle").textContent=isLogin?"Log In":"Sign Up";
+  document.getElementById("authSubmitBtn").textContent=isLogin?"Log In":"Sign Up";
+  document.getElementById("authPassword").autocomplete=isLogin?"current-password":"new-password";
+  document.getElementById("authSwitchText").textContent=isLogin?"Don't have an account?":"Already have an account?";
+  document.getElementById("authSwitchBtn").textContent=isLogin?"Sign Up":"Log In";
+}
+function openAuthModal(mode){
+  authMode=mode;
+  document.getElementById("authUsername").value="";
+  document.getElementById("authPassword").value="";
+  document.getElementById("authError").classList.add("hidden");
+  updateAuthModalMode();
+  document.getElementById("authModal").classList.remove("hidden");
+  document.getElementById("authUsername").focus();
+}
+function closeAuthModal(){ document.getElementById("authModal").classList.add("hidden"); }
+document.getElementById("authSwitchBtn").addEventListener("click",()=>{
+  authMode=authMode==="login"?"signup":"login";
+  document.getElementById("authError").classList.add("hidden");
+  updateAuthModalMode();
+});
+document.getElementById("authCancelBtn").addEventListener("click", closeAuthModal);
+document.getElementById("authModal").addEventListener("click",(e)=>{ if(e.target.id==="authModal") closeAuthModal(); });
+function showAuthError(msg){
+  const el=document.getElementById("authError");
+  el.textContent=msg; el.classList.remove("hidden");
+}
+async function submitAuthForm(){
+  const username=document.getElementById("authUsername").value.trim();
+  const password=document.getElementById("authPassword").value;
+  if(!username || !password){ showAuthError("Enter a username and password."); return; }
+  const btn=document.getElementById("authSubmitBtn");
+  const oldLabel=btn.textContent;
+  btn.disabled=true; btn.textContent="Please wait…";
   try{
-    const pgn=buildPgnForGames(games);
-    const res=await fetch(API_BASE+API_LIBRARIES_PATH, {
+    const endpoint=authMode==="login"?"/login":"/signup";
+    const res=await fetch(API_BASE+API_AUTH_PATH+endpoint, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username, password})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok){
+      showAuthError(data.error || (authMode==="login"?"Incorrect username or password.":"Couldn't create that account."));
+      return;
+    }
+    authToken=data.token; authUsername=data.username;
+    localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+    closeAuthModal();
+    updateAccountUI();
+    if(authMode==="signup"){
+      if(games.length) await syncLibraryToAccount();
+    } else {
+      await pullLibraryFromAccount();
+    }
+  }catch(err){
+    showAuthError("Something went wrong. Please try again.");
+  }finally{
+    btn.disabled=false; btn.textContent=oldLabel;
+  }
+}
+document.getElementById("authSubmitBtn").addEventListener("click", submitAuthForm);
+document.getElementById("authPassword").addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); submitAuthForm(); } });
+document.getElementById("authUsername").addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("authPassword").focus(); } });
+async function pullLibraryFromAccount(){
+  try{
+    const res=await fetch(API_BASE+API_LIBRARY_MINE_PATH, {headers:{"Authorization":"Bearer "+authToken}});
+    if(!res.ok) return false;
+    const data=await res.json();
+    loadGames(data.pgn, data.playerName);
+    return true;
+  }catch(_){ return false; }
+}
+function scheduleAuthSync(){
+  if(!authToken) return;
+  clearTimeout(authSyncTimer);
+  authSyncTimer=setTimeout(syncLibraryToAccount, 1500);
+}
+async function syncLibraryToAccount(){
+  if(!authToken) return;
+  try{
+    const pgn=buildPgnForGames(games);
+    await fetch(API_BASE+API_LIBRARY_MINE_PATH, {
+      method:"PUT",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+authToken},
       body:JSON.stringify({playerName, pgn})
     });
-    if(!res.ok) throw new Error("HTTP "+res.status);
+  }catch(_){}
+}
+async function checkAuthOnLoad(){
+  const stored=localStorage.getItem(AUTH_TOKEN_KEY);
+  if(!stored) return false;
+  try{
+    const res=await fetch(API_BASE+API_AUTH_PATH+"/me", {headers:{"Authorization":"Bearer "+stored}});
+    if(!res.ok){ localStorage.removeItem(AUTH_TOKEN_KEY); return false; }
     const data=await res.json();
-    const link=location.origin+location.pathname+"?lib="+data.id;
-    document.getElementById("saveLibraryLink").textContent=link;
-    document.getElementById("saveLibraryModal").classList.remove("hidden");
-  }catch(err){
-    alert("Couldn't save your library right now. Please try again in a moment.");
-  }finally{
-    btn.disabled=false; btn.innerHTML=oldLabel;
-  }
-});
-document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
-  copyToClipboard(document.getElementById("saveLibraryLink").textContent);
-  const btn=document.getElementById("copyLibraryLinkBtn");
-  const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200);
-});
-function closeSaveLibraryModal(){ document.getElementById("saveLibraryModal").classList.add("hidden"); }
-document.getElementById("saveLibraryDoneBtn").addEventListener("click", closeSaveLibraryModal);
-document.getElementById("saveLibraryModal").addEventListener("click",(e)=>{ if(e.target.id==="saveLibraryModal") closeSaveLibraryModal(); });
+    authToken=stored; authUsername=data.username;
+    updateAccountUI();
+    return true;
+  }catch(_){ return false; }
+}
 async function loadFromRemoteLibrary(id){
   try{
     const res=await fetch(API_BASE+API_LIBRARIES_PATH+"/"+encodeURIComponent(id));
@@ -1890,6 +2025,11 @@ function restoreFromStorage(){
     const ok=await loadFromRemoteLibrary(libId);
     if(ok) return;
     alert("Couldn't find a library at this link.");
+  }
+  const loggedIn=await checkAuthOnLoad();
+  if(loggedIn){
+    const pulled=await pullLibraryFromAccount();
+    if(pulled) return;
   }
   restoreFromStorage();
 })();

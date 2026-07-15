@@ -76,7 +76,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:60
 .toolbar .right{display:flex;gap:.4rem;align-items:center}
 .filter-group{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
 .search-wrap{position:relative;display:flex;align-items:center;flex:1 1 8rem;min-width:0}
-.search-icon{position:absolute;left:.7rem;font-size:.8rem;color:var(--text-faint);pointer-events:none}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);display:flex;color:var(--text-faint);pointer-events:none}
 #searchInput{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.4rem .8rem .4rem 1.9rem;font-size:.82rem;outline:none;width:100%;min-width:6rem;max-width:18rem;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
 #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15);background:var(--bg)}
 #searchInput::placeholder{color:var(--text-faint)}
@@ -90,13 +90,15 @@ tr.game td{transition:background .12s}
 tr.game:hover td{background:var(--surface-alt)}
 .num{color:var(--text-faint);width:2rem}.event{color:var(--link);max-width:22ch}.players{white-space:nowrap}.result{color:var(--result);font-weight:600}.moves{color:var(--moves-col)}.date{color:var(--date-col)}
 .detail-flex{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
-.move-formatted{font-size:.88rem;line-height:1.7;padding-right:1.6rem;color:var(--text);word-break:break-word}
-.move-num{color:var(--text-faint);font-weight:600}
+.move-formatted{display:grid;grid-template-columns:2.4rem 1fr 1fr;column-gap:.5rem;row-gap:.25rem;align-items:start;font-size:.88rem;line-height:1.5;padding-right:1.6rem;color:var(--text);word-break:break-word}
+.move-num{color:var(--text-faint);font-weight:600;padding-top:.2rem}
+.move-cell{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem}
 .move-san{color:var(--text)}
 .move-san-editable{cursor:pointer;padding:.15rem .25rem;margin:-.15rem -.25rem;border-radius:.2rem}
 .move-san-editable:hover{background:var(--surface-alt)}
-.move-result{color:var(--result);font-weight:700}
-.move-comment{display:block;background:rgba(56,189,248,.09);border-left:3px solid var(--accent);color:var(--comment);padding:.4rem .6rem;margin:.35rem 0;border-radius:.25rem;font-style:italic}
+.move-formatted .move-result{grid-column:1/-1;color:var(--result);font-weight:700}
+.move-formatted .move-comment{grid-column:1/-1;display:block;background:rgba(56,189,248,.09);border-left:3px solid var(--accent);color:var(--comment);padding:.4rem .6rem;margin:0 0 .2rem;border-radius:.25rem;font-style:italic}
+.move-formatted .move-variation{grid-column:1/-1;color:var(--text-faint);font-style:italic;font-size:.85em;margin-bottom:.2rem}
 #columnsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.6rem;width:15rem;max-width:calc(100vw - 2rem);max-height:60vh;overflow-y:auto;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .columns-panel-header{display:flex;justify-content:space-between;align-items:center;color:var(--text-dim);font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
 .columns-panel-header button{background:none;border:none;color:var(--accent);cursor:pointer;font-size:.75rem;text-transform:none;letter-spacing:0;padding:0}
@@ -107,8 +109,9 @@ tr.game:hover td{background:var(--surface-alt)}
 #columnsList li .drag-handle{color:var(--border-hover);cursor:grab;user-select:none}
 #columnsList li label{flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
 .pgnrow{display:none}.pgnrow.open{display:table-row}.pgnrow td{padding:0}.pgnrow.open td{padding:.6rem .8rem}
-.pgnwrap{position:relative;flex:1;min-width:260px;max-height:420px;overflow-y:auto;background:var(--surface-deep);padding:.6rem .8rem;border-radius:.4rem;box-sizing:border-box}
-.pgnwrap-actions{position:absolute;bottom:.5rem;right:.5rem;display:flex;gap:.3rem}
+.pgnwrap{flex:1;min-width:260px;box-sizing:border-box;display:flex;flex-direction:column;gap:.3rem}
+.pgnwrap-scroll{max-height:420px;overflow-y:auto;background:var(--surface-deep);padding:.6rem .8rem;border-radius:.4rem;box-sizing:border-box}
+.pgnwrap-actions{display:flex;gap:.3rem;justify-content:flex-end}
 .pgnwrap-actions button{background:rgba(15,23,42,.7);border:none;color:var(--text-dim);cursor:pointer;font-size:.75rem;padding:.2rem .3rem;border-radius:.15rem;line-height:1}
 .pgnwrap-actions button:hover{color:var(--text);background:rgba(30,41,59,.9)}
 .chess-widget-wrap{flex:0 0 360px;order:2;display:flex;flex-direction:column;align-items:center;gap:.4rem;width:360px;box-sizing:border-box}
@@ -138,7 +141,6 @@ tr.game:hover td{background:var(--surface-alt)}
 .move-comment-btn:hover{opacity:1;color:var(--accent)}
 .move-comment-btn.has-comment{opacity:.9;color:var(--comment)}
 .move-san-editable.cw-active{background:var(--accent);color:var(--accent-text);border-radius:.2rem}
-.move-variation{color:var(--text-faint);font-style:italic;font-size:.85em}
 button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:var(--border)}
 .hidden{display:none!important}.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-faint);font-size:.95rem}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50}
@@ -218,7 +220,8 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .sheet-close:hover{color:var(--text);background:var(--border)}
 .sheet-body{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column;padding:0}
 .sheet-embed-sticky{flex:0 0 auto;padding:.75rem 1rem;border-bottom:1px solid var(--border)}
-.sheet-moves{flex:1 1 auto;overflow-y:auto;padding:.75rem 1rem 1.5rem}
+.sheet-moves{flex:1 1 auto;box-sizing:border-box;min-height:0;display:flex;flex-direction:column;gap:.4rem;padding:.75rem 1rem 1rem}
+.sheet-moves-scroll{flex:1 1 auto;overflow-y:auto;min-height:0;box-sizing:border-box}
 .game-sheet .chess-widget-wrap{width:260px;margin:0 auto}
 .game-sheet .cw-board{width:260px;height:260px}
 .game-sheet .cw-error{width:260px}
@@ -299,7 +302,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
   <div class="search-wrap">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <input type="text" id="searchInput" placeholder="Search games…">
   </div>
   <div class="filter-group">
@@ -338,6 +341,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
         <div class="sheet-title" id="sheetTitle"></div>
         <div class="sheet-sub" id="sheetSub"></div>
       </div>
+      <button class="sheet-close" id="sheetCopyBtn" type="button" aria-label="Copy PGN" title="Copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
       <button class="sheet-close" id="sheetEditBtn" type="button" aria-label="Edit game">✎</button>
       <button class="sheet-close" id="sheetCloseBtn" type="button" aria-label="Close">✕</button>
     </div>
@@ -742,7 +746,7 @@ function createChessWidget(container, g){
     if(prevActive) prevActive.classList.remove("cw-active");
     if(ply>0){
       const span = scope.querySelector('.move-san-editable[data-ply="'+ply+'"]');
-      if(span){ span.classList.add("cw-active"); if(span.scrollIntoView) span.scrollIntoView({block:"nearest"}); }
+      if(span){ span.classList.add("cw-active"); if(span.scrollIntoView) span.scrollIntoView({block:"center", behavior: reduceMotion ? "auto" : "smooth"}); }
     }
   }
   function updateButtons(){
@@ -939,7 +943,7 @@ function applyCommentEdit(movetext, moveIdx, newText){
 function formatMovesWithComments(movetext, gameIdx){
   if(!movetext) return "";
   const tokens=tokenizeMovetext(movetext);
-  let out=""; let lineOpen=false; let moveIdx=0; let i=0;
+  const cells=[]; let moveIdx=0; let i=0;
   while(i<tokens.length){
     const t=tokens[i];
     if(t.type==="parenOpen"){
@@ -952,30 +956,54 @@ function formatMovesWithComments(movetext, gameIdx){
         else if(tj.type!=="nag"){ buf+=(buf?" ":"")+tj.text; }
         j++;
       }
-      if(!lineOpen){ out+=`<div class="move-line">`; lineOpen=true; }
-      out+=`<span class="move-variation">(${esc(buf)})</span> `;
+      cells.push({kind:"variation", text:buf});
       i=j; continue;
     }
-    if(t.type==="comment"){
-      const cleaned=cleanCommentText(t.raw.slice(1,-1));
-      if(cleaned){
-        if(lineOpen){ out+="</div>"; lineOpen=false; }
-        out+=`<div class="move-comment">${esc(cleaned)}</div>`;
-      }
-      i++; continue;
-    }
-    if(t.type==="nag" || t.type==="parenClose"){ i++; continue; }
-    if(!lineOpen){ out+=`<div class="move-line">`; lineOpen=true; }
-    if(t.type==="num"){ out+=`<span class="move-num">${esc(t.text)}</span> `; i++; continue; }
-    if(t.type==="result"){ out+=`<span class="move-result">${esc(t.text)}</span> `; i++; continue; }
+    if(t.type==="comment" || t.type==="nag" || t.type==="parenClose" || t.type==="num"){ i++; continue; }
+    if(t.type==="result"){ cells.push({kind:"result", text:t.text}); i++; continue; }
     const next=tokens[i+1];
-    const hasComment = !!(next && next.type==="comment" && !next.inVariation);
-    const ply=moveIdx+1;
-    out+=`<span class="move-san move-san-editable" data-game-idx="${gameIdx}" data-move-idx="${moveIdx}" data-ply="${ply}" role="button" tabindex="0">${esc(t.text)}</span>`
-       + `<button class="move-comment-btn${hasComment?' has-comment':''}" data-game-idx="${gameIdx}" data-move-idx="${moveIdx}" title="${hasComment?'Edit comment':'Add comment'}" aria-label="${hasComment?'Edit comment':'Add comment'}">${hasComment?'\u{1F4AC}':'\u270E'}</button> `;
+    const hasComment=!!(next && next.type==="comment" && !next.inVariation);
+    const comment=hasComment?cleanCommentText(next.raw.slice(1,-1)):"";
+    cells.push({kind:"move", moveIdx, ply:moveIdx+1, text:t.text, hasComment, comment});
     moveIdx++; i++;
   }
-  if(lineOpen) out+="</div>";
+
+  // Group mainline moves into White/Black row pairs (variations/results become their own full-width rows).
+  const rows=[]; let current=null;
+  function flush(){ if(current) rows.push(current); current=null; }
+  cells.forEach(c=>{
+    if(c.kind==="move"){
+      const isWhite = c.moveIdx%2===0;
+      const num = Math.floor(c.moveIdx/2)+1;
+      if(isWhite){ flush(); current={num, white:c, black:null}; }
+      else if(current && current.num===num && !current.black){ current.black=c; }
+      else { flush(); current={num, white:null, black:c}; }
+    } else {
+      flush(); rows.push({extra:c});
+    }
+  });
+  flush();
+
+  function moveCellHtml(c){
+    if(!c) return "";
+    return `<span class="move-san move-san-editable" data-game-idx="${gameIdx}" data-move-idx="${c.moveIdx}" data-ply="${c.ply}" role="button" tabindex="0">${esc(c.text)}</span>`
+      + `<button class="move-comment-btn${c.hasComment?' has-comment':''}" data-game-idx="${gameIdx}" data-move-idx="${c.moveIdx}" title="${c.hasComment?'Edit comment':'Add comment'}" aria-label="${c.hasComment?'Edit comment':'Add comment'}">${c.hasComment?'\u{1F4AC}':'\u270E'}</button>`;
+  }
+
+  let out="";
+  rows.forEach(row=>{
+    if(row.extra){
+      if(row.extra.kind==="variation") out+=`<div class="move-variation">(${esc(row.extra.text)})</div>`;
+      else out+=`<div class="move-result">${esc(row.extra.text)}</div>`;
+      return;
+    }
+    const numLabel = row.white ? (row.num+".") : (row.num+"...");
+    out+=`<div class="move-num">${esc(numLabel)}</div>`;
+    out+=`<div class="move-cell">${moveCellHtml(row.white)}</div>`;
+    out+=`<div class="move-cell">${moveCellHtml(row.black)}</div>`;
+    if(row.white && row.white.hasComment) out+=`<div class="move-comment">${esc(row.white.comment)}</div>`;
+    if(row.black && row.black.hasComment) out+=`<div class="move-comment">${esc(row.black.comment)}</div>`;
+  });
   return out;
 }
 function buildGameRecord(b, idx, name){
@@ -1101,7 +1129,7 @@ function render(){
       +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn" title="Copies the PGN, then opens chess.com to paste it in">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
-    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
+    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="pgnwrap-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateActionButtons(); renderMobileList(filtered); }
 let lastCheckedMobileIdx=null;
@@ -1179,7 +1207,7 @@ function openGameSheet(g){
   document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
   document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:var(--result)">${esc(g.headers.Result||"")}</span>`;
   const body=document.getElementById("sheetBody");
-  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div>`;
+  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="sheet-moves-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div></div>`;
   createChessWidget(body.querySelector(".chess-widget-wrap"), g);
   document.body.classList.add("sheet-open");
   history.pushState({sheet:true},"");
@@ -1270,6 +1298,12 @@ document.getElementById("editGameSaveBtn").addEventListener("click",()=>{
 });
 document.getElementById("sheetEditBtn").addEventListener("click",()=>{
   const g=games.find(x=>x.idx===currentSheetGameIdx); if(g) openEditGameModal(g);
+});
+document.getElementById("sheetCopyBtn").addEventListener("click",()=>{
+  const g=games.find(x=>x.idx===currentSheetGameIdx); if(!g) return;
+  copyToClipboard(g.pgn);
+  const btn=document.getElementById("sheetCopyBtn");
+  const old=btn.innerHTML; btn.innerHTML="✓"; setTimeout(()=>btn.innerHTML=old,1200);
 });
 document.getElementById("sheetBody").addEventListener("click",(e)=>{
   const commentBtn=e.target.closest(".move-comment-btn");
@@ -1418,7 +1452,10 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
-  const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
+  const old=btn.innerHTML;
+  if(btn.classList.contains("copy-btn")){ btn.textContent="copied"; setTimeout(()=>btn.innerHTML=old,1200); }
+  else { btn.innerHTML="✓"; setTimeout(()=>btn.innerHTML=old,1200); }
+  return; }
   const cb=e.target.closest("input[type='checkbox'][data-i]");
   if(cb){
     const i=parseInt(cb.dataset.i);

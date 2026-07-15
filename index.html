@@ -74,17 +74,34 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:60
 .toolbar{display:flex;flex-direction:row-reverse;gap:.6rem;flex-wrap:wrap;align-items:center;margin-bottom:.5rem}
 .player{color:var(--accent);font-weight:600;font-size:.95rem}
 .toolbar .right{display:flex;gap:.4rem;align-items:center}
+.normal-toolbar{display:flex;gap:.4rem;align-items:center}
+.selection-bar{display:flex;gap:.5rem;align-items:center}
+.selection-bar.hidden{display:none}
+.sel-cancel{width:2.3rem;height:2.3rem;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;cursor:pointer;font-size:1rem;padding:0}
+.sel-cancel:hover{background:var(--border)}
+.sel-count{font-size:.85rem;color:var(--text-dim);white-space:nowrap}
+.sel-group{display:flex;height:2.3rem;border:1px solid var(--border);border-radius:.25rem;overflow:hidden;flex:0 0 auto;margin-left:auto}
+.sel-group button{background:var(--surface-alt);border:none;color:var(--text);width:2.6rem;height:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.sel-group button:not(:last-child){border-right:1px solid var(--border)}
+.sel-group button:hover:not(:disabled){background:var(--border)}
+.sel-group button:disabled{opacity:.4;cursor:not-allowed}
+.sel-group button.seg-danger{background:var(--danger-strong);color:var(--danger-text)}
+.sel-group button.seg-danger:hover:not(:disabled){background:var(--danger-strong-hover)}
+.util-group{display:contents}
 .filter-group{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
 .search-wrap{position:relative;display:flex;align-items:center;flex:1 1 8rem;min-width:0}
 .search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);display:flex;color:var(--text-faint);pointer-events:none}
 #searchInput{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.4rem .8rem .4rem 1.9rem;font-size:.82rem;outline:none;width:100%;min-width:6rem;max-width:18rem;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
 #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15);background:var(--bg)}
 #searchInput::placeholder{color:var(--text-faint)}
-.toolbar button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem}
+.toolbar button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem;height:2.3rem;box-sizing:border-box}
+.toolbar button .btn-icon{display:none}
+.toolbar button .btn-label-short{display:none}
 .toolbar button:hover{background:var(--border)}.toolbar button.primary{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
 .toolbar button.danger{color:var(--loss)}.toolbar button.danger:hover{background:var(--danger-hover-bg);border-color:var(--loss)}
 .filters{display:flex;gap:.35rem;flex-wrap:wrap;min-width:0;align-items:center}.filters button{flex-shrink:0;background:var(--bg);color:var(--text-dim);border:1px solid var(--border);padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}.filters button:hover{background:var(--surface-alt)}.filters button.active:hover{background:var(--accent-hover);color:var(--accent-text)}.filters .sep{width:1px;height:1.1rem;background:var(--border);flex-shrink:0}
-table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:var(--text-dim);border-bottom:1px solid var(--border);font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--bg);z-index:1;white-space:nowrap;vertical-align:middle}
+.fgroup{display:contents}
+table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:var(--text-dim);border-bottom:1px solid var(--border);font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:var(--toolbar-height,0px);background:var(--bg);z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid var(--surface);vertical-align:top;font-size:.88rem}
 tr.game td{transition:background .12s}
 tr.game:hover td{background:var(--surface-alt)}
@@ -167,7 +184,7 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .th-icon-btn{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;padding:.3rem .6rem;line-height:1}
 .th-icon-btn:hover{color:var(--text)}
 .settings-wrap{position:relative}
-.toolbar .icon-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1}
+.toolbar .icon-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1;height:2.3rem;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
 .icon-btn:hover{background:var(--border)}
 #settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.9rem 1rem;width:16rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
 #settingsPanel label{color:var(--text-dim);font-size:.85rem;font-weight:500}
@@ -175,6 +192,9 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 #settingsPanel input[type="text"]:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .settings-toggle-row{display:flex;align-items:center;justify-content:space-between}
 .settings-toggle-row label{margin:0}
+.settings-sep{height:1px;background:var(--border);margin:.1rem 0}
+.settings-danger-row{width:100%;background:var(--danger-strong)!important;border:1px solid var(--danger-strong)!important;border-radius:.4rem;color:var(--danger-text)!important;padding:.6rem .7rem;font-size:.85rem;display:flex;align-items:center;gap:.55rem;cursor:pointer;text-align:left;font-family:inherit}
+.settings-danger-row:hover{background:var(--danger-strong-hover)!important;border-color:var(--danger-strong-hover)!important}
 .save-link-note{margin:0;color:var(--text-dim);font-size:.8rem;line-height:1.4}
 .save-link-box{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.6rem .7rem;font-size:.85rem;font-family:ui-monospace,monospace;line-height:1.5;word-break:break-all;box-sizing:border-box}
 .save-link-actions{display:flex;justify-content:flex-end}
@@ -227,14 +247,28 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .game-sheet .cw-error{width:260px}
 .sheet-moves .move-formatted{padding-right:0}
 
+.toolbar{position:sticky;top:0;z-index:15;background:var(--bg);padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid var(--border)}
 @media (max-width:700px){
   .table-wrap{display:none}
   .mobile-only{display:block}
-  .toolbar{position:sticky;top:0;z-index:15;background:var(--bg);padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid var(--border)}
   .filters{flex-wrap:wrap}
   .toolbar .right{flex-wrap:wrap}
   #mobileSelectAllRow.selecting{display:block;padding:.3rem 0 .6rem}
   .move-comment-btn{padding:.55rem;font-size:.85rem;min-width:1.9rem;min-height:1.9rem;display:inline-flex;align-items:center;justify-content:center}
+  .toolbar button .btn-icon{display:inline;font-size:1rem}
+  .toolbar button .btn-label{display:none}
+  .toolbar button .btn-label-full{display:none}
+  .toolbar button .btn-label-short{display:inline}
+  .util-group{display:flex;height:2.3rem;border:1px solid var(--border);border-radius:.25rem;overflow:hidden}
+  .util-group>*{height:100%!important;box-sizing:border-box}
+  .util-group>*:not(:first-child){border-left:1px solid var(--border)!important}
+  .util-group>button,.util-group .settings-wrap button{background:var(--surface-alt)!important;border:none!important;border-radius:0!important;flex:1 1 0}
+  .filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .filters .sep{display:none}
+  .fgroup{display:flex;flex-shrink:0;border:1px solid var(--border);border-radius:.25rem;overflow:hidden}
+  .fgroup button{border:none!important;border-radius:0!important}
+  .fgroup button:not(:last-child){border-right:1px solid var(--border)!important}
 }
 </style></head><body>
 <h1 class="logo-h1"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%23e8edf5%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23e8b93e%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-dark"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%2C%20light%20variant%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%230d1420%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23c99a1f%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%23f3efe6%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%230d1420%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%23f3efe6%22%20opacity%3D%220.6%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%230d1420%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23c99a1f%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-light"></h1>
@@ -274,16 +308,13 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 <div id="app" class="hidden">
 <div class="toolbar">
   <div class="right">
+    <div class="normal-toolbar" id="normalToolbar">
     <div class="save-library-wrap">
-      <button id="saveLibraryBtn" type="button" class="primary">Save My Library</button>
+      <button id="saveLibraryBtn" type="button" class="primary"><span class="btn-label-full">Save My Library</span><span class="btn-label-short">Save</span></button>
     </div>
-    <button id="addGamesBtn" type="button">Add Game(s)</button>
-    <button id="enterSelectionBtn" type="button">Edit</button>
-    <button id="bulkEditBtn" type="button" class="hidden">Edit</button>
-    <button id="exportBtn" type="button" class="hidden">Export</button>
-    <button id="deleteBtn" type="button" class="danger hidden">Delete</button>
-    <button id="cancelSelectionBtn" type="button" class="hidden">Cancel</button>
-    <button id="reloadBtn" type="button" class="danger">Reload</button>
+    <div class="util-group" id="utilGroup">
+    <button id="addGamesBtn" type="button"><span class="btn-icon">+</span><span class="btn-label">Add Game(s)</span></button>
+    <button id="enterSelectionBtn" type="button"><span class="btn-icon">✎</span><span class="btn-label">Edit</span></button>
     <div class="settings-wrap">
       <button id="settingsBtn" type="button" class="icon-btn" title="Settings">⚙</button>
       <div id="settingsPanel" class="hidden">
@@ -294,10 +325,22 @@ body.sheet-open .game-sheet{transform:translateY(0)}
           <label for="themeToggle">Light mode</label>
           <input type="checkbox" id="themeToggle">
         </div>
+        <div class="settings-sep"></div>
+        <button id="reloadBtn" type="button" class="settings-danger-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reload Library</button>
         <div class="modal-actions">
-          <button id="settingsCancelBtn" type="button">Cancel</button>
-          <button id="settingsSaveBtn" type="button" class="primary">Save</button>
+          <button id="settingsCancelBtn" type="button" class="primary">Done</button>
         </div>
+      </div>
+    </div>
+    </div>
+    </div>
+    <div class="selection-bar hidden" id="selectionBar">
+      <button id="cancelSelectionBtn" type="button" class="sel-cancel" aria-label="Cancel selection" title="Cancel">✕</button>
+      <span class="sel-count" id="selCount">0 selected</span>
+      <div class="sel-group">
+        <button id="bulkEditBtn" type="button" aria-label="Edit selected" title="Edit selected">✎</button>
+        <button id="exportBtn" type="button" aria-label="Export selected" title="Export selected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+        <button id="deleteBtn" type="button" class="seg-danger" aria-label="Delete selected" title="Delete selected"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
       </div>
     </div>
   </div>
@@ -309,9 +352,9 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     <span class="player" id="playerDisplay"></span>
     <div class="filters" id="filters">
       <button data-filter="all" data-group="base" class="active">All</button><div class="sep"></div>
-      <button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button><div class="sep"></div>
-      <button data-filter="wins" data-group="outcome">Wins</button><button data-filter="losses" data-group="outcome">Losses</button><button data-filter="draws" data-group="outcome">Draws</button><div class="sep"></div>
-      <button data-filter="blitz" data-group="speed">Blitz</button><button data-filter="rapid" data-group="speed">Rapid</button><button data-filter="classical" data-group="speed">Classical</button><button data-filter="untimed" data-group="speed">Untimed</button>
+      <div class="fgroup"><button data-filter="white" data-group="color">White</button><button data-filter="black" data-group="color">Black</button></div><div class="sep"></div>
+      <div class="fgroup"><button data-filter="wins" data-group="outcome">Wins</button><button data-filter="losses" data-group="outcome">Losses</button><button data-filter="draws" data-group="outcome">Draws</button></div><div class="sep"></div>
+      <div class="fgroup"><button data-filter="blitz" data-group="speed">Blitz</button><button data-filter="rapid" data-group="speed">Rapid</button><button data-filter="classical" data-group="speed">Classical</button><button data-filter="untimed" data-group="speed">Untimed</button></div>
     </div>
   </div>
 </div>
@@ -1053,11 +1096,8 @@ function loadGames(pgnText, name){
   sortGamesByDate();
   initColumnState();
   document.getElementById("table").classList.remove("selecting");
-  document.getElementById("enterSelectionBtn").classList.remove("hidden");
-  document.getElementById("bulkEditBtn").classList.add("hidden");
-  document.getElementById("exportBtn").classList.add("hidden");
-  document.getElementById("deleteBtn").classList.add("hidden"); document.getElementById("deleteBtn").classList.remove("armed");
-  document.getElementById("cancelSelectionBtn").classList.add("hidden");
+  document.getElementById("normalToolbar").classList.remove("hidden");
+  document.getElementById("selectionBar").classList.add("hidden");
   document.getElementById("landing").classList.add("hidden"); document.getElementById("app").classList.remove("hidden");
   window.scrollTo(0,0);
   render();
@@ -1105,6 +1145,16 @@ function reconcileColumnState(){
   const known=new Set(columnState.order);
   discoverColumns().forEach(c=>{ if(!known.has(c.key)) columnState.order.push(c.key); });
 }
+function updateToolbarHeightVar(){
+  const toolbar=document.querySelector(".toolbar");
+  if(!toolbar) return;
+  document.documentElement.style.setProperty("--toolbar-height", toolbar.getBoundingClientRect().height+"px");
+}
+let toolbarHeightResizeTimer=null;
+window.addEventListener("resize",()=>{
+  clearTimeout(toolbarHeightResizeTimer);
+  toolbarHeightResizeTimer=setTimeout(updateToolbarHeightVar, 100);
+});
 function render(){
   const allCols=discoverColumns();
   const colByKey=Object.fromEntries(allCols.map(c=>[c.key,c]));
@@ -1131,7 +1181,7 @@ function render(){
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="pgnwrap-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
-  }); updateActionButtons(); renderMobileList(filtered); }
+  }); updateActionButtons(); renderMobileList(filtered); updateToolbarHeightVar(); }
 let lastCheckedMobileIdx=null;
 function renderMobileList(filtered){
   const list=document.getElementById("mobileList"); if(!list) return;
@@ -1163,6 +1213,7 @@ function renderMobileList(filtered){
         if(!selectionMode) enterSelectionMode();
         if(selected.has(g.idx)) selected.delete(g.idx); else selected.add(g.idx);
         const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
+        updateSelCount();
         if(navigator.vibrate) navigator.vibrate(15);
       }, LONG_PRESS_MS);
     }, {passive:true});
@@ -1191,6 +1242,7 @@ function renderMobileList(filtered){
           const cb=card.querySelector(".mcard-cb"); if(cb) cb.checked=selected.has(g.idx);
         }
         lastCheckedMobileIdx=g.idx;
+        updateSelCount();
         return;
       }
       openGameSheet(g);
@@ -1366,12 +1418,14 @@ function onSelectAllChange(e){
   selected.clear();
   if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
   else { cbs.forEach(cb=>{ cb.checked=false; }); }
+  updateSelCount();
 }
 document.getElementById("mobileSelectAll").addEventListener("change",(e)=>{
   const cbs=[...document.querySelectorAll("#mobileList input[type='checkbox']")];
   selected.clear();
   if(e.target.checked){ cbs.forEach(cb=>{ cb.checked=true; const i=parseInt(cb.dataset.i); if(i) selected.add(i); }); }
   else { cbs.forEach(cb=>{ cb.checked=false; }); }
+  updateSelCount();
 });
 function positionPanelMobile(panel, trigger){
   if(!window.matchMedia("(max-width:700px)").matches) return;
@@ -1466,6 +1520,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
       if(fromPos!==-1 && toPos!==-1){
         const [start,end]=fromPos<toPos?[fromPos,toPos]:[toPos,fromPos];
         for(let p=start;p<=end;p++){ selected.add(idxs[p]); rowCbs[p].checked=true; }
+        updateSelCount();
       }
     }
     lastCheckedRowIdx=i;
@@ -1480,7 +1535,7 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   if(opening){ const g=games.find(x=>x.idx===i); const container=el.querySelector(".chess-widget-wrap"); if(g&&container) createChessWidget(container, g); }
 });
 let lastCheckedRowIdx=null;
-document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); } });
+document.getElementById("rows").addEventListener("change",(e)=>{ if(e.target.tagName==="INPUT"){ const i=parseInt(e.target.dataset.i); if(e.target.checked) selected.add(i); else selected.delete(i); updateSelCount(); } });
 document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListener("click",()=>{
   const group=btn.dataset.group; const filter=btn.dataset.filter; const wasActive=btn.classList.contains("active");
   if(filter==="all"){ activeFilters.clear(); btn.classList.add("active"); document.querySelectorAll("#filters button:not([data-filter='all'])").forEach(b=>b.classList.remove("active")); }
@@ -1496,30 +1551,27 @@ function updateActionButtons(){
   document.getElementById("exportBtn").disabled = noGames;
   document.getElementById("deleteBtn").disabled = noGames;
 }
+function updateSelCount(){
+  document.getElementById("selCount").textContent = selected.size+" selected";
+}
 function enterSelectionMode(){
   selectionMode=true;
   document.getElementById("table").classList.add("selecting");
   document.getElementById("mobileList").classList.add("selecting");
   document.getElementById("mobileSelectAllRow").classList.add("selecting");
-  document.getElementById("enterSelectionBtn").classList.add("hidden");
-  document.getElementById("bulkEditBtn").classList.remove("hidden");
-  document.getElementById("exportBtn").classList.remove("hidden");
-  document.getElementById("deleteBtn").classList.remove("hidden");
-  document.getElementById("cancelSelectionBtn").classList.remove("hidden");
-  document.getElementById("deleteBtn").classList.add("armed");
+  document.getElementById("normalToolbar").classList.add("hidden");
+  document.getElementById("selectionBar").classList.remove("hidden");
   updateActionButtons();
+  updateSelCount();
+  updateToolbarHeightVar();
 }
 function exitSelectionMode(){
   selectionMode=null;
   document.getElementById("table").classList.remove("selecting");
   document.getElementById("mobileList").classList.remove("selecting");
   document.getElementById("mobileSelectAllRow").classList.remove("selecting");
-  document.getElementById("enterSelectionBtn").classList.remove("hidden");
-  document.getElementById("bulkEditBtn").classList.add("hidden");
-  document.getElementById("exportBtn").classList.add("hidden");
-  document.getElementById("deleteBtn").classList.add("hidden");
-  document.getElementById("cancelSelectionBtn").classList.add("hidden");
-  document.getElementById("deleteBtn").classList.remove("armed");
+  document.getElementById("normalToolbar").classList.remove("hidden");
+  document.getElementById("selectionBar").classList.add("hidden");
   document.getElementById("selectAll").checked=false;
   document.getElementById("mobileSelectAll").checked=false;
   document.querySelectorAll("#rows input[type='checkbox']").forEach(cb=>{ cb.checked=false; });
@@ -1528,6 +1580,8 @@ function exitSelectionMode(){
   lastCheckedRowIdx=null;
   lastCheckedMobileIdx=null;
   updateActionButtons();
+  updateSelCount();
+  updateToolbarHeightVar();
 }
 const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];
 function buildPgnForGames(list){ if(!list.length) return "";
@@ -1703,32 +1757,34 @@ document.getElementById("settingsBtn").addEventListener("click",(e)=>{
   panel.classList.toggle("hidden");
   if(opening) positionPanelMobile(panel, e.currentTarget);
 });
-document.getElementById("settingsCancelBtn").addEventListener("click",()=>{
+function commitSettingsName(){
+  const newName=document.getElementById("settingsNameInput").value.trim();
+  if(newName && newName!==playerName){
+    playerName=newName;
+    games.forEach(g=>{ const c=classify(g, playerName); g.color=c.color; g.outcome=c.outcome; });
+    render();
+    saveToStorage();
+  }
+}
+function closeSettingsPanel(){
+  commitSettingsName();
   document.getElementById("settingsPanel").classList.add("hidden");
-});
+}
+document.getElementById("settingsCancelBtn").addEventListener("click", closeSettingsPanel);
 document.getElementById("themeToggle").addEventListener("change",(e)=>{
   lightModeEnabled=e.target.checked;
   applyTheme();
   saveToStorage();
 });
-document.getElementById("settingsSaveBtn").addEventListener("click",()=>{
-  const newName=document.getElementById("settingsNameInput").value.trim();
-  if(!newName){ alert("Please enter a name."); return; }
-  playerName=newName;
-  games.forEach(g=>{ const c=classify(g, playerName); g.color=c.color; g.outcome=c.outcome; });
-  document.getElementById("settingsPanel").classList.add("hidden");
-  render();
-  saveToStorage();
-});
 document.addEventListener("click",(e)=>{
   const panel=document.getElementById("settingsPanel");
-  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="settingsBtn"){ panel.classList.add("hidden"); }
+  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="settingsBtn"){ closeSettingsPanel(); }
 });
 const API_BASE="https://chess-library-api.up.railway.app";
 const API_LIBRARIES_PATH="/api/libraries";
 document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
   const btn=document.getElementById("saveLibraryBtn");
-  const oldLabel=btn.textContent;
+  const oldLabel=btn.innerHTML;
   btn.disabled=true; btn.textContent="Saving…";
   try{
     const pgn=buildPgnForGames(games);
@@ -1745,7 +1801,7 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
   }catch(err){
     alert("Couldn't save your library right now. Please try again in a moment.");
   }finally{
-    btn.disabled=false; btn.textContent=oldLabel;
+    btn.disabled=false; btn.innerHTML=oldLabel;
   }
 });
 document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{

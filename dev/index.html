@@ -746,7 +746,7 @@ function createChessWidget(container, g){
     if(prevActive) prevActive.classList.remove("cw-active");
     if(ply>0){
       const span = scope.querySelector('.move-san-editable[data-ply="'+ply+'"]');
-      if(span){ span.classList.add("cw-active"); if(span.scrollIntoView) span.scrollIntoView({block:"nearest"}); }
+      if(span){ span.classList.add("cw-active"); if(span.scrollIntoView) span.scrollIntoView({block:"center", behavior: reduceMotion ? "auto" : "smooth"}); }
     }
   }
   function updateButtons(){

@@ -157,15 +157,40 @@ node your_script.js`.
   It used to run PGN header values through `esc()` (HTML-entity escaping) when building
   `g.pgn`, which corrupted any header containing `&`, `<`, `>`, or `"` for every one of
   those uses. Don't re-introduce HTML-escaping anywhere in the `g.pgn`/export pipeline.
-- **Save My Library**: calls the `chess-library-api` backend (separate repo, see its own
-  CLAUDE.md) to store the current PGN under a random unlisted id, returns a `?lib=<id>`
-  link. Presented as a **centered modal** (`#saveLibraryModal`, matching the
-  `.modal-overlay`/`.modal-card` pattern used by Add Games/game-edit) — not an anchored
-  dropdown, which was tried first and had two problems: (1) visually easy to miss (same dark
-  surface color as the page background), and (2) being positioned relative to its trigger
-  button meant it could overflow the viewport edge on narrow screens. The link renders in a
-  wrapping monospace text block (`.save-link-box`, `word-break:break-all`), not a
-  single-line `<input>`, which silently clips/scrolls long URLs out of view.
+- **Accounts (username/password, replacing "Save My Library" as the primary flow)**:
+  calls the `chess-library-api` backend's `/api/auth/*` and `/api/library/mine` endpoints
+  (separate repo, see its own CLAUDE.md for the full endpoint list and auth design notes).
+  A `#accountBtn` lives in `.page-header`, **outside `#app`/`#landing`**, so it's visible
+  whether or not any games are currently loaded — it was originally nested inside the
+  in-app toolbar (like the old Save My Library button was) but that meant a returning
+  logged-in user with no local data yet had no way to log in, since the toolbar only
+  renders once games are loaded. Don't renest it back inside `#app`.
+  Signup/login share one modal (`#authModal`, same `.modal-overlay`/`.modal-card` pattern
+  as Add Games/game-edit) toggled between modes via `authMode`/`updateAuthModalMode()`.
+  **Signup pushes the current locally-loaded library up to the new account** (if any games
+  are loaded); **login pulls the account's saved library down and replaces what's showing**
+  — this asymmetry is deliberate: signup is "claim what I already have", login is "give me
+  my account's data back". A 404 on login's pull (fresh account, nothing saved yet) is a
+  no-op, not a reset — it deliberately does not clear locally-loaded data, to avoid
+  destroying an anonymous session someone was just trying out.
+  Session token lives in `localStorage` (`chessLibraryAuthToken` / `_dev` suffix, same
+  path-based namespacing as `STORAGE_KEY`) and is sent as `Authorization: Bearer <token>`,
+  not a cookie (cross-origin frontend/backend, see the API's CLAUDE.md for why). On load,
+  `checkAuthOnLoad()` validates the stored token against `/api/auth/me` before trusting it.
+  Every mutation still calls `saveToStorage()` exactly as before (instant local save is
+  unchanged/preserved), which now also calls `scheduleAuthSync()` — a 1.5s-debounced
+  `PUT /api/library/mine` that only fires when logged in, so the account copy stays in
+  sync in the background without blocking the UI or hammering the API on every keystroke.
+  The **old anonymous unlisted-link flow (`?lib=<id>`, `loadFromRemoteLibrary()`) still
+  works and was deliberately kept** for backward compatibility with links already shared
+  — it's just no longer the primary "save" action surfaced in the UI.
+  **Google Sign-In is stubbed but not wired up**: the backend endpoint
+  (`/api/auth/google`) and the frontend's hidden `#authGoogleWrap`/`#googleSignInBtn`
+  placeholder exist, but there's no `GOOGLE_CLIENT_ID` yet (needs manual provisioning via
+  Google Cloud Console — see the API repo's CLAUDE.md) and the frontend never loads
+  Google's Identity Services script or calls `google.accounts.id.initialize()`, since
+  there's no Client ID to configure it with. Don't half-wire this further until the
+  Client ID exists; there's nothing useful to test without it.
 - **Light/dark theme**: every color in the stylesheet is a CSS custom property, defined
   under `:root` (dark, the default) and re-defined under `:root[data-theme="light"]` — never
   hardcode a color directly in a new rule, add/reuse a token instead. The theme toggle

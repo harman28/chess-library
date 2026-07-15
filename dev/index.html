@@ -90,8 +90,9 @@ tr.game td{transition:background .12s}
 tr.game:hover td{background:var(--surface-alt)}
 .num{color:var(--text-faint);width:2rem}.event{color:var(--link);max-width:22ch}.players{white-space:nowrap}.result{color:var(--result);font-weight:600}.moves{color:var(--moves-col)}.date{color:var(--date-col)}
 .detail-flex{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
-.move-formatted{display:grid;grid-template-columns:2.4rem 1fr 1fr;column-gap:.5rem;row-gap:.25rem;align-items:start;font-size:.88rem;line-height:1.5;padding-right:1.6rem;color:var(--text);word-break:break-word}
+.move-formatted{display:grid;grid-template-columns:2.2rem 1fr 1fr 2.2rem 1fr 1fr;column-gap:.5rem;row-gap:.2rem;align-items:start;font-size:.88rem;line-height:1.4;padding-right:1.6rem;color:var(--text);word-break:break-word}
 .move-num{color:var(--text-faint);font-weight:600;padding-top:.2rem}
+.move-num-second{padding-left:.5rem;border-left:1px solid var(--border)}
 .move-cell{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem}
 .move-san{color:var(--text)}
 .move-san-editable{cursor:pointer;padding:.15rem .25rem;margin:-.15rem -.25rem;border-radius:.2rem}
@@ -225,7 +226,8 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .game-sheet .chess-widget-wrap{width:260px;margin:0 auto}
 .game-sheet .cw-board{width:260px;height:260px}
 .game-sheet .cw-error{width:260px}
-.sheet-moves .move-formatted{padding-right:0}
+.sheet-moves .move-formatted{padding-right:0;grid-template-columns:2.2rem 1fr 1fr}
+.sheet-moves .move-num-second{border-left:none;padding-left:0}
 
 @media (max-width:700px){
   .table-wrap{display:none}
@@ -341,6 +343,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
         <div class="sheet-title" id="sheetTitle"></div>
         <div class="sheet-sub" id="sheetSub"></div>
       </div>
+      <button class="sheet-close" id="sheetCopyBtn" type="button" aria-label="Copy PGN" title="Copy PGN">📋</button>
       <button class="sheet-close" id="sheetEditBtn" type="button" aria-label="Edit game">✎</button>
       <button class="sheet-close" id="sheetCloseBtn" type="button" aria-label="Close">✕</button>
     </div>
@@ -967,21 +970,29 @@ function formatMovesWithComments(movetext, gameIdx){
     moveIdx++; i++;
   }
 
-  // Group mainline moves into White/Black row pairs (variations/results become their own full-width rows).
-  const rows=[]; let current=null;
-  function flush(){ if(current) rows.push(current); current=null; }
+  // Group mainline moves into pairs (White/Black), then pack up to two pairs per row
+  // (variations/results always get their own full-width row, and force a fresh row after).
+  const pairs=[]; let currentPair=null;
+  function flushPair(){ if(currentPair) pairs.push(currentPair); currentPair=null; }
   cells.forEach(c=>{
     if(c.kind==="move"){
       const isWhite = c.moveIdx%2===0;
       const num = Math.floor(c.moveIdx/2)+1;
-      if(isWhite){ flush(); current={num, white:c, black:null}; }
-      else if(current && current.num===num && !current.black){ current.black=c; }
-      else { flush(); current={num, white:null, black:c}; }
+      if(isWhite){ flushPair(); currentPair={num, white:c, black:null}; }
+      else if(currentPair && currentPair.num===num && !currentPair.black){ currentPair.black=c; }
+      else { flushPair(); currentPair={num, white:null, black:c}; }
     } else {
-      flush(); rows.push({extra:c});
+      flushPair(); pairs.push({extra:c});
     }
   });
-  flush();
+  flushPair();
+
+  const rows=[]; let currentRow=null;
+  pairs.forEach(p=>{
+    if(p.extra){ currentRow=null; rows.push({extra:p.extra}); return; }
+    if(!currentRow || currentRow.pairs.length>=2){ currentRow={pairs:[]}; rows.push(currentRow); }
+    currentRow.pairs.push(p);
+  });
 
   function moveCellHtml(c){
     if(!c) return "";
@@ -996,12 +1007,17 @@ function formatMovesWithComments(movetext, gameIdx){
       else out+=`<div class="move-result">${esc(row.extra.text)}</div>`;
       return;
     }
-    const numLabel = row.white ? (row.num+".") : (row.num+"...");
-    out+=`<div class="move-num">${esc(numLabel)}</div>`;
-    out+=`<div class="move-cell">${moveCellHtml(row.white)}</div>`;
-    out+=`<div class="move-cell">${moveCellHtml(row.black)}</div>`;
-    if(row.white && row.white.hasComment) out+=`<div class="move-comment">${esc(row.white.comment)}</div>`;
-    if(row.black && row.black.hasComment) out+=`<div class="move-comment">${esc(row.black.comment)}</div>`;
+    const comments=[];
+    row.pairs.forEach((p,pi)=>{
+      const numLabel = p.white ? (p.num+".") : (p.num+"...");
+      out+=`<div class="move-num${pi>0?' move-num-second':''}">${esc(numLabel)}</div>`;
+      out+=`<div class="move-cell">${moveCellHtml(p.white)}</div>`;
+      out+=`<div class="move-cell">${moveCellHtml(p.black)}</div>`;
+      if(p.white && p.white.hasComment) comments.push(p.white.comment);
+      if(p.black && p.black.hasComment) comments.push(p.black.comment);
+    });
+    if(row.pairs.length<2) out+=`<div class="move-num move-num-second"></div><div class="move-cell"></div><div class="move-cell"></div>`;
+    comments.forEach(c=>{ out+=`<div class="move-comment">${esc(c)}</div>`; });
   });
   return out;
 }
@@ -1206,7 +1222,7 @@ function openGameSheet(g){
   document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
   document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:var(--result)">${esc(g.headers.Result||"")}</span>`;
   const body=document.getElementById("sheetBody");
-  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="sheet-moves-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="copy-btn" data-i="${g.idx}" title="Copies the PGN, then opens chess.com to paste it in">Analyse ↗</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">📋</button></div></div>`;
+  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="sheet-moves-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div></div>`;
   createChessWidget(body.querySelector(".chess-widget-wrap"), g);
   document.body.classList.add("sheet-open");
   history.pushState({sheet:true},"");
@@ -1298,17 +1314,15 @@ document.getElementById("editGameSaveBtn").addEventListener("click",()=>{
 document.getElementById("sheetEditBtn").addEventListener("click",()=>{
   const g=games.find(x=>x.idx===currentSheetGameIdx); if(g) openEditGameModal(g);
 });
+document.getElementById("sheetCopyBtn").addEventListener("click",()=>{
+  const g=games.find(x=>x.idx===currentSheetGameIdx); if(!g) return;
+  copyToClipboard(g.pgn);
+  const btn=document.getElementById("sheetCopyBtn");
+  const old=btn.textContent; btn.textContent="✓"; setTimeout(()=>btn.textContent=old,1200);
+});
 document.getElementById("sheetBody").addEventListener("click",(e)=>{
   const commentBtn=e.target.closest(".move-comment-btn");
   if(commentBtn){ openCommentModal(parseInt(commentBtn.dataset.gameIdx), parseInt(commentBtn.dataset.moveIdx)); return; }
-  const actionBtn=e.target.closest("button.copy-btn, button.mini-copy");
-  if(actionBtn){
-    const i=parseInt(actionBtn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
-    copyToClipboard(text);
-    if(actionBtn.classList.contains("copy-btn")) window.open("https://www.chess.com/analysis","_blank");
-    const old=actionBtn.textContent; actionBtn.textContent="copied"; setTimeout(()=>actionBtn.textContent=old,1200);
-    return;
-  }
   const moveSpan=e.target.closest(".move-san-editable");
   if(moveSpan){
     const wrapEl=document.querySelector("#sheetBody .chess-widget-wrap");

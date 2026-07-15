@@ -76,7 +76,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:60
 .toolbar .right{display:flex;gap:.4rem;align-items:center}
 .filter-group{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
 .search-wrap{position:relative;display:flex;align-items:center;flex:1 1 8rem;min-width:0}
-.search-icon{position:absolute;left:.7rem;font-size:.8rem;color:var(--text-faint);pointer-events:none}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);display:flex;color:var(--text-faint);pointer-events:none}
 #searchInput{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.4rem .8rem .4rem 1.9rem;font-size:.82rem;outline:none;width:100%;min-width:6rem;max-width:18rem;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
 #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15);background:var(--bg)}
 #searchInput::placeholder{color:var(--text-faint)}
@@ -90,9 +90,8 @@ tr.game td{transition:background .12s}
 tr.game:hover td{background:var(--surface-alt)}
 .num{color:var(--text-faint);width:2rem}.event{color:var(--link);max-width:22ch}.players{white-space:nowrap}.result{color:var(--result);font-weight:600}.moves{color:var(--moves-col)}.date{color:var(--date-col)}
 .detail-flex{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
-.move-formatted{display:grid;grid-template-columns:2.2rem 1fr 1fr 2.2rem 1fr 1fr;column-gap:.5rem;row-gap:.2rem;align-items:start;font-size:.88rem;line-height:1.4;padding-right:1.6rem;color:var(--text);word-break:break-word}
+.move-formatted{display:grid;grid-template-columns:2.4rem 1fr 1fr;column-gap:.5rem;row-gap:.25rem;align-items:start;font-size:.88rem;line-height:1.5;padding-right:1.6rem;color:var(--text);word-break:break-word}
 .move-num{color:var(--text-faint);font-weight:600;padding-top:.2rem}
-.move-num-second{padding-left:.5rem;border-left:1px solid var(--border)}
 .move-cell{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem}
 .move-san{color:var(--text)}
 .move-san-editable{cursor:pointer;padding:.15rem .25rem;margin:-.15rem -.25rem;border-radius:.2rem}
@@ -226,8 +225,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .game-sheet .chess-widget-wrap{width:260px;margin:0 auto}
 .game-sheet .cw-board{width:260px;height:260px}
 .game-sheet .cw-error{width:260px}
-.sheet-moves .move-formatted{padding-right:0;grid-template-columns:2.2rem 1fr 1fr}
-.sheet-moves .move-num-second{border-left:none;padding-left:0}
+.sheet-moves .move-formatted{padding-right:0}
 
 @media (max-width:700px){
   .table-wrap{display:none}
@@ -304,7 +302,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
   <div class="search-wrap">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <input type="text" id="searchInput" placeholder="Search games…">
   </div>
   <div class="filter-group">
@@ -343,7 +341,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
         <div class="sheet-title" id="sheetTitle"></div>
         <div class="sheet-sub" id="sheetSub"></div>
       </div>
-      <button class="sheet-close" id="sheetCopyBtn" type="button" aria-label="Copy PGN" title="Copy PGN">📋</button>
+      <button class="sheet-close" id="sheetCopyBtn" type="button" aria-label="Copy PGN" title="Copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
       <button class="sheet-close" id="sheetEditBtn" type="button" aria-label="Edit game">✎</button>
       <button class="sheet-close" id="sheetCloseBtn" type="button" aria-label="Close">✕</button>
     </div>
@@ -970,29 +968,21 @@ function formatMovesWithComments(movetext, gameIdx){
     moveIdx++; i++;
   }
 
-  // Group mainline moves into pairs (White/Black), then pack up to two pairs per row
-  // (variations/results always get their own full-width row, and force a fresh row after).
-  const pairs=[]; let currentPair=null;
-  function flushPair(){ if(currentPair) pairs.push(currentPair); currentPair=null; }
+  // Group mainline moves into White/Black row pairs (variations/results become their own full-width rows).
+  const rows=[]; let current=null;
+  function flush(){ if(current) rows.push(current); current=null; }
   cells.forEach(c=>{
     if(c.kind==="move"){
       const isWhite = c.moveIdx%2===0;
       const num = Math.floor(c.moveIdx/2)+1;
-      if(isWhite){ flushPair(); currentPair={num, white:c, black:null}; }
-      else if(currentPair && currentPair.num===num && !currentPair.black){ currentPair.black=c; }
-      else { flushPair(); currentPair={num, white:null, black:c}; }
+      if(isWhite){ flush(); current={num, white:c, black:null}; }
+      else if(current && current.num===num && !current.black){ current.black=c; }
+      else { flush(); current={num, white:null, black:c}; }
     } else {
-      flushPair(); pairs.push({extra:c});
+      flush(); rows.push({extra:c});
     }
   });
-  flushPair();
-
-  const rows=[]; let currentRow=null;
-  pairs.forEach(p=>{
-    if(p.extra){ currentRow=null; rows.push({extra:p.extra}); return; }
-    if(!currentRow || currentRow.pairs.length>=2){ currentRow={pairs:[]}; rows.push(currentRow); }
-    currentRow.pairs.push(p);
-  });
+  flush();
 
   function moveCellHtml(c){
     if(!c) return "";
@@ -1007,17 +997,12 @@ function formatMovesWithComments(movetext, gameIdx){
       else out+=`<div class="move-result">${esc(row.extra.text)}</div>`;
       return;
     }
-    const comments=[];
-    row.pairs.forEach((p,pi)=>{
-      const numLabel = p.white ? (p.num+".") : (p.num+"...");
-      out+=`<div class="move-num${pi>0?' move-num-second':''}">${esc(numLabel)}</div>`;
-      out+=`<div class="move-cell">${moveCellHtml(p.white)}</div>`;
-      out+=`<div class="move-cell">${moveCellHtml(p.black)}</div>`;
-      if(p.white && p.white.hasComment) comments.push(p.white.comment);
-      if(p.black && p.black.hasComment) comments.push(p.black.comment);
-    });
-    if(row.pairs.length<2) out+=`<div class="move-num move-num-second"></div><div class="move-cell"></div><div class="move-cell"></div>`;
-    comments.forEach(c=>{ out+=`<div class="move-comment">${esc(c)}</div>`; });
+    const numLabel = row.white ? (row.num+".") : (row.num+"...");
+    out+=`<div class="move-num">${esc(numLabel)}</div>`;
+    out+=`<div class="move-cell">${moveCellHtml(row.white)}</div>`;
+    out+=`<div class="move-cell">${moveCellHtml(row.black)}</div>`;
+    if(row.white && row.white.hasComment) out+=`<div class="move-comment">${esc(row.white.comment)}</div>`;
+    if(row.black && row.black.hasComment) out+=`<div class="move-comment">${esc(row.black.comment)}</div>`;
   });
   return out;
 }
@@ -1144,7 +1129,7 @@ function render(){
       +cells
       +`<td class="actions"><button data-i="${g.idx}" class="copy-btn" title="Copies the PGN, then opens chess.com to paste it in">Analyse \u2197</button></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
-    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="pgnwrap-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">\ud83d\udccb</button></div></div></div></td>`;
+    pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="pgnwrap-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
   }); updateActionButtons(); renderMobileList(filtered); }
 let lastCheckedMobileIdx=null;
@@ -1318,7 +1303,7 @@ document.getElementById("sheetCopyBtn").addEventListener("click",()=>{
   const g=games.find(x=>x.idx===currentSheetGameIdx); if(!g) return;
   copyToClipboard(g.pgn);
   const btn=document.getElementById("sheetCopyBtn");
-  const old=btn.textContent; btn.textContent="✓"; setTimeout(()=>btn.textContent=old,1200);
+  const old=btn.innerHTML; btn.innerHTML="✓"; setTimeout(()=>btn.innerHTML=old,1200);
 });
 document.getElementById("sheetBody").addEventListener("click",(e)=>{
   const commentBtn=e.target.closest(".move-comment-btn");
@@ -1467,7 +1452,10 @@ document.getElementById("rows").addEventListener("click",(e)=>{
   }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
   copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
-  const old=btn.textContent; btn.textContent="copied"; setTimeout(()=>btn.textContent=old,1200); return; }
+  const old=btn.innerHTML;
+  if(btn.classList.contains("copy-btn")){ btn.textContent="copied"; setTimeout(()=>btn.innerHTML=old,1200); }
+  else { btn.innerHTML="✓"; setTimeout(()=>btn.innerHTML=old,1200); }
+  return; }
   const cb=e.target.closest("input[type='checkbox'][data-i]");
   if(cb){
     const i=parseInt(cb.dataset.i);

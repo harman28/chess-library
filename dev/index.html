@@ -218,7 +218,7 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .sheet-close:hover{color:var(--text);background:var(--border)}
 .sheet-body{flex:1 1 auto;overflow:hidden;display:flex;flex-direction:column;padding:0}
 .sheet-embed-sticky{flex:0 0 auto;padding:.75rem 1rem;border-bottom:1px solid var(--border)}
-.sheet-moves{flex:1 1 auto;overflow-y:auto;padding:.75rem 1rem 1.5rem}
+.sheet-moves{position:relative;flex:1 1 auto;overflow-y:auto;padding:.75rem 1rem 1.5rem}
 .game-sheet .chess-widget-wrap{width:260px;margin:0 auto}
 .game-sheet .cw-board{width:260px;height:260px}
 .game-sheet .cw-error{width:260px}
@@ -1179,7 +1179,7 @@ function openGameSheet(g){
   document.getElementById("sheetTitle").textContent=(g.headers.White||"")+" vs "+(g.headers.Black||"");
   document.getElementById("sheetSub").innerHTML=`<span class="ev">${esc(g.headers.Event||"")}</span> · ${esc(g.headers.Date||"")} · <span style="color:var(--result)">${esc(g.headers.Result||"")}</span>`;
   const body=document.getElementById("sheetBody");
-  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div>`;
+  body.innerHTML=`<div class="sheet-embed-sticky"><div class="chess-widget-wrap"></div></div><div class="sheet-moves"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div><div class="pgnwrap-actions"><button class="copy-btn" data-i="${g.idx}" title="Copies the PGN, then opens chess.com to paste it in">Analyse ↗</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN">📋</button></div></div>`;
   createChessWidget(body.querySelector(".chess-widget-wrap"), g);
   document.body.classList.add("sheet-open");
   history.pushState({sheet:true},"");
@@ -1274,6 +1274,14 @@ document.getElementById("sheetEditBtn").addEventListener("click",()=>{
 document.getElementById("sheetBody").addEventListener("click",(e)=>{
   const commentBtn=e.target.closest(".move-comment-btn");
   if(commentBtn){ openCommentModal(parseInt(commentBtn.dataset.gameIdx), parseInt(commentBtn.dataset.moveIdx)); return; }
+  const actionBtn=e.target.closest("button.copy-btn, button.mini-copy");
+  if(actionBtn){
+    const i=parseInt(actionBtn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
+    copyToClipboard(text);
+    if(actionBtn.classList.contains("copy-btn")) window.open("https://www.chess.com/analysis","_blank");
+    const old=actionBtn.textContent; actionBtn.textContent="copied"; setTimeout(()=>actionBtn.textContent=old,1200);
+    return;
+  }
   const moveSpan=e.target.closest(".move-san-editable");
   if(moveSpan){
     const wrapEl=document.querySelector("#sheetBody .chess-widget-wrap");

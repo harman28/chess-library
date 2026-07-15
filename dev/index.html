@@ -101,7 +101,7 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:60
 .toolbar button.danger{color:var(--loss)}.toolbar button.danger:hover{background:var(--danger-hover-bg);border-color:var(--loss)}
 .filters{display:flex;gap:.35rem;flex-wrap:wrap;min-width:0;align-items:center}.filters button{flex-shrink:0;background:var(--bg);color:var(--text-dim);border:1px solid var(--border);padding:.28rem .65rem;border-radius:.25rem;cursor:pointer;font-size:.82rem}.filters button.active{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}.filters button:hover{background:var(--surface-alt)}.filters button.active:hover{background:var(--accent-hover);color:var(--accent-text)}.filters .sep{width:1px;height:1.1rem;background:var(--border);flex-shrink:0}
 .fgroup{display:contents}
-table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:var(--text-dim);border-bottom:1px solid var(--border);font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;background:var(--bg);z-index:1;white-space:nowrap;vertical-align:middle}
+table{border-collapse:collapse;width:100%}th{text-align:left;padding:.5rem .6rem;color:var(--text-dim);border-bottom:1px solid var(--border);font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:var(--toolbar-height,0px);background:var(--bg);z-index:1;white-space:nowrap;vertical-align:middle}
 td{padding:.5rem .6rem;border-bottom:1px solid var(--surface);vertical-align:top;font-size:.88rem}
 tr.game td{transition:background .12s}
 tr.game:hover td{background:var(--surface-alt)}
@@ -247,10 +247,10 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 .game-sheet .cw-error{width:260px}
 .sheet-moves .move-formatted{padding-right:0}
 
+.toolbar{position:sticky;top:0;z-index:15;background:var(--bg);padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid var(--border)}
 @media (max-width:700px){
   .table-wrap{display:none}
   .mobile-only{display:block}
-  .toolbar{position:sticky;top:0;z-index:15;background:var(--bg);padding-top:.6rem;padding-bottom:.6rem;margin-left:-2rem;margin-right:-2rem;padding-left:2rem;padding-right:2rem;border-bottom:1px solid var(--border)}
   .filters{flex-wrap:wrap}
   .toolbar .right{flex-wrap:wrap}
   #mobileSelectAllRow.selecting{display:block;padding:.3rem 0 .6rem}
@@ -1145,6 +1145,16 @@ function reconcileColumnState(){
   const known=new Set(columnState.order);
   discoverColumns().forEach(c=>{ if(!known.has(c.key)) columnState.order.push(c.key); });
 }
+function updateToolbarHeightVar(){
+  const toolbar=document.querySelector(".toolbar");
+  if(!toolbar) return;
+  document.documentElement.style.setProperty("--toolbar-height", toolbar.getBoundingClientRect().height+"px");
+}
+let toolbarHeightResizeTimer=null;
+window.addEventListener("resize",()=>{
+  clearTimeout(toolbarHeightResizeTimer);
+  toolbarHeightResizeTimer=setTimeout(updateToolbarHeightVar, 100);
+});
 function render(){
   const allCols=discoverColumns();
   const colByKey=Object.fromEntries(allCols.map(c=>[c.key,c]));
@@ -1171,7 +1181,7 @@ function render(){
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="pgnwrap-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
-  }); updateActionButtons(); renderMobileList(filtered); }
+  }); updateActionButtons(); renderMobileList(filtered); updateToolbarHeightVar(); }
 let lastCheckedMobileIdx=null;
 function renderMobileList(filtered){
   const list=document.getElementById("mobileList"); if(!list) return;
@@ -1553,6 +1563,7 @@ function enterSelectionMode(){
   document.getElementById("selectionBar").classList.remove("hidden");
   updateActionButtons();
   updateSelCount();
+  updateToolbarHeightVar();
 }
 function exitSelectionMode(){
   selectionMode=null;
@@ -1570,6 +1581,7 @@ function exitSelectionMode(){
   lastCheckedMobileIdx=null;
   updateActionButtons();
   updateSelCount();
+  updateToolbarHeightVar();
 }
 const EXPORT_TAG_ORDER=['Event','Site','Date','Round','White','Black','Result'];
 function buildPgnForGames(list){ if(!list.length) return "";

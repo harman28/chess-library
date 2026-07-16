@@ -431,6 +431,22 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
 </div>
+<div id="saveLibraryModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2>Save My Library</h2>
+    <p class="save-link-note">Anyone with this link can see and edit your library. Keep it safe.</p>
+    <div class="save-link-box" id="saveLibraryLink"></div>
+    <div class="save-link-actions">
+      <button id="copyLibraryLinkBtn" type="button">Copy</button>
+    </div>
+    <div class="modal-actions">
+      <button id="saveLibraryDoneBtn" type="button" class="primary">Done</button>
+    </div>
+    <div class="auth-switch">
+      <span>Prefer an account?</span> <button id="saveModalLoginBtn" type="button" class="link-btn">Log In</button> or <button id="saveModalSignupBtn" type="button" class="link-btn">Sign Up</button>
+    </div>
+  </div>
+</div>
 <div id="authModal" class="modal-overlay hidden">
   <div class="modal-card">
     <h2 id="authModalTitle">Log In</h2>
@@ -1136,6 +1152,7 @@ function loadGames(pgnText, name){
   window.scrollTo(0,0);
   render();
   saveToStorage();
+  updateAccountUI();
 }
 const STORAGE_KEY="chessLibraryData"+(location.pathname.startsWith("/dev/")?"_dev":"");
 const SCHEMA_VERSION=5;
@@ -1779,6 +1796,7 @@ function resetToUpload(){
   document.getElementById("stepConfirm").classList.add("hidden"); document.getElementById("stepUpload").classList.remove("hidden");
   document.getElementById("manualNameWrap").classList.add("hidden");
   document.getElementById("app").classList.add("hidden"); document.getElementById("landing").classList.remove("hidden");
+  updateAccountUI();
 }
 document.getElementById("reloadBtn").addEventListener("click",()=>{
   if(confirm("Drop all currently loaded games and import a new PGN?")) resetToUpload();
@@ -1829,17 +1847,53 @@ const API_LIBRARY_MINE_PATH=IS_DEV?"/api/dev/library/mine":"/api/library/mine";
 const AUTH_TOKEN_KEY="chessLibraryAuthToken"+(IS_DEV?"_dev":"");
 let authToken=null; let authUsername=null; let authMode="login"; let authSyncTimer=null;
 function updateAccountUI(){
-  document.getElementById("accountBtnLabel").textContent=authUsername||"Log In";
+  document.getElementById("accountBtnLabel").textContent=
+    authUsername ? authUsername : (games.length ? "Save My Library" : "Log In");
   document.getElementById("accountPanelUsername").textContent=authUsername?("Signed in as "+authUsername):"";
 }
-document.getElementById("accountBtn").addEventListener("click",(e)=>{
+document.getElementById("accountBtn").addEventListener("click", async (e)=>{
   e.stopPropagation();
-  if(!authUsername){ openAuthModal("login"); return; }
-  const panel=document.getElementById("accountPanel");
-  const opening=panel.classList.contains("hidden");
-  panel.classList.toggle("hidden");
-  if(opening) positionPanelMobile(panel, e.currentTarget);
+  if(authUsername){
+    const panel=document.getElementById("accountPanel");
+    const opening=panel.classList.contains("hidden");
+    panel.classList.toggle("hidden");
+    if(opening) positionPanelMobile(panel, e.currentTarget);
+    return;
+  }
+  if(games.length){ await openSaveLibraryModal(e.currentTarget); return; }
+  openAuthModal("login");
 });
+async function openSaveLibraryModal(btn){
+  const oldLabel=btn.innerHTML;
+  btn.disabled=true; btn.textContent="Saving…";
+  try{
+    const pgn=buildPgnForGames(games);
+    const res=await fetch(API_BASE+API_LIBRARIES_PATH, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({playerName, pgn})
+    });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const data=await res.json();
+    const link=location.origin+location.pathname+"?lib="+data.id;
+    document.getElementById("saveLibraryLink").textContent=link;
+    document.getElementById("saveLibraryModal").classList.remove("hidden");
+  }catch(err){
+    alert("Couldn't save your library right now. Please try again in a moment.");
+  }finally{
+    btn.disabled=false; btn.innerHTML=oldLabel;
+  }
+}
+document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
+  copyToClipboard(document.getElementById("saveLibraryLink").textContent);
+  const btn=document.getElementById("copyLibraryLinkBtn");
+  const old=btn.textContent; btn.textContent="Copied"; setTimeout(()=>btn.textContent=old,1200);
+});
+function closeSaveLibraryModal(){ document.getElementById("saveLibraryModal").classList.add("hidden"); }
+document.getElementById("saveLibraryDoneBtn").addEventListener("click", closeSaveLibraryModal);
+document.getElementById("saveLibraryModal").addEventListener("click",(e)=>{ if(e.target.id==="saveLibraryModal") closeSaveLibraryModal(); });
+document.getElementById("saveModalLoginBtn").addEventListener("click",()=>{ closeSaveLibraryModal(); openAuthModal("login"); });
+document.getElementById("saveModalSignupBtn").addEventListener("click",()=>{ closeSaveLibraryModal(); openAuthModal("signup"); });
 document.addEventListener("click",(e)=>{
   const panel=document.getElementById("accountPanel");
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="accountBtn"){ panel.classList.add("hidden"); }
@@ -1849,11 +1903,10 @@ document.getElementById("logoutBtn").addEventListener("click", async ()=>{
   const oldToken=authToken;
   authToken=null; authUsername=null;
   localStorage.removeItem(AUTH_TOKEN_KEY);
-  updateAccountUI();
+  resetToUpload();
   if(oldToken){
     try{ await fetch(API_BASE+API_AUTH_PATH+"/logout", {method:"POST", headers:{"Authorization":"Bearer "+oldToken}}); }catch(_){}
   }
-  resetToUpload();
 });
 function updateAuthModalMode(){
   const isLogin=authMode==="login";

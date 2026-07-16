@@ -164,6 +164,14 @@ tr.game:hover td{background:var(--surface-alt)}
 .move-comment-btn.has-comment{opacity:.9;color:var(--comment)}
 .move-san-editable.cw-active{background:var(--accent);color:var(--accent-text);border-radius:.2rem}
 button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);padding:.15rem .4rem;border-radius:.2rem;cursor:pointer;font-size:.78rem;line-height:1}button.copy-btn:hover{background:var(--border)}
+.analyse-split{display:inline-flex;border-radius:.2rem;overflow:hidden}
+.analyse-split .copy-btn{border-top-right-radius:0;border-bottom-right-radius:0;border-right:none}
+.analyse-chevron{background:var(--surface-alt);color:var(--text-dim);border:1px solid var(--border);border-left:1px solid var(--border);border-top-left-radius:0;border-bottom-left-radius:0;padding:.15rem .35rem;cursor:pointer;font-size:.65rem;line-height:1}
+.analyse-chevron:hover{background:var(--border);color:var(--text)}
+#analysePickerPanel{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.3rem;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.15rem;min-width:9rem}
+.analyse-picker-option{background:none;border:none;color:var(--text);text-align:left;padding:.4rem .6rem;border-radius:.3rem;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem;font-family:inherit}
+.analyse-picker-option:hover{background:var(--surface-alt)}
+.analyse-picker-option .check{color:var(--accent);font-weight:700}
 .hidden{display:none!important}.empty-state{text-align:center;padding:3rem 1rem;color:var(--text-faint);font-size:.95rem}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50}
 .modal-card{background:var(--surface);border:1px solid var(--border);border-radius:.5rem;padding:1.5rem 1.75rem;width:100%;max-width:480px;display:flex;flex-direction:column;gap:.8rem;margin:0 1rem}
@@ -471,6 +479,13 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
 </div>
+<div id="analysePickerPanel" class="hidden">
+  <button type="button" class="analyse-picker-option" data-site="chesscom">Chess.com <span class="check"></span></button>
+  <button type="button" class="analyse-picker-option" data-site="lichess">Lichess.org <span class="check"></span></button>
+</div>
+<form id="lichessImportForm" method="POST" action="https://lichess.org/api/import" target="_blank" class="hidden">
+  <input type="hidden" name="pgn" id="lichessImportPgnField">
+</form>
 <div id="editGameModal" class="modal-overlay hidden">
   <div class="modal-card">
     <h2 id="editModalTitle">Edit Game</h2>
@@ -1231,7 +1246,7 @@ function render(){
     tr.innerHTML=`<td class="cb-col"><input type="checkbox" data-i="${g.idx}" ${checked}></td>`
       +`<td class="num">${i+1}</td>`
       +cells
-      +`<td class="actions"><button data-i="${g.idx}" class="copy-btn" title="Copies the PGN, then opens chess.com to paste it in">Analyse \u2197</button></td>`;
+      +`<td class="actions"><div class="analyse-split"><button data-i="${g.idx}" class="copy-btn" title="${getAnalysisSite()==="lichess"?"Opens Lichess with this game loaded":"Copies the PGN, then opens chess.com to paste it in"}">Analyse \u2197</button><button data-i="${g.idx}" class="analyse-chevron" title="Choose analysis site" aria-label="Choose analysis site">\u25be</button></div></td>`;
     const pr=document.createElement("tr"); pr.className="pgnrow"; pr.id="pgnrow-"+g.idx;
     pr.innerHTML=`<td colspan="9999" style="padding:.4rem .8rem;"><div class="detail-flex"><div class="chess-widget-wrap"></div><div class="pgnwrap"><div class="pgnwrap-scroll"><div class="move-formatted">${formatMovesWithComments(g.movetext, g.idx)}</div></div><div class="pgnwrap-actions"><button class="edit-game-btn" data-i="${g.idx}" title="edit game info">\u270e</button><button class="mini-copy" data-i="${g.idx}" title="copy PGN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></div></div></td>`;
     tbody.appendChild(tr); tbody.appendChild(pr);
@@ -1545,6 +1560,47 @@ document.addEventListener("click",(e)=>{
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="columnsBtn"){ panel.classList.add("hidden"); }
 });
 function copyToClipboard(text){ try { navigator.clipboard.writeText(text); } catch(_){ const ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta); } }
+const ANALYSIS_SITE_KEY="chessLibraryAnalysisSite";
+function getAnalysisSite(){ return localStorage.getItem(ANALYSIS_SITE_KEY)==="lichess" ? "lichess" : "chesscom"; }
+function setAnalysisSite(site){ try{ localStorage.setItem(ANALYSIS_SITE_KEY, site); }catch(_){} }
+function openAnalysis(site, text){
+  if(site==="lichess"){
+    document.getElementById("lichessImportPgnField").value=text;
+    document.getElementById("lichessImportForm").submit();
+  } else {
+    copyToClipboard(text);
+    window.open("https://www.chess.com/analysis","_blank");
+  }
+}
+function renderAnalysePickerChecks(){
+  const site=getAnalysisSite();
+  document.querySelectorAll(".analyse-picker-option").forEach(btn=>{
+    btn.querySelector(".check").textContent = btn.dataset.site===site ? "✓" : "";
+  });
+}
+function openAnalysePicker(chevronBtn){
+  const panel=document.getElementById("analysePickerPanel");
+  panel.dataset.gameIdx=chevronBtn.dataset.i;
+  renderAnalysePickerChecks();
+  const r=chevronBtn.getBoundingClientRect();
+  panel.style.top=(r.bottom+4)+"px";
+  panel.style.left="auto";
+  panel.style.right=(window.innerWidth-r.right)+"px";
+  panel.classList.remove("hidden");
+}
+document.getElementById("analysePickerPanel").addEventListener("click",(e)=>{
+  const opt=e.target.closest(".analyse-picker-option"); if(!opt) return;
+  const site=opt.dataset.site;
+  setAnalysisSite(site);
+  document.getElementById("analysePickerPanel").classList.add("hidden");
+  const i=parseInt(document.getElementById("analysePickerPanel").dataset.gameIdx);
+  const g=games.find(x=>x.idx===i);
+  if(g) openAnalysis(site, g.pgn);
+});
+document.addEventListener("click",(e)=>{
+  const panel=document.getElementById("analysePickerPanel");
+  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && !e.target.closest(".analyse-chevron")){ panel.classList.add("hidden"); }
+});
 document.getElementById("rows").addEventListener("click",(e)=>{
   const editBtn=e.target.closest("button.edit-game-btn");
   if(editBtn){ e.stopPropagation(); const i=parseInt(editBtn.dataset.i); const g=games.find(x=>x.idx===i); if(g) openEditGameModal(g); return; }
@@ -1558,11 +1614,18 @@ document.getElementById("rows").addEventListener("click",(e)=>{
     if(wrapEl && wrapEl._chessWidget) wrapEl._chessWidget.goToPly(parseInt(moveSpan.dataset.ply,10));
     return;
   }
+  const chevronBtn=e.target.closest("button.analyse-chevron");
+  if(chevronBtn){ e.stopPropagation(); openAnalysePicker(chevronBtn); return; }
   const btn=e.target.closest("button.copy-btn, button.mini-copy"); if(btn){ e.stopPropagation(); const i=parseInt(btn.dataset.i); const g=games.find(x=>x.idx===i); const text=g?g.pgn:"";
-  copyToClipboard(text); if(btn.classList.contains("copy-btn")){ window.open("https://www.chess.com/analysis","_blank"); }
   const old=btn.innerHTML;
-  if(btn.classList.contains("copy-btn")){ btn.textContent="copied"; setTimeout(()=>btn.innerHTML=old,1200); }
-  else { btn.innerHTML="✓"; setTimeout(()=>btn.innerHTML=old,1200); }
+  if(btn.classList.contains("copy-btn")){
+    const site=getAnalysisSite();
+    openAnalysis(site, text);
+    if(site==="chesscom"){ btn.textContent="copied"; setTimeout(()=>btn.innerHTML=old,1200); }
+  } else {
+    copyToClipboard(text);
+    btn.innerHTML="✓"; setTimeout(()=>btn.innerHTML=old,1200);
+  }
   return; }
   const cb=e.target.closest("input[type='checkbox'][data-i]");
   if(cb){

@@ -33,7 +33,8 @@
 }
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2rem;background:var(--bg);color:var(--text)}
 h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:600}
-.logo-h1{margin:0 0 1.5rem;line-height:0}
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.logo-h1{margin:0;line-height:0}
 .logo-h1 img{height:3.4rem;width:auto}
 .logo-h1 .logo-dark{display:block}
 .logo-h1 .logo-light{display:none}
@@ -89,9 +90,13 @@ h1{font-size:1.25rem;margin:0 0 1.5rem}.count{color:var(--accent);font-weight:60
 .sel-group button.seg-danger:hover:not(:disabled){background:var(--danger-strong-hover)}
 .util-group{display:contents}
 .filter-group{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;min-width:0;max-width:100%}
-.search-wrap{position:relative;display:flex;align-items:center;flex:1 1 8rem;min-width:0}
+.search-wrap{display:flex;align-items:center;flex:1 1 8rem;min-width:0}
+.search-inner{position:relative;display:flex;align-items:center;width:100%;max-width:18rem}
 .search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);display:flex;color:var(--text-faint);pointer-events:none}
-#searchInput{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.4rem .8rem .4rem 1.9rem;font-size:.82rem;outline:none;width:100%;min-width:6rem;max-width:18rem;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
+#searchInput{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.4rem 1.9rem .4rem 1.9rem;font-size:.82rem;outline:none;width:100%;min-width:6rem;box-sizing:border-box;transition:border-color .15s,box-shadow .15s,background .15s}
+.search-clear{position:absolute;right:.6rem;top:50%;transform:translateY(-50%);display:none;align-items:center;justify-content:center;background:none!important;border:none!important;color:var(--text-faint);cursor:pointer;padding:0!important;height:auto!important;width:auto!important;line-height:0}
+.search-clear:hover{color:var(--text);background:none!important}
+.search-wrap.has-value .search-clear{display:flex}
 #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15);background:var(--bg)}
 #searchInput::placeholder{color:var(--text-faint)}
 .toolbar button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem;height:2.3rem;box-sizing:border-box}
@@ -166,8 +171,8 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .modal-card label{color:var(--text-dim);font-size:.85rem;font-weight:500}
 .modal-card input[type="file"]{color:var(--text);font-size:.85rem}
 .modal-card textarea{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.6rem .8rem;font-size:.82rem;font-family:ui-monospace,monospace;resize:vertical;outline:none;box-sizing:border-box;width:100%}
-.modal-card input[type="text"],.modal-card input[type="date"],.modal-card select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
-.modal-card input[type="text"]:focus,.modal-card input[type="date"]:focus,.modal-card select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
+.modal-card input[type="text"],.modal-card input[type="password"],.modal-card input[type="date"],.modal-card select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .7rem;font-size:.85rem;outline:none;box-sizing:border-box;width:100%}
+.modal-card input[type="text"]:focus,.modal-card input[type="password"]:focus,.modal-card input[type="date"]:focus,.modal-card select:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .modal-card input[type="date"]::-webkit-calendar-picker-indicator{filter:var(--date-icon-filter)}
 .modal-card textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.15)}
 .modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:.4rem}
@@ -184,6 +189,13 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .th-icon-btn{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;padding:.3rem .6rem;line-height:1}
 .th-icon-btn:hover{color:var(--text)}
 .settings-wrap{position:relative}
+.account-wrap{position:relative}
+#accountBtn{background:var(--accent);color:var(--accent-text);border:1px solid var(--accent);border-radius:.25rem;padding:.35rem .65rem;cursor:pointer;font-size:.82rem;height:2.3rem;box-sizing:border-box;font-weight:600;font-family:inherit}
+#accountBtn:hover{filter:brightness(1.08)}
+#accountPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.9rem 1rem;width:14rem;max-width:calc(100vw - 2rem);z-index:20;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
+.account-panel-username{color:var(--text);font-size:.9rem;font-weight:600;word-break:break-all}
+.account-logout-row{width:100%;background:var(--surface-alt);border:1px solid var(--border);border-radius:.4rem;color:var(--text);padding:.5rem .7rem;font-size:.85rem;cursor:pointer;text-align:left;font-family:inherit}
+.account-logout-row:hover{border-color:var(--border-hover)}
 .toolbar .icon-btn{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.25rem;padding:.35rem .6rem;cursor:pointer;font-size:1.35rem;line-height:1;height:2.3rem;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
 .icon-btn:hover{background:var(--border)}
 #settingsPanel{position:absolute;top:calc(100% + .4rem);right:0;background:var(--surface);border:1px solid var(--border);border-radius:.4rem;padding:.9rem 1rem;width:16rem;max-width:calc(100vw - 2rem);z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:.6rem}
@@ -200,6 +212,13 @@ button.copy-btn{background:var(--surface-alt);color:var(--text);border:1px solid
 .save-link-actions{display:flex;justify-content:flex-end}
 .save-link-actions button{background:var(--surface-alt);color:var(--text);border:1px solid var(--border);border-radius:.4rem;padding:.5rem .9rem;cursor:pointer;font-size:.85rem}
 .save-link-actions button:hover{border-color:var(--border-hover)}
+.auth-error{background:var(--danger-hover-bg);border:1px solid var(--loss);color:var(--loss);border-radius:.4rem;padding:.5rem .7rem;font-size:.82rem;line-height:1.4}
+.auth-switch{color:var(--text-dim);font-size:.85rem;text-align:center}
+.link-btn{background:none;border:none;color:var(--accent);cursor:pointer;font-size:inherit;padding:0;font-family:inherit;text-decoration:underline}
+.auth-google-wrap{display:flex;flex-direction:column;gap:.6rem}
+.auth-divider{display:flex;align-items:center;gap:.6rem;color:var(--text-faint);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--border)}
+#googleSignInBtn{display:flex;justify-content:center}
 
 /* ---------- mobile card list + bottom sheet ---------- */
 .mobile-only{display:none}
@@ -271,13 +290,23 @@ body.sheet-open .game-sheet{transform:translateY(0)}
   .fgroup button:not(:last-child){border-right:1px solid var(--border)!important}
 }
 </style></head><body>
+<div class="page-header">
 <h1 class="logo-h1"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%23e8edf5%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23e8b93e%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%230d1420%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%23e8edf5%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.35%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%23e8edf5%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23e8b93e%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-dark"><img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20344%2072%22%20role%3D%22img%22%20aria-label%3D%22Chess%20Library%20logo%2C%20light%20variant%22%3E%0A%20%20%0A%20%20%3Cg%20transform%3D%22translate%286%204%29%22%3E%0A%20%20%20%20%3Cline%20x1%3D%225%22%20y1%3D%2253%22%20x2%3D%2259%22%20y2%3D%2253%22%20stroke%3D%22%230d1420%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22/%3E%0A%20%20%20%20%3Crect%20x%3D%227%22%20y%3D%2227%22%20width%3D%227%22%20height%3D%2226%22%20rx%3D%221%22%20fill%3D%22%23e5645f%22/%3E%0A%20%20%20%20%3Crect%20x%3D%228.5%22%20y%3D%2231%22%20width%3D%224%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2216%22%20y%3D%2221%22%20width%3D%229%22%20height%3D%2232%22%20rx%3D%221%22%20fill%3D%22%236ab0f3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2225%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2217.5%22%20y%3D%2228%22%20width%3D%226%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Cpath%20d%3D%22M27%2053%20L27%2013%20L30%2013%20L30%2018%20L31.5%2018%20L31.5%2013%20L34.5%2013%20L34.5%2018%20L36%2018%20L36%2013%20L39%2013%20L39%2053%20Z%22%20fill%3D%22%23c99a1f%22/%3E%0A%20%20%20%20%3Ctext%20x%3D%2233%22%20y%3D%2240%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-weight%3D%22bold%22%20font-size%3D%2216%22%20fill%3D%22%23f3efe6%22%3E%21%3C/text%3E%0A%20%20%20%20%3Crect%20x%3D%2241%22%20y%3D%2224%22%20width%3D%228%22%20height%3D%2229%22%20rx%3D%221%22%20fill%3D%22%234cc38a%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2242.5%22%20y%3D%2228%22%20width%3D%225%22%20height%3D%221.5%22%20fill%3D%22%230d1420%22%20opacity%3D%220.3%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2251%22%20y%3D%2229%22%20width%3D%226%22%20height%3D%2224%22%20rx%3D%221%22%20fill%3D%22%230d1420%22/%3E%0A%20%20%20%20%3Crect%20x%3D%2252.3%22%20y%3D%2233%22%20width%3D%223.4%22%20height%3D%221.5%22%20fill%3D%22%23f3efe6%22%20opacity%3D%220.6%22/%3E%0A%20%20%3C/g%3E%0A%20%20%3Ctext%20x%3D%2280%22%20y%3D%2246%22%20font-family%3D%22Georgia%2C%20%27Times%20New%20Roman%27%2C%20serif%22%20font-size%3D%2230%22%20letter-spacing%3D%220.5%22%3E%0A%20%20%20%20%3Ctspan%20fill%3D%22%230d1420%22%3EChess%20%3C/tspan%3E%3Ctspan%20fill%3D%22%23c99a1f%22%3ELibrary%3C/tspan%3E%0A%20%20%3C/text%3E%0A%3C/svg%3E%0A" alt="Chess Library" class="logo-light"></h1>
+<div class="account-wrap">
+  <button id="accountBtn" type="button" class="primary"><span id="accountBtnLabel">Log In</span></button>
+  <div id="accountPanel" class="hidden">
+    <div class="columns-panel-header">Account</div>
+    <div id="accountPanelUsername" class="account-panel-username"></div>
+    <button id="logoutBtn" type="button" class="account-logout-row">Log Out</button>
+  </div>
+</div>
+</div>
 <div class="landing" id="landing">
 <div class="landing-inner">
 <div class="hero">
 <p class="tagline">A private viewer for your over-the-board games.</p>
 <p class="hero-note">Filter, browse, and re-live your games. Or open an analysis board to analyse.</p>
-<p class="hero-note">Your games stay on your device. Nothing is uploaded anywhere unless you explicitly create a reusable link.</p>
+<p class="hero-note">Your games stay on your device unless you log in — then your library syncs to your account so you can pick up where you left off on any device.</p>
 </div>
 <div class="card">
 <h2>Get Started</h2>
@@ -309,9 +338,6 @@ body.sheet-open .game-sheet{transform:translateY(0)}
 <div class="toolbar">
   <div class="right">
     <div class="normal-toolbar" id="normalToolbar">
-    <div class="save-library-wrap">
-      <button id="saveLibraryBtn" type="button" class="primary"><span class="btn-label-full">Save My Library</span><span class="btn-label-short">Save</span></button>
-    </div>
     <div class="util-group" id="utilGroup">
     <button id="addGamesBtn" type="button"><span class="btn-icon">+</span><span class="btn-label">Add Game(s)</span></button>
     <button id="enterSelectionBtn" type="button"><span class="btn-icon">✎</span><span class="btn-label">Edit</span></button>
@@ -345,8 +371,11 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
   </div>
   <div class="search-wrap">
-    <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-    <input type="text" id="searchInput" placeholder="Search games…">
+    <div class="search-inner">
+      <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" id="searchInput" placeholder="Search games…">
+      <button class="search-clear" id="searchClearBtn" type="button" aria-label="Clear search" title="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="9" height="9"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
   </div>
   <div class="filter-group">
     <span class="player" id="playerDisplay"></span>
@@ -415,6 +444,30 @@ body.sheet-open .game-sheet{transform:translateY(0)}
     </div>
     <div class="modal-actions">
       <button id="saveLibraryDoneBtn" type="button" class="primary">Done</button>
+    </div>
+    <div class="auth-switch">
+      <span>Prefer an account?</span> <button id="saveModalLoginBtn" type="button" class="link-btn">Log In</button> or <button id="saveModalSignupBtn" type="button" class="link-btn">Sign Up</button>
+    </div>
+  </div>
+</div>
+<div id="authModal" class="modal-overlay hidden">
+  <div class="modal-card">
+    <h2 id="authModalTitle">Log In</h2>
+    <div id="authError" class="auth-error hidden"></div>
+    <label>Username</label>
+    <input type="text" id="authUsername" autocomplete="username" spellcheck="false">
+    <label>Password</label>
+    <input type="password" id="authPassword" autocomplete="current-password">
+    <div class="modal-actions">
+      <button id="authCancelBtn" type="button">Cancel</button>
+      <button id="authSubmitBtn" type="button" class="primary">Log In</button>
+    </div>
+    <div class="auth-switch">
+      <span id="authSwitchText">Don't have an account?</span> <button id="authSwitchBtn" type="button" class="link-btn">Sign Up</button>
+    </div>
+    <div id="authGoogleWrap" class="auth-google-wrap hidden">
+      <div class="auth-divider"><span>or</span></div>
+      <div id="googleSignInBtn"></div>
     </div>
   </div>
 </div>
@@ -1090,7 +1143,7 @@ function sortGamesByDate(){
 }
 function loadGames(pgnText, name){
   if(!name || !name.trim()){ alert("Please enter your name"); return; }
-  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); selectionMode=null; searchQuery=""; document.getElementById("searchInput").value="";
+  games=[]; selected.clear(); playerName=name.trim(); activeFilters=new Set(["all"]); selectionMode=null; searchQuery=""; document.getElementById("searchInput").value=""; updateSearchClearVisibility();
   const blocks=parsePGN(pgnText);
   blocks.forEach((b,idx)=>{ games.push(buildGameRecord(b, idx+1, name)); });
   sortGamesByDate();
@@ -1102,10 +1155,11 @@ function loadGames(pgnText, name){
   window.scrollTo(0,0);
   render();
   saveToStorage();
+  updateAccountUI();
 }
 const STORAGE_KEY="chessLibraryData"+(location.pathname.startsWith("/dev/")?"_dev":"");
 const SCHEMA_VERSION=5;
-function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}, lightModeEnabled})); }catch(_){} }
+function saveToStorage(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({version:SCHEMA_VERSION, playerName, games, columnState:{order:columnState.order, visible:[...columnState.visible]}, lightModeEnabled})); }catch(_){} scheduleAuthSync(); }
 
 const KNOWN_HEADER_ORDER=['Site','Round','ECO','WhiteElo','BlackElo','TimeControl','Termination','Opening','Variation'];
 const KNOWN_KEY_FOR_HEADER={Site:'site',Round:'round',ECO:'eco',WhiteElo:'whiteelo',BlackElo:'blackelo',TimeControl:'time',Termination:'term',Opening:'opening',Variation:'variation'};
@@ -1544,7 +1598,14 @@ document.querySelectorAll("#filters button").forEach((btn)=>{ btn.addEventListen
     if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");}
   }
   syncFiltersFromDOM(); render(); }); });
-document.getElementById("searchInput").addEventListener("input",(e)=>{ searchQuery=e.target.value.trim(); render(); });
+function updateSearchClearVisibility(){
+  document.querySelector(".search-wrap").classList.toggle("has-value", document.getElementById("searchInput").value.length>0);
+}
+document.getElementById("searchInput").addEventListener("input",(e)=>{ searchQuery=e.target.value.trim(); render(); updateSearchClearVisibility(); });
+document.getElementById("searchClearBtn").addEventListener("click",()=>{
+  const input=document.getElementById("searchInput");
+  input.value=""; searchQuery=""; render(); updateSearchClearVisibility(); input.focus();
+});
 function syncFiltersFromDOM(){ activeFilters.clear(); document.querySelectorAll("#filters button.active").forEach(b=>activeFilters.add(b.dataset.filter)); if(activeFilters.size===0){document.querySelector("#filters button[data-filter='all']").classList.add("active");activeFilters.add("all");} }
 function updateActionButtons(){
   const noGames=games.length===0;
@@ -1729,7 +1790,7 @@ document.getElementById("importBtn").addEventListener("click",()=>{
   loadGames(uploadedText, name);
 });
 function resetToUpload(){
-  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); selectionMode=null; uploadedText=""; searchQuery=""; document.getElementById("searchInput").value="";
+  games=[]; selected.clear(); playerName=""; activeFilters=new Set(["all"]); selectionMode=null; uploadedText=""; searchQuery=""; document.getElementById("searchInput").value=""; updateSearchClearVisibility();
   columnState={order:[], visible:new Set()};
   localStorage.removeItem(STORAGE_KEY);
   document.getElementById("pgnUpload").value=""; document.getElementById("fileName").textContent="";
@@ -1738,6 +1799,7 @@ function resetToUpload(){
   document.getElementById("stepConfirm").classList.add("hidden"); document.getElementById("stepUpload").classList.remove("hidden");
   document.getElementById("manualNameWrap").classList.add("hidden");
   document.getElementById("app").classList.add("hidden"); document.getElementById("landing").classList.remove("hidden");
+  updateAccountUI();
 }
 document.getElementById("reloadBtn").addEventListener("click",()=>{
   if(confirm("Drop all currently loaded games and import a new PGN?")) resetToUpload();
@@ -1781,9 +1843,30 @@ document.addEventListener("click",(e)=>{
   if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="settingsBtn"){ closeSettingsPanel(); }
 });
 const API_BASE="https://chess-library-api.up.railway.app";
-const API_LIBRARIES_PATH="/api/libraries";
-document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
-  const btn=document.getElementById("saveLibraryBtn");
+const IS_DEV=location.pathname.startsWith("/dev/");
+const API_LIBRARIES_PATH=IS_DEV?"/api/dev/libraries":"/api/libraries";
+const API_AUTH_PATH=IS_DEV?"/api/dev/auth":"/api/auth";
+const API_LIBRARY_MINE_PATH=IS_DEV?"/api/dev/library/mine":"/api/library/mine";
+const AUTH_TOKEN_KEY="chessLibraryAuthToken"+(IS_DEV?"_dev":"");
+let authToken=null; let authUsername=null; let authMode="login"; let authSyncTimer=null;
+function updateAccountUI(){
+  document.getElementById("accountBtnLabel").textContent=
+    authUsername ? authUsername : (games.length ? "Save My Library" : "Log In");
+  document.getElementById("accountPanelUsername").textContent=authUsername?("Signed in as "+authUsername):"";
+}
+document.getElementById("accountBtn").addEventListener("click", async (e)=>{
+  e.stopPropagation();
+  if(authUsername){
+    const panel=document.getElementById("accountPanel");
+    const opening=panel.classList.contains("hidden");
+    panel.classList.toggle("hidden");
+    if(opening) positionPanelMobile(panel, e.currentTarget);
+    return;
+  }
+  if(games.length){ await openSaveLibraryModal(e.currentTarget); return; }
+  openAuthModal("login");
+});
+async function openSaveLibraryModal(btn){
   const oldLabel=btn.innerHTML;
   btn.disabled=true; btn.textContent="Saving…";
   try{
@@ -1803,7 +1886,7 @@ document.getElementById("saveLibraryBtn").addEventListener("click", async ()=>{
   }finally{
     btn.disabled=false; btn.innerHTML=oldLabel;
   }
-});
+}
 document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
   copyToClipboard(document.getElementById("saveLibraryLink").textContent);
   const btn=document.getElementById("copyLibraryLinkBtn");
@@ -1812,6 +1895,125 @@ document.getElementById("copyLibraryLinkBtn").addEventListener("click",()=>{
 function closeSaveLibraryModal(){ document.getElementById("saveLibraryModal").classList.add("hidden"); }
 document.getElementById("saveLibraryDoneBtn").addEventListener("click", closeSaveLibraryModal);
 document.getElementById("saveLibraryModal").addEventListener("click",(e)=>{ if(e.target.id==="saveLibraryModal") closeSaveLibraryModal(); });
+document.getElementById("saveModalLoginBtn").addEventListener("click",()=>{ closeSaveLibraryModal(); openAuthModal("login"); });
+document.getElementById("saveModalSignupBtn").addEventListener("click",()=>{ closeSaveLibraryModal(); openAuthModal("signup"); });
+document.addEventListener("click",(e)=>{
+  const panel=document.getElementById("accountPanel");
+  if(!panel.classList.contains("hidden") && !panel.contains(e.target) && e.target.id!=="accountBtn"){ panel.classList.add("hidden"); }
+});
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+  document.getElementById("accountPanel").classList.add("hidden");
+  const oldToken=authToken;
+  authToken=null; authUsername=null;
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  resetToUpload();
+  if(oldToken){
+    try{ await fetch(API_BASE+API_AUTH_PATH+"/logout", {method:"POST", headers:{"Authorization":"Bearer "+oldToken}}); }catch(_){}
+  }
+});
+function updateAuthModalMode(){
+  const isLogin=authMode==="login";
+  document.getElementById("authModalTitle").textContent=isLogin?"Log In":"Sign Up";
+  document.getElementById("authSubmitBtn").textContent=isLogin?"Log In":"Sign Up";
+  document.getElementById("authPassword").autocomplete=isLogin?"current-password":"new-password";
+  document.getElementById("authSwitchText").textContent=isLogin?"Don't have an account?":"Already have an account?";
+  document.getElementById("authSwitchBtn").textContent=isLogin?"Sign Up":"Log In";
+}
+function openAuthModal(mode){
+  authMode=mode;
+  document.getElementById("authUsername").value="";
+  document.getElementById("authPassword").value="";
+  document.getElementById("authError").classList.add("hidden");
+  updateAuthModalMode();
+  document.getElementById("authModal").classList.remove("hidden");
+  document.getElementById("authUsername").focus();
+}
+function closeAuthModal(){ document.getElementById("authModal").classList.add("hidden"); }
+document.getElementById("authSwitchBtn").addEventListener("click",()=>{
+  authMode=authMode==="login"?"signup":"login";
+  document.getElementById("authError").classList.add("hidden");
+  updateAuthModalMode();
+});
+document.getElementById("authCancelBtn").addEventListener("click", closeAuthModal);
+document.getElementById("authModal").addEventListener("click",(e)=>{ if(e.target.id==="authModal") closeAuthModal(); });
+function showAuthError(msg){
+  const el=document.getElementById("authError");
+  el.textContent=msg; el.classList.remove("hidden");
+}
+async function submitAuthForm(){
+  const username=document.getElementById("authUsername").value.trim();
+  const password=document.getElementById("authPassword").value;
+  if(!username || !password){ showAuthError("Enter a username and password."); return; }
+  const btn=document.getElementById("authSubmitBtn");
+  const oldLabel=btn.textContent;
+  btn.disabled=true; btn.textContent="Please wait…";
+  try{
+    const endpoint=authMode==="login"?"/login":"/signup";
+    const res=await fetch(API_BASE+API_AUTH_PATH+endpoint, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username, password})
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok){
+      showAuthError(data.error || (authMode==="login"?"Incorrect username or password.":"Couldn't create that account."));
+      return;
+    }
+    authToken=data.token; authUsername=data.username;
+    localStorage.setItem(AUTH_TOKEN_KEY, authToken);
+    closeAuthModal();
+    updateAccountUI();
+    if(authMode==="signup"){
+      if(games.length) await syncLibraryToAccount();
+    } else {
+      await pullLibraryFromAccount();
+    }
+  }catch(err){
+    showAuthError("Something went wrong. Please try again.");
+  }finally{
+    btn.disabled=false; btn.textContent=oldLabel;
+  }
+}
+document.getElementById("authSubmitBtn").addEventListener("click", submitAuthForm);
+document.getElementById("authPassword").addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); submitAuthForm(); } });
+document.getElementById("authUsername").addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ e.preventDefault(); document.getElementById("authPassword").focus(); } });
+async function pullLibraryFromAccount(){
+  try{
+    const res=await fetch(API_BASE+API_LIBRARY_MINE_PATH, {headers:{"Authorization":"Bearer "+authToken}});
+    if(!res.ok) return false;
+    const data=await res.json();
+    loadGames(data.pgn, data.playerName);
+    return true;
+  }catch(_){ return false; }
+}
+function scheduleAuthSync(){
+  if(!authToken) return;
+  clearTimeout(authSyncTimer);
+  authSyncTimer=setTimeout(syncLibraryToAccount, 1500);
+}
+async function syncLibraryToAccount(){
+  if(!authToken) return;
+  try{
+    const pgn=buildPgnForGames(games);
+    await fetch(API_BASE+API_LIBRARY_MINE_PATH, {
+      method:"PUT",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+authToken},
+      body:JSON.stringify({playerName, pgn})
+    });
+  }catch(_){}
+}
+async function checkAuthOnLoad(){
+  const stored=localStorage.getItem(AUTH_TOKEN_KEY);
+  if(!stored) return false;
+  try{
+    const res=await fetch(API_BASE+API_AUTH_PATH+"/me", {headers:{"Authorization":"Bearer "+stored}});
+    if(!res.ok){ localStorage.removeItem(AUTH_TOKEN_KEY); return false; }
+    const data=await res.json();
+    authToken=stored; authUsername=data.username;
+    updateAccountUI();
+    return true;
+  }catch(_){ return false; }
+}
 async function loadFromRemoteLibrary(id){
   try{
     const res=await fetch(API_BASE+API_LIBRARIES_PATH+"/"+encodeURIComponent(id));
@@ -1879,6 +2081,11 @@ function restoreFromStorage(){
     const ok=await loadFromRemoteLibrary(libId);
     if(ok) return;
     alert("Couldn't find a library at this link.");
+  }
+  const loggedIn=await checkAuthOnLoad();
+  if(loggedIn){
+    const pulled=await pullLibraryFromAccount();
+    if(pulled) return;
   }
   restoreFromStorage();
 })();

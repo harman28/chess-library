@@ -1,5 +1,15 @@
 # Chess Library
 
+**RETIRED / superseded.** This repo and its GitHub Pages deployment have been replaced by
+`chess-library-api` (frontend now lives in that repo's `static/` folder, see its
+`static/CLAUDE.md` for the up-to-date version of everything below) — GitHub Pages could
+only ever serve static files, which made real per-game WhatsApp link previews for the
+single-game-sharing feature impossible, so the frontend moved to a host that can render
+per-request content. This file is kept for historical reference only; don't make changes
+here.
+
+---
+
 A client-side, single-file chess PGN viewer/library for personal OTB (over-the-board)
 games. No build step, no framework — one `index.html` with inline `<style>`/`<script>`.
 Hosted on GitHub Pages at the custom domain `library.chessscenes.com` (migration complete,

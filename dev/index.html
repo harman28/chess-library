@@ -930,17 +930,19 @@ function createChessWidget(container, g){
   nextBtn.addEventListener("click",()=>goToPly(ply+1));
   firstBtn.addEventListener("click",()=>goToPly(0));
   lastBtn.addEventListener("click",()=>goToPly(states.length-1));
-  flipBtn.addEventListener("click",()=>{
+  function flipBoard(){
     orientation = orientation==="white"?"black":"white";
     renderSquares();
     Object.entries(pieceEls).forEach(([sq, el])=>{ const rc=sqToRC(sq); setPiecePos(el, rc.f, rc.r, false); });
     updateHighlightSquares();
     updateNameplates();
     try{ boardWrap.focus({preventScroll:true}); }catch(_){}
-  });
+  }
+  flipBtn.addEventListener("click", flipBoard);
   boardWrap.addEventListener("keydown",(e)=>{
     if(e.key==="ArrowLeft"){ e.preventDefault(); goToPly(ply-1); }
     else if(e.key==="ArrowRight"){ e.preventDefault(); goToPly(ply+1); }
+    else if(e.key.toLowerCase()==="x"){ e.preventDefault(); flipBoard(); }
   });
 
   renderSquares();
